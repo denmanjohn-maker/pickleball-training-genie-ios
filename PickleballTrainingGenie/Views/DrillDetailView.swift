@@ -169,6 +169,6 @@ struct DrillDetailView: View {
         createdAt: "2024-01-01"
     ))
     .environmentObject(DrillsViewModel(client: PickleballTrainingGenieClient(
-        baseURL: URL(string: "http://localhost:5000/")!
+        baseURL: URL(string: "http://localhost:5123/")!
     )))
 }

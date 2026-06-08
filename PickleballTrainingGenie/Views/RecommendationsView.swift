@@ -106,7 +106,7 @@ private struct RecommendationsHeaderView: View {
 #Preview {
     RecommendationsView()
         .environmentObject(DrillsViewModel(client: PickleballTrainingGenieClient(
-            baseURL: URL(string: "http://localhost:5000/")!
+            baseURL: URL(string: "http://localhost:5123/")!
         )))
         .environmentObject(AuthViewModel())
 }

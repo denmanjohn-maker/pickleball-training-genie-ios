@@ -9,7 +9,10 @@
   - `xcodebuild -project PickleballTrainingGenie.xcodeproj -scheme PickleballTrainingGenie -configuration Debug -destination 'generic/platform=iOS Simulator' build`
 - Run in Xcode:
   - Open `PickleballTrainingGenie.xcodeproj`
-  - Set `API_BASE_URL` in the Run scheme environment if you are not using the default backend at `http://localhost:5000/`
+  - Default backend URL is `https://thepickleballgenie.com/`
+  - For local API development, use `http://localhost:5123/` for `dotnet run`
+  - If the backend is running under Docker Compose, use `http://localhost:8080/` instead
+  - On a physical iOS device, set `API_BASE_URL` to your Mac's LAN IP instead of `localhost`
 - There is currently no test target in the Xcode project, so there is no repository-defined full-suite or single-test command yet.
 - There is currently no lint configuration in the repo (no SwiftLint or similar config checked in).
 
@@ -35,7 +38,7 @@
 
 - Keep auth tokens in Keychain, not `UserDefaults`. The token key is `jwtToken`, managed through `Utilities/KeychainHelper.swift`.
 - Reuse the shared `PickleballTrainingGenieClient` from `AuthViewModel` for app flows that depend on auth. Do not introduce parallel client instances for normal runtime state unless there is a clear isolation reason such as previews.
-- API base URL comes from `ProcessInfo.processInfo.environment["API_BASE_URL"]` and defaults to `http://localhost:5000/`. Keep the protocol and trailing slash when setting it.
+- API base URL comes from `ProcessInfo.processInfo.environment["API_BASE_URL"]` and defaults to `https://thepickleballgenie.com/`. Keep the protocol and trailing slash when setting it.
 - View models are `@MainActor` and own loading/error state. Views are expected to call async methods and render published state, rather than performing URLSession work directly.
 - The API client centralizes endpoint behavior behind `request(..., requireAuth:)`; authenticated endpoints rely on the `requireAuth` flag and `client.jwtToken` rather than setting headers ad hoc in views or view models.
 - Prefer the shared theme primitives in `Theme/AppTheme.swift` over one-off styling:

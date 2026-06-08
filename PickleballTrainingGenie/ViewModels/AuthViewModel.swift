@@ -33,12 +33,14 @@ class AuthViewModel: ObservableObject {
             case .invalidResponse(let code) where code == 401:
                 errorMessage = "Invalid email or password."
             case .invalidResponse(let code) where code == 0:
-                errorMessage = "Cannot connect to the server. Please check your connection."
+                errorMessage = connectionErrorMessage()
             case .invalidResponse(let code):
                 errorMessage = "Login failed (error \(code))."
             case .invalidURL:
                 errorMessage = "Invalid server configuration."
             }
+        } catch let error as URLError {
+            errorMessage = networkErrorMessage(for: error)
         } catch {
             errorMessage = "An unexpected error occurred: \(error.localizedDescription)"
         }
@@ -67,12 +69,14 @@ class AuthViewModel: ObservableObject {
             case .invalidResponse(let code) where code == 400:
                 errorMessage = "Registration failed. This email may already be in use."
             case .invalidResponse(let code) where code == 0:
-                errorMessage = "Cannot connect to the server. Please check your connection."
+                errorMessage = connectionErrorMessage()
             case .invalidResponse(let code):
                 errorMessage = "Registration failed (error \(code))."
             case .invalidURL:
                 errorMessage = "Invalid server configuration."
             }
+        } catch let error as URLError {
+            errorMessage = networkErrorMessage(for: error)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -86,9 +90,26 @@ class AuthViewModel: ObservableObject {
         isAuthenticated = false
         currentUser = nil
     }
+
+    private func networkErrorMessage(for error: URLError) -> String {
+        switch error.code {
+        case .cannotFindHost, .cannotConnectToHost, .timedOut, .networkConnectionLost, .notConnectedToInternet:
+            return connectionErrorMessage()
+        default:
+            return "Network error: \(error.localizedDescription)"
+        }
+    }
+
+    private func connectionErrorMessage() -> String {
+        let url = client.baseURL.absoluteString
+        if url.contains("localhost") || url.contains("127.0.0.1") {
+            return "Cannot reach \(url). Use http://localhost:5123/ for dotnet run or http://localhost:8080/ for Docker. On a physical device, set API_BASE_URL to your Mac's local IP instead of localhost."
+        }
+        return "Cannot reach \(url). Make sure the hosted API is available or override API_BASE_URL for your local backend."
+    }
 }
 
 enum APIConfig {
     static let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"]
-        ?? "http://localhost:5000/"
+        ?? "https://thepickleballgenie.com/"
 }

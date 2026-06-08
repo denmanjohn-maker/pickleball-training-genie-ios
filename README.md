@@ -69,6 +69,6 @@ PickleballTrainingGenie/
 
 ### Running the App
 1. Open `PickleballTrainingGenie.xcodeproj` in Xcode.
-2. Ensure you have the Backend API server running. By default, the client looks for a local server at `http://localhost:5000/`.
-3. To point the client to a different server environment (e.g., staging or production), define the `API_BASE_URL` environment variable in your Xcode scheme's Environment Variables (under **Run** -> **Arguments**). Note that the URL must include the protocol (e.g., `API_BASE_URL=https://api.example.com/` or `http://192.168.1.100:5000/`).
+2. By default, the client connects to the hosted API at `https://thepickleballgenie.com/`.
+3. To use a different backend for development, define `API_BASE_URL` in your Xcode scheme's Environment Variables (under **Run** -> **Arguments**). For local API work, use `http://localhost:5123/` for `dotnet run` or `http://localhost:8080/` for Docker Compose. The URL must include the protocol and trailing slash (for example `API_BASE_URL=http://localhost:5123/` or `API_BASE_URL=https://api.example.com/`). On a physical iPhone or iPad, do not use `localhost`; use your Mac's LAN IP instead.
 4. Select your target simulator or device, and click **Run** (Cmd + R).
