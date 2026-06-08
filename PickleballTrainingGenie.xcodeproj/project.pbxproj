@@ -21,7 +21,6 @@
 		AAAA000000000000002ACAFE /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000001ECAFE /* AppTheme.swift */; };
 		AAAA000000000000002BCAFE /* PickleballTrainingGenieClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000002ECAFE /* PickleballTrainingGenieClient.swift */; };
 		AAAA0000000000000031CAFE /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000032CAFE /* KeychainHelper.swift */; };
-		E878B9B72FD7408E00107A08 /* SeedHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E878B9B62FD7408E00107A08 /* SeedHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +40,6 @@
 		AAAA000000000000002ECAFE /* PickleballTrainingGenieClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickleballTrainingGenieClient.swift; sourceTree = "<group>"; };
 		AAAA0000000000000030CAFE /* WorkoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000032CAFE /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
-		E878B9B62FD7408E00107A08 /* SeedHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,7 +127,6 @@
 			isa = PBXGroup;
 			children = (
 				AAAA0000000000000032CAFE /* KeychainHelper.swift */,
-				E878B9B62FD7408E00107A08 /* SeedHelper.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -205,7 +202,6 @@
 			files = (
 				AAAA000000000000001FCAFE /* PickleballTrainingGenieApp.swift in Sources */,
 				AAAA0000000000000020CAFE /* ContentView.swift in Sources */,
-				E878B9B72FD7408E00107A08 /* SeedHelper.swift in Sources */,
 				AAAA000000000000002BCAFE /* PickleballTrainingGenieClient.swift in Sources */,
 				AAAA0000000000000022CAFE /* LoginView.swift in Sources */,
 				AAAA0000000000000023CAFE /* RegisterView.swift in Sources */,

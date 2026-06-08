@@ -8,11 +8,6 @@ struct PickleballTrainingGenieApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(authViewModel)
-                #if DEBUG
-                .task {
-                    await SeedHelper.seedTestAccount(using: authViewModel.client)
-                }
-                #endif
         }
     }
 }
