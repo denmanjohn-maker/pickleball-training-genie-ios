@@ -20,6 +20,7 @@
 		AAAA0000000000000029CAFE /* DrillsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000001DCAFE /* DrillsViewModel.swift */; };
 		AAAA000000000000002ACAFE /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000001ECAFE /* AppTheme.swift */; };
 		AAAA000000000000002BCAFE /* PickleballTrainingGenieClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000002ECAFE /* PickleballTrainingGenieClient.swift */; };
+		AAAA0000000000000034CAFE /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000030CAFE /* WorkoutView.swift */; };
 		AAAA0000000000000031CAFE /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000032CAFE /* KeychainHelper.swift */; };
 /* End PBXBuildFile section */
 
@@ -208,6 +209,7 @@
 				AAAA0000000000000024CAFE /* DrillsListView.swift in Sources */,
 				AAAA0000000000000025CAFE /* DrillDetailView.swift in Sources */,
 				AAAA0000000000000026CAFE /* RecommendationsView.swift in Sources */,
+				AAAA0000000000000034CAFE /* WorkoutView.swift in Sources */,
 				AAAA0000000000000027CAFE /* ProfileView.swift in Sources */,
 				AAAA0000000000000028CAFE /* AuthViewModel.swift in Sources */,
 				AAAA0000000000000029CAFE /* DrillsViewModel.swift in Sources */,
@@ -226,6 +228,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z4U4RL7THN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -255,6 +258,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z4U4RL7THN;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
