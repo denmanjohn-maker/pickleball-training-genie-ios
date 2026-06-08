@@ -1,6 +1,8 @@
 import SwiftUI
 
 extension Color {
+    static let pickleballGreen = Color("PickleballGreen")
+    static let pickleballYellow = Color("PickleballYellow")
     static let pickleballDarkGreen = Color(red: 0.11, green: 0.37, blue: 0.13)
     static let pickleballLightGreen = Color(red: 0.56, green: 0.93, blue: 0.56)
 }
