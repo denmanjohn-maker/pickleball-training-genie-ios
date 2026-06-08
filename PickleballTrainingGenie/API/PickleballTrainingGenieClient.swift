@@ -95,9 +95,11 @@ class PickleballTrainingGenieClient {
         requestObj.setValue("application/json", forHTTPHeaderField: "Content-Type")
         requestObj.httpBody = data
         let (responseData, response) = try await session.data(for: requestObj)
-        guard let httpResponse = response as? HTTPURLResponse,
-              200..<300 ~= httpResponse.statusCode else {
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw PickleballTrainingGenieError.invalidResponse(statusCode: 0)
+        }
+        guard 200..<300 ~= httpResponse.statusCode else {
+            throw PickleballTrainingGenieError.invalidResponse(statusCode: httpResponse.statusCode)
         }
         return try decoder.decode(MessageResponse.self, from: responseData)
     }

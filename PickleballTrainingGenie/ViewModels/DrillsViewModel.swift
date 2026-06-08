@@ -72,7 +72,7 @@ class DrillsViewModel: ObservableObject {
             _ = try await client.completeDrill(id: id)
             completedDrillIds.insert(id)
         } catch {
-            // Silently handle - the UI already optimistically updates
+            // API call failed; do not mark as completed
         }
     }
 

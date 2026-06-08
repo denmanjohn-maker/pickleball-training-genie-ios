@@ -13,8 +13,8 @@ class AuthViewModel: ObservableObject {
     init() {
         let baseURL = URL(string: APIConfig.baseURL)!
         client = PickleballTrainingGenieClient(baseURL: baseURL)
-        // Restore saved token on launch
-        if let savedToken = UserDefaults.standard.string(forKey: "jwtToken"),
+        // Restore saved token on launch from Keychain
+        if let savedToken = KeychainHelper.read(forKey: "jwtToken"),
            !savedToken.isEmpty {
             client.jwtToken = savedToken
             isAuthenticated = true
@@ -26,7 +26,7 @@ class AuthViewModel: ObservableObject {
         errorMessage = nil
         do {
             let response = try await client.login(email: email, password: password)
-            UserDefaults.standard.set(response.token, forKey: "jwtToken")
+            KeychainHelper.save(response.token, forKey: "jwtToken")
             isAuthenticated = true
         } catch let error as PickleballTrainingGenieError {
             switch error {
@@ -81,7 +81,7 @@ class AuthViewModel: ObservableObject {
     }
 
     func logout() {
-        UserDefaults.standard.removeObject(forKey: "jwtToken")
+        KeychainHelper.delete(forKey: "jwtToken")
         client.jwtToken = nil
         isAuthenticated = false
         currentUser = nil

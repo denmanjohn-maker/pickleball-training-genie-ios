@@ -174,8 +174,14 @@ struct RegisterView: View {
         .navigationBarTitleDisplayMode(.inline)
         .alert("Account Created! 🎉", isPresented: $registrationSuccess) {
             Button("Sign In Now") {
+                let registeredEmail = email
+                let registeredPassword = password
+                // Clear sensitive fields before async login
+                email = ""
+                password = ""
+                confirmPassword = ""
                 Task {
-                    await authViewModel.login(email: email, password: password)
+                    await authViewModel.login(email: registeredEmail, password: registeredPassword)
                 }
             }
         } message: {
