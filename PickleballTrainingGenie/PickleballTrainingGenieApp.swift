@@ -3,11 +3,18 @@ import SwiftUI
 @main
 struct PickleballTrainingGenieApp: App {
     @StateObject private var authViewModel = AuthViewModel()
+    @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environmentObject(authViewModel)
+            if showSplash {
+                SplashVideoView {
+                    withAnimation { showSplash = false }
+                }
+            } else {
+                RootView()
+                    .environmentObject(authViewModel)
+            }
         }
     }
 }
