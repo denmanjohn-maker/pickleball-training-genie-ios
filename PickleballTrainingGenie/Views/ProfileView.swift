@@ -14,7 +14,7 @@ struct ProfileView: View {
                             Circle()
                                 .fill(
                                     LinearGradient(
-                                        colors: [Color.pickleballGreen, Color.pickleballDarkGreen],
+                                        colors: [Color.courtBlue, Color.graphiteBlack],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )
@@ -22,9 +22,9 @@ struct ProfileView: View {
                                 .frame(width: 100, height: 100)
                             Image(systemName: "figure.racquetball")
                                 .font(.system(size: 48))
-                                .foregroundColor(.pickleballYellow)
+                                .foregroundColor(.neonVolt)
                         }
-                        .shadow(color: .pickleballGreen.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: .courtBlue.opacity(0.4), radius: 12, x: 0, y: 6)
 
                         if let user = authViewModel.currentUser {
                             Text(user.email)
@@ -41,7 +41,7 @@ struct ProfileView: View {
                     .padding(28)
                     .background(
                         LinearGradient(
-                            colors: [Color.pickleballGreen.opacity(0.08), Color.clear],
+                            colors: [Color.courtBlue.opacity(0.08), Color.clear],
                             startPoint: .top,
                             endPoint: .bottom
                         )

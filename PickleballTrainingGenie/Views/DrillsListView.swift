@@ -72,7 +72,7 @@ struct DrillsListView: View {
                 if drillsViewModel.isLoadingDrills {
                     ProgressView("Loading drills…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .tint(.pickleballGreen)
+                        .tint(.neonVolt)
                 } else if let error = drillsViewModel.drillsError {
                     ContentUnavailableView {
                         Label("Could Not Load Drills", systemImage: "wifi.slash")
@@ -83,7 +83,7 @@ struct DrillsListView: View {
                             Task { await drillsViewModel.loadDrills() }
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.pickleballGreen)
+                        .tint(.neonVolt)
                     }
                 } else if displayedDrills.isEmpty {
                     ContentUnavailableView.search(text: searchText)
@@ -188,10 +188,10 @@ struct FilterChip: View {
             Text(label)
                 .font(.caption)
                 .fontWeight(isSelected ? .semibold : .regular)
-                .foregroundColor(isSelected ? .white : .primary)
+                .foregroundColor(isSelected ? .black : .primary)
                 .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(isSelected ? Color.pickleballGreen : Color(.systemGray5))
+                .frame(minHeight: 48)
+                .background(isSelected ? Color.neonVolt : Color(.systemGray5))
                 .cornerRadius(20)
         }
     }

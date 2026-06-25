@@ -21,7 +21,7 @@ struct LoginView: View {
                                     .frame(width: 100, height: 100)
                                 Image(systemName: "figure.racquetball")
                                     .font(.system(size: 52))
-                                    .foregroundColor(.pickleballDarkGreen)
+                                    .foregroundColor(.black)
                             }
                             .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
 
@@ -96,7 +96,7 @@ struct LoginView: View {
                             } label: {
                                 Text("New to Pickleball Genie? **Create Account**")
                                     .font(.subheadline)
-                                    .foregroundColor(.pickleballGreen)
+                                    .foregroundColor(.neonVolt)
                             }
                         }
                         .padding(24)

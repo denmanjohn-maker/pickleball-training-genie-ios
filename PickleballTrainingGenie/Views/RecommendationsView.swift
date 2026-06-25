@@ -10,7 +10,7 @@ struct RecommendationsView: View {
             Group {
                 if drillsViewModel.isLoadingRecommendations {
                     ProgressView("Loading your recommendations…")
-                        .tint(.pickleballGreen)
+                        .tint(.neonVolt)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let error = drillsViewModel.recommendationsError {
                     ContentUnavailableView {
@@ -22,7 +22,7 @@ struct RecommendationsView: View {
                             Task { await drillsViewModel.loadRecommendations() }
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.pickleballGreen)
+                        .tint(.neonVolt)
                     }
                 } else if drillsViewModel.recommendations.isEmpty {
                     ContentUnavailableView {
@@ -34,7 +34,7 @@ struct RecommendationsView: View {
                             // Switch to drills tab handled by parent
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.pickleballGreen)
+                        .tint(.neonVolt)
                     }
                 } else {
                     List(drillsViewModel.recommendations) { drill in
