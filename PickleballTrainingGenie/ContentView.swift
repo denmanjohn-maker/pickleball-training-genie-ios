@@ -43,6 +43,6 @@ struct MainTabView: View {
                     Label("Profile", systemImage: "person.fill")
                 }
         }
-        .tint(.pickleballGreen)
+        .tint(.neonVolt)
     }
 }

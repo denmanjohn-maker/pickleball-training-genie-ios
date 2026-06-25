@@ -36,10 +36,10 @@ struct WorkoutView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .cornerRadius(20)
+                    .cornerRadius(24)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color.pickleballGreen.opacity(0.2), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 24)
+                            .stroke(Color.kitchenGreen.opacity(0.2), lineWidth: 1.5)
                     )
                     .padding(.horizontal)
 
@@ -77,7 +77,7 @@ struct WorkoutView: View {
                                  : "Generate My Workout")
                         }
                     }
-                    .buttonStyle(PrimaryButtonStyle(color: .pickleballYellow))
+                    .buttonStyle(PrimaryButtonStyle())
                     .disabled(drillsViewModel.isGeneratingWorkout)
                     .padding(.horizontal)
 
@@ -120,10 +120,9 @@ private struct DurationButton: View {
             Text("\(minutes)m")
                 .font(.subheadline)
                 .fontWeight(isSelected ? .bold : .regular)
-                .foregroundColor(isSelected ? .white : .primary)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .background(isSelected ? Color.pickleballGreen : Color(.systemGray5))
+                .foregroundColor(isSelected ? .black : .primary)
+                .frame(maxWidth: .infinity, minHeight: 48)
+                .background(isSelected ? Color.neonVolt : Color(.systemGray5))
                 .cornerRadius(10)
         }
     }
