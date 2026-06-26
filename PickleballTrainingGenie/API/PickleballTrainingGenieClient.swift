@@ -18,7 +18,10 @@ struct Drill: Codable, Equatable, Identifiable, Sendable {
 struct User: Codable, Equatable, Sendable {
     let id: String
     let email: String
-    let currentDUPR: Decimal
+    let singlesDUPR: Decimal?
+    let doublesDUPR: Decimal?
+    let isDuprLinked: Bool
+    let preferredSessionDurationMinutes: Int?
     let targetDUPR: Decimal
 }
 
@@ -65,30 +68,70 @@ class PickleballTrainingGenieClient {
     }
 
     func login(email: String, password: String) async throws -> LoginResponse {
-        let payload = ["email": email, "password": password]
-        let response: LoginResponse = try await request(
-            url(path: "api/Users/login"),
-            method: "POST",
-            body: payload,
-            requireAuth: false
-        )
-        self.jwtToken = response.token
-        return response
-    }
+            let payload = ["email": email, "password": password]
+            let response: LoginResponse = try await request(
+                url(path: "api/Users/login"),
+                method: "POST",
+                body: payload,
+                requireAuth: false
+            )
+            self.jwtToken = response.token
+            return response
+        }
+
+        func loginWithDUPR(authCode: String) async throws -> LoginResponse {
+            let payload = ["authCode": authCode]
+            let response: LoginResponse = try await request(
+                url(path: "api/Users/dupr-login"),
+                method: "POST",
+                body: payload,
+                requireAuth: false
+            )
+            self.jwtToken = response.token
+            return response
+        }
+
+        func getProfile() async throws -> User {
+                    return try await request(
+                        url(path: "api/Users/profile"),
+                        method: "GET",
+                        requireAuth: true
+                    )
+                }
+
+        func updateRatings(singlesDUPR: Decimal?, doublesDUPR: Decimal?) async throws -> User {
+            struct UpdateRatingsRequest: Encodable {
+                let singlesDUPR: Decimal?
+                let doublesDUPR: Decimal?
+            }
+            let payload = UpdateRatingsRequest(singlesDUPR: singlesDUPR, doublesDUPR: doublesDUPR)
+            return try await request(
+                url(path: "api/Users/profile/ratings"),
+                method: "PUT",
+                body: payload,
+                requireAuth: true
+            )
+        }
 
     func register(
-        email: String,
-        password: String,
-        currentDUPR: Decimal,
-        targetDUPR: Decimal
-    ) async throws -> MessageResponse {
-        let payload: [String: Any] = [
-            "email": email,
-            "password": password,
-            "currentDUPR": NSDecimalNumber(decimal: currentDUPR).doubleValue,
-            "targetDUPR": NSDecimalNumber(decimal: targetDUPR).doubleValue
-        ]
-        let data = try JSONSerialization.data(withJSONObject: payload)
+            email: String,
+            password: String,
+            singlesDUPR: Decimal?,
+            doublesDUPR: Decimal?,
+            targetDUPR: Decimal
+        ) async throws -> MessageResponse {
+            var payload: [String: Any] = [
+                "email": email,
+                "password": password,
+                "targetDUPR": NSDecimalNumber(decimal: targetDUPR).doubleValue
+            ]
+            if let singles = singlesDUPR {
+                payload["singlesDUPR"] = NSDecimalNumber(decimal: singles).doubleValue
+            }
+            if let doubles = doublesDUPR {
+                payload["doublesDUPR"] = NSDecimalNumber(decimal: doubles).doubleValue
+            }
+            let data = try JSONSerialization.data(withJSONObject: payload)
         var requestObj = URLRequest(url: url(path: "api/Users/register"))
         requestObj.httpMethod = "POST"
         requestObj.setValue("application/json", forHTTPHeaderField: "Accept")

@@ -48,25 +48,61 @@ struct ProfileView: View {
                     )
 
                     // DUPR Info Card
-                    if let user = authViewModel.currentUser {
-                        VStack(spacing: 0) {
-                            DUPRStatRow(
-                                title: "Current DUPR",
-                                level: user.currentDUPR,
-                                icon: "chart.bar.fill",
-                                color: .blue
-                            )
-                            Divider().padding(.horizontal)
-                            DUPRStatRow(
-                                title: "Target DUPR",
-                                level: user.targetDUPR,
-                                icon: "target",
-                                color: .pickleballGreen
-                            )
-                        }
-                        .pickleballCard()
-                        .padding(.horizontal)
-                    } else {
+                                        if let user = authViewModel.currentUser {
+                                            VStack(spacing: 0) {
+                                                if user.isDuprLinked {
+                                                    HStack {
+                                                        Text("Verified by DUPR")
+                                                            .font(.caption)
+                                                            .bold()
+                                                            .padding(.horizontal, 8)
+                                                            .padding(.vertical, 4)
+                                                            .background(Color.blue)
+                                                            .foregroundColor(.white)
+                                                            .cornerRadius(8)
+                                                    }
+                                                    .padding()
+                                                }
+
+                                                DUPRStatRow(
+                                                    title: "Singles DUPR",
+                                                    level: user.singlesDUPR ?? 0.0,
+                                                    icon: "person.fill",
+                                                    color: .blue
+                                                )
+                                                Divider().padding(.horizontal)
+                                                DUPRStatRow(
+                                                    title: "Doubles DUPR",
+                                                    level: user.doublesDUPR ?? 0.0,
+                                                    icon: "person.2.fill",
+                                                    color: .purple
+                                                )
+                                                Divider().padding(.horizontal)
+                                                DUPRStatRow(
+                                                    title: "Target DUPR",
+                                                    level: user.targetDUPR,
+                                                    icon: "target",
+                                                    color: .pickleballGreen
+                                                )
+
+                                                if !user.isDuprLinked {
+                                                    Divider().padding(.horizontal)
+                                                    NavigationLink {
+                                                        EditRatingsView()
+                                                    } label: {
+                                                        HStack {
+                                                            Text("Edit Ratings")
+                                                            Spacer()
+                                                            Image(systemName: "chevron.right")
+                                                                .foregroundColor(.gray)
+                                                        }
+                                                        .padding()
+                                                    }
+                                                }
+                                            }
+                                            .pickleballCard()
+                                            .padding(.horizontal)
+                                        } else {
                         // Placeholder stats
                         VStack(spacing: 0) {
                             StatRowPlaceholder(
@@ -212,4 +248,56 @@ private struct StatRowPlaceholder: View {
 #Preview {
     ProfileView()
         .environmentObject(AuthViewModel())
+}
+import SwiftUI
+
+struct EditRatingsView: View {
+    @EnvironmentObject var authViewModel: AuthViewModel
+    @Environment(\.dismiss) private var dismiss
+    
+    @State private var singlesDUPR: Decimal = 3.0
+    @State private var doublesDUPR: Decimal = 3.0
+    
+    let duprOptions: [(Decimal, String)] = [
+        (3.0, "3.0 (Beginner)"),
+        (3.5, "3.5 (Novice)"),
+        (4.0, "4.0 (Intermediate)"),
+        (4.5, "4.5 (Advanced)"),
+        (5.0, "5.0 (Pro)")
+    ]
+
+    var body: some View {
+        Form {
+            Section(header: Text("Manual Ratings")) {
+                Picker("Singles DUPR", selection: $singlesDUPR) {
+                    ForEach(duprOptions, id: \.0) { value, label in
+                        Text(label).tag(value)
+                    }
+                }
+                
+                Picker("Doubles DUPR", selection: $doublesDUPR) {
+                    ForEach(duprOptions, id: \.0) { value, label in
+                        Text(label).tag(value)
+                    }
+                }
+            }
+            
+            Button("Save Ratings") {
+                Task {
+                    await authViewModel.updateRatings(singles: singlesDUPR, doubles: doublesDUPR)
+                    dismiss()
+                }
+            }
+            .buttonStyle(PrimaryButtonStyle())
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+        }
+        .navigationTitle("Edit Ratings")
+        .onAppear {
+            if let user = authViewModel.currentUser {
+                singlesDUPR = user.singlesDUPR ?? 3.0
+                doublesDUPR = user.doublesDUPR ?? 3.0
+            }
+        }
+    }
 }

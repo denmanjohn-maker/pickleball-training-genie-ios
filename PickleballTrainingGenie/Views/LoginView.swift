@@ -14,25 +14,17 @@ struct LoginView: View {
                 ScrollView {
                     VStack(spacing: 32) {
                         // Header
-                        VStack(spacing: 12) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.pickleballYellow)
-                                    .frame(width: 100, height: 100)
-                                Image(systemName: "figure.racquetball")
-                                    .font(.system(size: 52))
-                                    .foregroundColor(.black)
-                            }
-                            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
-
-                            Text("Pickleball Genie")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-                                .foregroundColor(.white)
+                        VStack(spacing: 16) {
+                            Image("Logo")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 120)
+                                .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)
 
                             Text("Your AI-powered training coach")
                                 .font(.subheadline)
-                                .foregroundColor(.white.opacity(0.85))
+                                .fontWeight(.medium)
+                                .foregroundColor(.white.opacity(0.9))
                         }
                         .padding(.top, 40)
 
@@ -90,6 +82,28 @@ struct LoginView: View {
                             }
                             .buttonStyle(PrimaryButtonStyle())
                             .disabled(authViewModel.isLoading || email.isEmpty || password.isEmpty)
+
+                            Divider()
+                                .padding(.vertical, 8)
+
+                            Button {
+                                Task {
+                                    let provider = AuthenticationContextProvider()
+                                    await authViewModel.loginWithDUPR(presentationContextProvider: provider)
+                                }
+                            } label: {
+                                HStack {
+                                    Image(systemName: "link.circle.fill")
+                                    Text("Continue with DUPR")
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .font(.headline)
+                                .cornerRadius(12)
+                            }
+                            .disabled(authViewModel.isLoading)
 
                             Button {
                                 showRegister = true

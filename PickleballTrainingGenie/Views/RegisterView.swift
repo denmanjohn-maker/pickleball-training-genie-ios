@@ -6,7 +6,8 @@ struct RegisterView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
-    @State private var currentDUPR: Decimal = 3.0
+    @State private var singlesDUPR: Decimal = 3.0
+        @State private var doublesDUPR: Decimal = 3.0
     @State private var targetDUPR: Decimal = 3.5
     @State private var registrationSuccess = false
 
@@ -19,9 +20,9 @@ struct RegisterView: View {
 
     var passwordsMatch: Bool { password == confirmPassword }
     var formValid: Bool {
-        !email.isEmpty && !password.isEmpty && password.count >= 6
-            && passwordsMatch && targetDUPR >= currentDUPR
-    }
+            !email.isEmpty && !password.isEmpty && password.count >= 6
+                && passwordsMatch && targetDUPR >= max(singlesDUPR, doublesDUPR)
+        }
 
     var body: some View {
         ZStack {
@@ -87,17 +88,30 @@ struct RegisterView: View {
                                 .foregroundColor(.pickleballDarkGreen)
 
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("Current DUPR")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
-                                Picker("Current DUPR", selection: $currentDUPR) {
-                                    ForEach(duprOptions, id: \.0) { value, label in
-                                        Text(label).tag(value)
-                                    }
-                                }
-                                .pickerStyle(.segmented)
-                            }
+                                Text("Singles DUPR")
+                                                                    .font(.caption)
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(.secondary)
+                                                                Picker("Singles DUPR", selection: $singlesDUPR) {
+                                                                    ForEach(duprOptions, id: \.0) { value, label in
+                                                                        Text(label).tag(value)
+                                                                    }
+                                                                }
+                                                                .pickerStyle(.segmented)
+                                                            }
+
+                                                            VStack(alignment: .leading, spacing: 6) {
+                                                                Text("Doubles DUPR")
+                                                                    .font(.caption)
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(.secondary)
+                                                                Picker("Doubles DUPR", selection: $doublesDUPR) {
+                                                                    ForEach(duprOptions, id: \.0) { value, label in
+                                                                        Text(label).tag(value)
+                                                                    }
+                                                                }
+                                                                .pickerStyle(.segmented)
+                                                            }
 
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Target DUPR")
@@ -112,7 +126,7 @@ struct RegisterView: View {
                                 .pickerStyle(.segmented)
                             }
 
-                            if targetDUPR < currentDUPR {
+                            if targetDUPR < max(singlesDUPR, doublesDUPR) {
                                 HStack {
                                     Image(systemName: "exclamationmark.triangle.fill")
                                         .foregroundColor(.orange)
@@ -136,11 +150,12 @@ struct RegisterView: View {
                         Button {
                             Task {
                                 let success = await authViewModel.register(
-                                    email: email,
-                                    password: password,
-                                    currentDUPR: currentDUPR,
-                                    targetDUPR: targetDUPR
-                                )
+                                                                    email: email,
+                                                                    password: password,
+                                                                    singlesDUPR: singlesDUPR,
+                                                                    doublesDUPR: doublesDUPR,
+                                                                    targetDUPR: targetDUPR
+                                                                )
                                 if success {
                                     registrationSuccess = true
                                 }
