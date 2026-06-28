@@ -83,18 +83,6 @@ class PickleballTrainingGenieClient {
             return response
         }
 
-        func loginWithDUPR(authCode: String) async throws -> LoginResponse {
-            let payload = ["authCode": authCode]
-            let response: LoginResponse = try await request(
-                url(path: "api/Users/dupr-login"),
-                method: "POST",
-                body: payload,
-                requireAuth: false
-            )
-            self.jwtToken = response.token
-            return response
-        }
-
         func getProfile() async throws -> User {
                     return try await request(
                         url(path: "api/Users/profile"),

@@ -50,20 +50,6 @@ struct ProfileView: View {
                     // DUPR Info Card
                                         if let user = authViewModel.currentUser {
                                             VStack(spacing: 0) {
-                                                if user.isDuprLinked {
-                                                    HStack {
-                                                        Text("Verified by DUPR")
-                                                            .font(.caption)
-                                                            .bold()
-                                                            .padding(.horizontal, 8)
-                                                            .padding(.vertical, 4)
-                                                            .background(Color.blue)
-                                                            .foregroundColor(.white)
-                                                            .cornerRadius(8)
-                                                    }
-                                                    .padding()
-                                                }
-
                                                 DUPRStatRow(
                                                     title: "Singles DUPR",
                                                     level: user.singlesDUPR ?? 0.0,
@@ -262,7 +248,6 @@ struct EditRatingsView: View {
         (5.0, "5.0 – Professional")
     ]
 
-    var isDuprLinked: Bool { authViewModel.currentUser?.isDuprLinked ?? false }
     var currentDUPR: Decimal { max(singlesDUPR, doublesDUPR) }
     var targetValid: Bool { targetDUPR >= currentDUPR }
 
@@ -280,7 +265,6 @@ struct EditRatingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    .disabled(isDuprLinked)
                 }
                 .padding(.vertical, 4)
 
@@ -295,15 +279,10 @@ struct EditRatingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
-                    .disabled(isDuprLinked)
                 }
                 .padding(.vertical, 4)
             } header: {
                 Text("Current Ratings")
-            } footer: {
-                if isDuprLinked {
-                    Text("Your singles and doubles ratings are managed by your linked DUPR account.")
-                }
             }
 
             Section {
@@ -353,8 +332,8 @@ struct EditRatingsView: View {
                     Task {
                         authViewModel.errorMessage = nil
                         await authViewModel.updateRatings(
-                            singles: isDuprLinked ? nil : singlesDUPR,
-                            doubles: isDuprLinked ? nil : doublesDUPR,
+                            singles: singlesDUPR,
+                            doubles: doublesDUPR,
                             target: targetDUPR
                         )
                         if authViewModel.errorMessage == nil {

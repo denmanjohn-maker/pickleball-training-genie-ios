@@ -83,28 +83,6 @@ struct LoginView: View {
                             .buttonStyle(PrimaryButtonStyle())
                             .disabled(authViewModel.isLoading || email.isEmpty || password.isEmpty)
 
-                            Divider()
-                                .padding(.vertical, 8)
-
-                            Button {
-                                Task {
-                                    let provider = AuthenticationContextProvider()
-                                    await authViewModel.loginWithDUPR(presentationContextProvider: provider)
-                                }
-                            } label: {
-                                HStack {
-                                    Image(systemName: "link.circle.fill")
-                                    Text("Continue with DUPR")
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(Color.blue)
-                                .foregroundColor(.white)
-                                .font(.headline)
-                                .cornerRadius(12)
-                            }
-                            .disabled(authViewModel.isLoading)
-
                             Button {
                                 showRegister = true
                             } label: {

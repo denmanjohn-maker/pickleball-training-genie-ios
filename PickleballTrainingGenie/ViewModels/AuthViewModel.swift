@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import AuthenticationServices
 
 @MainActor
 class AuthViewModel: ObservableObject {
@@ -57,46 +56,6 @@ class AuthViewModel: ObservableObject {
             errorMessage = networkErrorMessage(for: error)
         } catch {
             errorMessage = "An unexpected error occurred: \(error.localizedDescription)"
-        }
-        isLoading = false
-    }
-
-    func loginWithDUPR(presentationContextProvider: ASWebAuthenticationPresentationContextProviding) async {
-        isLoading = true
-        errorMessage = nil
-        
-        // Setup DUPR OAuth
-        let authURL = URL(string: "https://mydupr.com/oauth/authorize?client_id=YOUR_CLIENT_ID&redirect_uri=pickleballgenie://oauth2/callback&response_type=code")!
-        let callbackScheme = "pickleballgenie"
-        
-        do {
-            let callbackURL = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<URL, Error>) in
-                let session = ASWebAuthenticationSession(url: authURL, callbackURLScheme: callbackScheme) { url, error in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else if let url = url {
-                        continuation.resume(returning: url)
-                    }
-                }
-                session.presentationContextProvider = presentationContextProvider
-                session.start()
-            }
-            
-            guard let components = URLComponents(url: callbackURL, resolvingAgainstBaseURL: true),
-                  let code = components.queryItems?.first(where: { $0.name == "code" })?.value else {
-                throw URLError(.badURL)
-            }
-            
-            let response = try await client.loginWithDUPR(authCode: code)
-            KeychainHelper.save(response.token, forKey: "jwtToken")
-            isAuthenticated = true
-            await fetchProfile()
-        } catch {
-            if let asError = error as? ASWebAuthenticationSessionError, asError.code == .canceledLogin {
-                // User canceled, no error message needed
-            } else {
-                errorMessage = "DUPR login failed: \(error.localizedDescription)"
-            }
         }
         isLoading = false
     }
@@ -180,16 +139,4 @@ class AuthViewModel: ObservableObject {
 enum APIConfig {
     static let baseURL = ProcessInfo.processInfo.environment["API_BASE_URL"]
         ?? "https://thepickleballgenie.com/"
-}
-import Foundation
-import AuthenticationServices
-import UIKit
-
-class AuthenticationContextProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        let scenes = UIApplication.shared.connectedScenes
-        let windowScene = scenes.first as? UIWindowScene
-        let window = windowScene?.windows.first { $0.isKeyWindow }
-        return window ?? ASPresentationAnchor()
-    }
 }
