@@ -3,6 +3,7 @@ import SwiftUI
 struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showLogoutConfirmation = false
+    @State private var showEditRatings = false
 
     var body: some View {
         NavigationStack {
@@ -72,17 +73,22 @@ struct ProfileView: View {
                                                 )
 
                                                 Divider().padding(.horizontal)
-                                                NavigationLink {
-                                                    EditRatingsView()
+                                                Button {
+                                                    showEditRatings = true
                                                 } label: {
                                                     HStack {
-                                                        Text("Edit Ratings")
+                                                        Image(systemName: "pencil.circle.fill")
+                                                            .foregroundColor(.pickleballGreen)
+                                                        Text("Edit My Ratings")
+                                                            .fontWeight(.medium)
                                                         Spacer()
                                                         Image(systemName: "chevron.right")
-                                                            .foregroundColor(.gray)
+                                                            .font(.caption)
+                                                            .foregroundColor(.secondary)
                                                     }
                                                     .padding()
                                                 }
+                                                .foregroundColor(.primary)
                                             }
                                             .pickleballCard()
                                             .padding(.horizontal)
@@ -173,6 +179,19 @@ struct ProfileView: View {
                     authViewModel.logout()
                 }
                 Button("Cancel", role: .cancel) {}
+            }
+            .sheet(isPresented: $showEditRatings) {
+                NavigationStack {
+                    EditRatingsView()
+                        .environmentObject(authViewModel)
+                        .navigationTitle("Edit Ratings")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Cancel") { showEditRatings = false }
+                            }
+                        }
+                }
             }
         }
     }
