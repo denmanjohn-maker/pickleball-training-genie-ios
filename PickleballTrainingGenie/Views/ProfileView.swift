@@ -249,54 +249,135 @@ private struct StatRowPlaceholder: View {
     ProfileView()
         .environmentObject(AuthViewModel())
 }
-import SwiftUI
-
 struct EditRatingsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.dismiss) private var dismiss
-    
+
     @State private var singlesDUPR: Decimal = 3.0
     @State private var doublesDUPR: Decimal = 3.0
-    
+    @State private var targetDUPR: Decimal = 3.5
+
     let duprOptions: [(Decimal, String)] = [
-        (3.0, "3.0 (Beginner)"),
-        (3.5, "3.5 (Novice)"),
-        (4.0, "4.0 (Intermediate)"),
-        (4.5, "4.5 (Advanced)"),
-        (5.0, "5.0 (Pro)")
+        (3.0, "3.0 – Beginner"),
+        (3.5, "3.5 – Intermediate"),
+        (4.0, "4.0 – Advanced"),
+        (5.0, "5.0 – Professional")
     ]
+
+    var currentDUPR: Decimal { max(singlesDUPR, doublesDUPR) }
+    var targetValid: Bool { targetDUPR >= currentDUPR }
 
     var body: some View {
         Form {
-            Section(header: Text("Manual Ratings")) {
-                Picker("Singles DUPR", selection: $singlesDUPR) {
-                    ForEach(duprOptions, id: \.0) { value, label in
-                        Text(label).tag(value)
+            Section("Current Ratings") {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Singles DUPR")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                    Picker("Singles DUPR", selection: $singlesDUPR) {
+                        ForEach(duprOptions, id: \.0) { value, label in
+                            Text(label).tag(value)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                .padding(.vertical, 4)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Doubles DUPR")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                    Picker("Doubles DUPR", selection: $doublesDUPR) {
+                        ForEach(duprOptions, id: \.0) { value, label in
+                            Text(label).tag(value)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                }
+                .padding(.vertical, 4)
+            }
+
+            Section {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Target DUPR")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                    Picker("Target DUPR", selection: $targetDUPR) {
+                        ForEach(duprOptions, id: \.0) { value, label in
+                            Text(label).tag(value)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    if !targetValid {
+                        HStack(spacing: 6) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.orange)
+                            Text("Target must be ≥ current DUPR")
+                                .font(.caption)
+                                .foregroundColor(.orange)
+                        }
                     }
                 }
-                
-                Picker("Doubles DUPR", selection: $doublesDUPR) {
-                    ForEach(duprOptions, id: \.0) { value, label in
-                        Text(label).tag(value)
+                .padding(.vertical, 4)
+            } header: {
+                Text("Goal")
+            } footer: {
+                Text("Your target DUPR determines the drills the AI selects for your workouts.")
+            }
+
+            if let error = authViewModel.errorMessage {
+                Section {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.red)
+                        Text(error)
+                            .font(.subheadline)
+                            .foregroundColor(.red)
                     }
                 }
             }
-            
-            Button("Save Ratings") {
-                Task {
-                    await authViewModel.updateRatings(singles: singlesDUPR, doubles: doublesDUPR)
-                    dismiss()
+
+            Section {
+                Button {
+                    Task {
+                        authViewModel.errorMessage = nil
+                        await authViewModel.updateRatings(
+                            singles: singlesDUPR,
+                            doubles: doublesDUPR,
+                            target: targetDUPR
+                        )
+                        if authViewModel.errorMessage == nil {
+                            dismiss()
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Spacer()
+                        if authViewModel.isLoading {
+                            ProgressView().tint(.white)
+                        } else {
+                            Text("Save Ratings")
+                                .fontWeight(.semibold)
+                        }
+                        Spacer()
+                    }
+                    .padding(.vertical, 4)
                 }
+                .disabled(authViewModel.isLoading || !targetValid)
+                .listRowBackground(Color.pickleballGreen)
+                .foregroundColor(.white)
             }
-            .buttonStyle(PrimaryButtonStyle())
-            .listRowInsets(EdgeInsets())
-            .listRowBackground(Color.clear)
         }
         .navigationTitle("Edit Ratings")
         .onAppear {
             if let user = authViewModel.currentUser {
                 singlesDUPR = user.singlesDUPR ?? 3.0
                 doublesDUPR = user.doublesDUPR ?? 3.0
+                targetDUPR = user.targetDUPR
             }
         }
     }

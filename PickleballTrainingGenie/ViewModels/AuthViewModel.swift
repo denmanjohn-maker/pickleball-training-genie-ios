@@ -101,11 +101,11 @@ class AuthViewModel: ObservableObject {
         isLoading = false
     }
 
-    func updateRatings(singles: Decimal?, doubles: Decimal?) async {
+    func updateRatings(singles: Decimal?, doubles: Decimal?, target: Decimal? = nil) async {
         isLoading = true
         errorMessage = nil
         do {
-            let updatedUser = try await client.updateRatings(singlesDUPR: singles, doublesDUPR: doubles)
+            let updatedUser = try await client.updateRatings(singlesDUPR: singles, doublesDUPR: doubles, targetDUPR: target)
             self.currentUser = updatedUser
         } catch {
             errorMessage = "Failed to update ratings: \(error.localizedDescription)"

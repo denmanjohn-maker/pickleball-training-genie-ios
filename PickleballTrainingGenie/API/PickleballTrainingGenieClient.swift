@@ -38,13 +38,12 @@ struct GenerateWorkoutRequest: Codable, Sendable {
 }
 
 struct WorkoutDrillItem: Codable, Identifiable, Sendable {
-    let drillId: String
     let title: String
     let category: String
     let durationMinutes: Int
     let coachingNotes: String
 
-    var id: String { drillId }
+    var id: String { title }
 }
 
 struct WorkoutPlanResponse: Codable, Sendable {
@@ -53,6 +52,11 @@ struct WorkoutPlanResponse: Codable, Sendable {
     let cooldown: String?
     let totalDurationMinutes: Int?
     let rawResponse: String?
+
+    enum CodingKeys: String, CodingKey {
+        case warmup, drills, cooldown, rawResponse
+        case totalDurationMinutes = "totalDuration"
+    }
 }
 
 class PickleballTrainingGenieClient {
@@ -99,12 +103,13 @@ class PickleballTrainingGenieClient {
                     )
                 }
 
-        func updateRatings(singlesDUPR: Decimal?, doublesDUPR: Decimal?) async throws -> User {
+        func updateRatings(singlesDUPR: Decimal?, doublesDUPR: Decimal?, targetDUPR: Decimal? = nil) async throws -> User {
             struct UpdateRatingsRequest: Encodable {
                 let singlesDUPR: Decimal?
                 let doublesDUPR: Decimal?
+                let targetDUPR: Decimal?
             }
-            let payload = UpdateRatingsRequest(singlesDUPR: singlesDUPR, doublesDUPR: doublesDUPR)
+            let payload = UpdateRatingsRequest(singlesDUPR: singlesDUPR, doublesDUPR: doublesDUPR, targetDUPR: targetDUPR)
             return try await request(
                 url(path: "api/Users/profile/ratings"),
                 method: "PUT",
