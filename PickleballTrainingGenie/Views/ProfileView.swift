@@ -85,19 +85,17 @@ struct ProfileView: View {
                                                     color: .pickleballGreen
                                                 )
 
-                                                if !user.isDuprLinked {
-                                                    Divider().padding(.horizontal)
-                                                    NavigationLink {
-                                                        EditRatingsView()
-                                                    } label: {
-                                                        HStack {
-                                                            Text("Edit Ratings")
-                                                            Spacer()
-                                                            Image(systemName: "chevron.right")
-                                                                .foregroundColor(.gray)
-                                                        }
-                                                        .padding()
+                                                Divider().padding(.horizontal)
+                                                NavigationLink {
+                                                    EditRatingsView()
+                                                } label: {
+                                                    HStack {
+                                                        Text("Edit Ratings")
+                                                        Spacer()
+                                                        Image(systemName: "chevron.right")
+                                                            .foregroundColor(.gray)
                                                     }
+                                                    .padding()
                                                 }
                                             }
                                             .pickleballCard()
@@ -264,12 +262,13 @@ struct EditRatingsView: View {
         (5.0, "5.0 – Professional")
     ]
 
+    var isDuprLinked: Bool { authViewModel.currentUser?.isDuprLinked ?? false }
     var currentDUPR: Decimal { max(singlesDUPR, doublesDUPR) }
     var targetValid: Bool { targetDUPR >= currentDUPR }
 
     var body: some View {
         Form {
-            Section("Current Ratings") {
+            Section {
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Singles DUPR")
                         .font(.caption)
@@ -281,6 +280,7 @@ struct EditRatingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .disabled(isDuprLinked)
                 }
                 .padding(.vertical, 4)
 
@@ -295,8 +295,15 @@ struct EditRatingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .disabled(isDuprLinked)
                 }
                 .padding(.vertical, 4)
+            } header: {
+                Text("Current Ratings")
+            } footer: {
+                if isDuprLinked {
+                    Text("Your singles and doubles ratings are managed by your linked DUPR account.")
+                }
             }
 
             Section {
@@ -346,8 +353,8 @@ struct EditRatingsView: View {
                     Task {
                         authViewModel.errorMessage = nil
                         await authViewModel.updateRatings(
-                            singles: singlesDUPR,
-                            doubles: doublesDUPR,
+                            singles: isDuprLinked ? nil : singlesDUPR,
+                            doubles: isDuprLinked ? nil : doublesDUPR,
                             target: targetDUPR
                         )
                         if authViewModel.errorMessage == nil {
