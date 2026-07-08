@@ -110,26 +110,38 @@ struct TournamentsListView: View {
         } else {
             List {
                 ForEach(viewModel.tournaments) { tournament in
-                    TournamentRowView(tournament: tournament)
-                        .onTapGesture { selectedTournament = tournament }
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                    Button {
+                        selectedTournament = tournament
+                    } label: {
+                        TournamentRowView(tournament: tournament)
+                    }
+                    .buttonStyle(.plain)
+                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
                 }
 
                 if viewModel.hasMorePages {
-                    HStack {
-                        Spacer()
-                        if viewModel.isLoadingMore {
-                            ProgressView()
-                                .tint(.neonVolt)
-                        } else {
-                            Button("Load More") {
-                                Task { await viewModel.loadMoreTournaments() }
-                            }
-                            .foregroundColor(.pickleballGreen)
+                    VStack(spacing: 6) {
+                        if let error = viewModel.loadMoreError {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
                         }
-                        Spacer()
+                        HStack {
+                            Spacer()
+                            if viewModel.isLoadingMore {
+                                ProgressView()
+                                    .tint(.neonVolt)
+                            } else {
+                                Button("Load More") {
+                                    Task { await viewModel.loadMoreTournaments() }
+                                }
+                                .foregroundColor(.pickleballGreen)
+                            }
+                            Spacer()
+                        }
                     }
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)

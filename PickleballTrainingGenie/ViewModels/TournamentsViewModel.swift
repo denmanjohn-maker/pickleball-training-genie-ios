@@ -30,6 +30,7 @@ class TournamentsViewModel: ObservableObject {
     @Published var isLoadingMore = false
     @Published var citiesError: String?
     @Published var tournamentsError: String?
+    @Published var loadMoreError: String?
 
     @Published var selectedTournamentDetail: TournamentDetail?
     @Published var isLoadingDetail = false
@@ -81,6 +82,7 @@ class TournamentsViewModel: ObservableObject {
         if resetPage {
             page = 1
             tournaments = []
+            loadMoreError = nil
         }
         isLoadingTournaments = true
         tournamentsError = nil
@@ -106,6 +108,7 @@ class TournamentsViewModel: ObservableObject {
     func loadMoreTournaments() async {
         guard let selectedCity, hasMorePages, !isLoadingMore else { return }
         isLoadingMore = true
+        loadMoreError = nil
         let nextPage = page + 1
         do {
             let response = try await client.tournaments(
@@ -117,8 +120,12 @@ class TournamentsViewModel: ObservableObject {
             tournaments.append(contentsOf: response.items)
             totalCount = response.totalCount
             page = nextPage
+        } catch let error as TournamentsAPIError {
+            loadMoreError = message(for: error)
+        } catch let error as URLError {
+            loadMoreError = networkErrorMessage(for: error)
         } catch {
-            // Keep existing results; the Load More row can be tapped again.
+            loadMoreError = "Could not load more tournaments: \(error.localizedDescription)"
         }
         isLoadingMore = false
     }
