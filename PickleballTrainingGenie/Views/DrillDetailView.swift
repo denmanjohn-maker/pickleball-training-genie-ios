@@ -18,7 +18,7 @@ struct DrillDetailView: View {
                     // Header Banner
                     ZStack(alignment: .bottomLeading) {
                         LinearGradient(
-                            colors: [Color.pickleballDarkGreen, Color.pickleballGreen],
+                            colors: [Color.cosmicPurple, Color.deepSpace],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -43,7 +43,7 @@ struct DrillDetailView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Label("Instructions", systemImage: "doc.text.fill")
                             .font(.headline)
-                            .foregroundColor(.pickleballDarkGreen)
+                            .foregroundColor(.neonMagenta)
 
                         Text(drill.description)
                             .font(.body)
@@ -60,7 +60,7 @@ struct DrillDetailView: View {
                             HStack {
                                 Image(systemName: "play.rectangle.fill")
                                     .font(.title3)
-                                    .foregroundColor(.pickleballGreen)
+                                    .foregroundColor(.neonCyan)
                                 VStack(alignment: .leading) {
                                     Text("Watch Drill Video")
                                         .font(.subheadline)
@@ -95,7 +95,7 @@ struct DrillDetailView: View {
                                     .foregroundColor(.secondary)
                             }
                             .padding()
-                            .background(Color(.systemGray6))
+                            .background(Color.nebulaSurface)
                             .cornerRadius(12)
                         }
                         .padding(.horizontal)
@@ -106,14 +106,14 @@ struct DrillDetailView: View {
                         if isCompleted {
                             HStack {
                                 Image(systemName: "checkmark.seal.fill")
-                                    .foregroundColor(.pickleballGreen)
+                                    .foregroundColor(.neonCyan)
                                 Text("Drill Completed!")
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.pickleballGreen)
+                                    .foregroundColor(.neonCyan)
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.pickleballGreen.opacity(0.1))
+                            .background(Color.neonCyan.opacity(0.1))
                             .cornerRadius(12)
                         } else {
                             Button {
@@ -141,11 +141,12 @@ struct DrillDetailView: View {
                     .padding(.bottom, 24)
                 }
             }
+            .background(Color.deepSpace)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
-                        .foregroundColor(.pickleballGreen)
+                        .foregroundColor(.neonCyan)
                 }
             }
             .alert("Great Work! 🏆", isPresented: $showCompleteSuccess) {

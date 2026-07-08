@@ -41,7 +41,7 @@ struct DrillsListView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                 }
-                .background(Color(.systemBackground))
+                .background(Color.deepSpace)
 
                 // DUPR Level filter
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -65,14 +65,14 @@ struct DrillsListView: View {
                     .padding(.horizontal, 16)
                     .padding(.bottom, 10)
                 }
-                .background(Color(.systemBackground))
+                .background(Color.deepSpace)
 
                 Divider()
 
                 if drillsViewModel.isLoadingDrills {
                     ProgressView("Loading drills…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .tint(.neonVolt)
+                        .tint(.neonMagenta)
                 } else if let error = drillsViewModel.drillsError {
                     ContentUnavailableView {
                         Label("Could Not Load Drills", systemImage: "wifi.slash")
@@ -83,7 +83,7 @@ struct DrillsListView: View {
                             Task { await drillsViewModel.loadDrills() }
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.neonVolt)
+                        .tint(.neonMagenta)
                     }
                 } else if displayedDrills.isEmpty {
                     ContentUnavailableView.search(text: searchText)
@@ -96,7 +96,8 @@ struct DrillsListView: View {
                             .listRowBackground(Color.clear)
                     }
                     .listStyle(.plain)
-                    .background(Color(.systemGroupedBackground))
+                    .scrollContentBackground(.hidden)
+                    .background(Color.deepSpace)
                 }
             }
             .navigationTitle("Drills")
@@ -107,7 +108,7 @@ struct DrillsListView: View {
                         Task { await drillsViewModel.loadDrills() }
                     } label: {
                         Image(systemName: "arrow.clockwise")
-                            .foregroundColor(.pickleballGreen)
+                            .foregroundColor(.neonCyan)
                     }
                 }
             }
@@ -157,7 +158,7 @@ struct DrillRowView: View {
 
                 if isCompleted {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.pickleballGreen)
+                        .foregroundColor(.neonCyan)
                         .font(.title3)
                 }
             }
@@ -170,7 +171,7 @@ struct DrillRowView: View {
             if drill.videoUrl != nil {
                 Label("Video Available", systemImage: "play.circle.fill")
                     .font(.caption)
-                    .foregroundColor(.pickleballGreen)
+                    .foregroundColor(.neonCyan)
             }
         }
         .padding()
@@ -191,7 +192,7 @@ struct FilterChip: View {
                 .foregroundColor(isSelected ? .black : .primary)
                 .padding(.horizontal, 12)
                 .frame(minHeight: 48)
-                .background(isSelected ? Color.neonVolt : Color(.systemGray5))
+                .background(isSelected ? Color.neonMagenta : Color(.systemGray5))
                 .cornerRadius(20)
         }
     }

@@ -26,7 +26,7 @@ struct RegisterView: View {
 
     var body: some View {
         ZStack {
-            PickleballGradient()
+            SynthwaveGradient()
 
             ScrollView {
                 VStack(spacing: 28) {
@@ -34,7 +34,7 @@ struct RegisterView: View {
                     VStack(spacing: 8) {
                         Image(systemName: "person.badge.plus.fill")
                             .font(.system(size: 48))
-                            .foregroundColor(.pickleballYellow)
+                            .foregroundColor(.neonMagenta)
                         Text("Create Account")
                             .font(.title)
                             .fontWeight(.bold)
@@ -85,7 +85,7 @@ struct RegisterView: View {
                             Label("Your DUPR Level", systemImage: "chart.bar.fill")
                                 .font(.subheadline)
                                 .fontWeight(.semibold)
-                                .foregroundColor(.pickleballDarkGreen)
+                                .foregroundColor(.neonCyan)
 
                             VStack(alignment: .leading, spacing: 6) {
                                 Text("Singles DUPR")
@@ -172,9 +172,20 @@ struct RegisterView: View {
                         .disabled(!formValid || authViewModel.isLoading)
                     }
                     .padding(24)
-                    .background(Color(.systemBackground))
+                    .background(Color.nebulaSurface)
                     .cornerRadius(20)
-                    .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [.neonMagenta.opacity(0.55), .neonCyan.opacity(0.55)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1
+                            )
+                    )
+                    .shadow(color: .neonMagenta.opacity(0.2), radius: 12, x: 0, y: 6)
                     .padding(.horizontal, 20)
 
                     Button { dismiss() } label: {

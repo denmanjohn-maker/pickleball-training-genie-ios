@@ -15,7 +15,7 @@ struct ProfileView: View {
                             Circle()
                                 .fill(
                                     LinearGradient(
-                                        colors: [Color.courtBlue, Color.graphiteBlack],
+                                        colors: [Color.neonMagenta, Color.cosmicPurple],
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
                                     )
@@ -23,9 +23,9 @@ struct ProfileView: View {
                                 .frame(width: 100, height: 100)
                             Image(systemName: "figure.racquetball")
                                 .font(.system(size: 48))
-                                .foregroundColor(.neonVolt)
+                                .foregroundColor(.white)
                         }
-                        .shadow(color: .courtBlue.opacity(0.4), radius: 12, x: 0, y: 6)
+                        .shadow(color: .neonMagenta.opacity(0.45), radius: 12, x: 0, y: 6)
 
                         if let user = authViewModel.currentUser {
                             Text(user.email)
@@ -42,7 +42,7 @@ struct ProfileView: View {
                     .padding(28)
                     .background(
                         LinearGradient(
-                            colors: [Color.courtBlue.opacity(0.08), Color.clear],
+                            colors: [Color.cosmicPurple.opacity(0.18), Color.clear],
                             startPoint: .top,
                             endPoint: .bottom
                         )
@@ -69,7 +69,7 @@ struct ProfileView: View {
                                                     title: "Target DUPR",
                                                     level: user.targetDUPR,
                                                     icon: "target",
-                                                    color: .pickleballGreen
+                                                    color: .neonCyan
                                                 )
 
                                                 Divider().padding(.horizontal)
@@ -78,7 +78,7 @@ struct ProfileView: View {
                                                 } label: {
                                                     HStack {
                                                         Image(systemName: "pencil.circle.fill")
-                                                            .foregroundColor(.pickleballGreen)
+                                                            .foregroundColor(.neonCyan)
                                                         Text("Edit My Ratings")
                                                             .fontWeight(.medium)
                                                         Spacer()
@@ -104,7 +104,7 @@ struct ProfileView: View {
                             StatRowPlaceholder(
                                 title: "Target DUPR",
                                 icon: "target",
-                                color: .pickleballGreen
+                                color: .neonCyan
                             )
                         }
                         .pickleballCard()
@@ -115,7 +115,7 @@ struct ProfileView: View {
                     VStack(alignment: .leading, spacing: 12) {
                         Label("About DUPR", systemImage: "info.circle.fill")
                             .font(.headline)
-                            .foregroundColor(.pickleballDarkGreen)
+                            .foregroundColor(.starlight)
 
                         ForEach(duprInfo, id: \.level) { info in
                             HStack(alignment: .top, spacing: 12) {
@@ -169,7 +169,7 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
-            .background(Color(.systemGroupedBackground))
+            .background(Color.deepSpace)
             .confirmationDialog(
                 "Sign out of Pickleball Genie?",
                 isPresented: $showLogoutConfirmation,
@@ -363,7 +363,7 @@ struct EditRatingsView: View {
                     HStack {
                         Spacer()
                         if authViewModel.isLoading {
-                            ProgressView().tint(.white)
+                            ProgressView().tint(.black)
                         } else {
                             Text("Save Ratings")
                                 .fontWeight(.semibold)
@@ -373,10 +373,12 @@ struct EditRatingsView: View {
                     .padding(.vertical, 4)
                 }
                 .disabled(authViewModel.isLoading || !targetValid)
-                .listRowBackground(Color.pickleballGreen)
-                .foregroundColor(.white)
+                .listRowBackground(Color.neonMagenta)
+                .foregroundColor(.black)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.deepSpace)
         .navigationTitle("Edit Ratings")
         .onAppear {
             if let user = authViewModel.currentUser {

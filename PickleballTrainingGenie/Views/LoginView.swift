@@ -9,7 +9,9 @@ struct LoginView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                PickleballGradient()
+                SynthwaveGradient()
+                StarFieldView()
+                    .ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: 32) {
@@ -18,8 +20,31 @@ struct LoginView: View {
                             Image("Logo")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 120)
-                                .shadow(color: .black.opacity(0.15), radius: 6, x: 0, y: 3)
+                                .frame(height: 110)
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .strokeBorder(
+                                            LinearGradient(
+                                                colors: [.neonMagenta, .neonCyan],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            ),
+                                            lineWidth: 1.5
+                                        )
+                                )
+                                .neonGlow(.neonMagenta, radius: 14)
+
+                            Text("Pickleball Genie")
+                                .font(.system(size: 30, weight: .heavy, design: .rounded))
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.neonMagenta, .neonCyan],
+                                        startPoint: .leading,
+                                        endPoint: .trailing
+                                    )
+                                )
+                                .neonGlow(.neonMagenta, radius: 8)
 
                             Text("Your AI-powered training coach")
                                 .font(.subheadline)
@@ -88,13 +113,24 @@ struct LoginView: View {
                             } label: {
                                 Text("New to Pickleball Genie? **Create Account**")
                                     .font(.subheadline)
-                                    .foregroundColor(.neonVolt)
+                                    .foregroundColor(.neonMagenta)
                             }
                         }
                         .padding(24)
-                        .background(Color(.systemBackground))
+                        .background(Color.nebulaSurface)
                         .cornerRadius(20)
-                        .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .strokeBorder(
+                                    LinearGradient(
+                                        colors: [.neonMagenta.opacity(0.55), .neonCyan.opacity(0.55)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: 1
+                                )
+                        )
+                        .shadow(color: .neonMagenta.opacity(0.2), radius: 12, x: 0, y: 6)
                         .padding(.horizontal, 20)
 
                         // Pickleball fun fact
