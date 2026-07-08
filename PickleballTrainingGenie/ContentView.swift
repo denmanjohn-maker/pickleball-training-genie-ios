@@ -10,6 +10,11 @@ struct RootView: View {
                 .environmentObject(
                     DrillsViewModel(client: authViewModel.client)
                 )
+                .environmentObject(
+                    TournamentsViewModel(
+                        client: TournamentsAPIClient(baseURL: URL(string: TournamentsAPIConfig.baseURL)!)
+                    )
+                )
         } else {
             LoginView()
                 .environmentObject(authViewModel)
@@ -36,6 +41,11 @@ struct MainTabView: View {
             WorkoutView()
                 .tabItem {
                     Label("Workout", systemImage: "bolt.fill")
+                }
+
+            TournamentsListView()
+                .tabItem {
+                    Label("Tournaments", systemImage: "trophy.fill")
                 }
 
             ProfileView()
