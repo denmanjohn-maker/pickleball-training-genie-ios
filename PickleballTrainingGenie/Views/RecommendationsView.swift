@@ -10,7 +10,7 @@ struct RecommendationsView: View {
             Group {
                 if drillsViewModel.isLoadingRecommendations {
                     ProgressView("Loading your recommendations…")
-                        .tint(.neonVolt)
+                        .tint(.neonMagenta)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if let error = drillsViewModel.recommendationsError {
                     ContentUnavailableView {
@@ -22,7 +22,7 @@ struct RecommendationsView: View {
                             Task { await drillsViewModel.loadRecommendations() }
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.neonVolt)
+                        .tint(.neonMagenta)
                     }
                 } else if drillsViewModel.recommendations.isEmpty {
                     ContentUnavailableView {
@@ -34,7 +34,7 @@ struct RecommendationsView: View {
                             // Switch to drills tab handled by parent
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.neonVolt)
+                        .tint(.neonMagenta)
                     }
                 } else {
                     List(drillsViewModel.recommendations) { drill in
@@ -48,7 +48,8 @@ struct RecommendationsView: View {
                         .listRowBackground(Color.clear)
                     }
                     .listStyle(.plain)
-                    .background(Color(.systemGroupedBackground))
+                    .scrollContentBackground(.hidden)
+                    .background(Color.deepSpace)
                 }
             }
             .navigationTitle("For You")
@@ -59,7 +60,7 @@ struct RecommendationsView: View {
                         Task { await drillsViewModel.loadRecommendations() }
                     } label: {
                         Image(systemName: "arrow.clockwise")
-                            .foregroundColor(.pickleballGreen)
+                            .foregroundColor(.neonCyan)
                     }
                 }
             }
@@ -94,12 +95,12 @@ private struct RecommendationsHeaderView: View {
                 Spacer()
                 Image(systemName: "figure.racquetball")
                     .font(.title)
-                    .foregroundColor(.pickleballYellow)
+                    .foregroundColor(.neonMagenta)
             }
             .padding(.horizontal)
             .padding(.vertical, 12)
         }
-        .background(Color.pickleballDarkGreen)
+        .background(Color.cosmicPurple)
     }
 }
 

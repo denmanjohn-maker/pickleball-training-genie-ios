@@ -19,7 +19,7 @@ struct CityPickerView: View {
                 if viewModel.isLoadingCities {
                     ProgressView("Loading cities…")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .tint(.neonVolt)
+                        .tint(.neonMagenta)
                 } else if let error = viewModel.citiesError {
                     ContentUnavailableView {
                         Label("Could Not Load Cities", systemImage: "wifi.slash")
@@ -30,7 +30,7 @@ struct CityPickerView: View {
                             Task { await viewModel.loadCities() }
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.neonVolt)
+                        .tint(.neonMagenta)
                     }
                 } else if displayedCities.isEmpty {
                     ContentUnavailableView.search(text: searchText)
@@ -54,21 +54,23 @@ struct CityPickerView: View {
                                 Spacer()
                                 if city.id == viewModel.selectedCity?.id {
                                     Image(systemName: "checkmark.circle.fill")
-                                        .foregroundColor(.pickleballGreen)
+                                        .foregroundColor(.neonCyan)
                                 }
                             }
                         }
                     }
                     .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
             }
+            .background(Color.deepSpace)
             .navigationTitle("Choose a City")
             .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, prompt: "Search cities…")
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
-                        .foregroundColor(.pickleballGreen)
+                        .foregroundColor(.neonCyan)
                 }
             }
             .task {

@@ -11,11 +11,11 @@ struct WorkoutView: View {
                     VStack(spacing: 16) {
                         ZStack {
                             Circle()
-                                .fill(Color.pickleballYellow.opacity(0.15))
+                                .fill(Color.neonMagenta.opacity(0.15))
                                 .frame(width: 80, height: 80)
                             Image(systemName: "bolt.fill")
                                 .font(.system(size: 36))
-                                .foregroundColor(.pickleballYellow)
+                                .foregroundColor(.neonMagenta)
                         }
 
                         Text("AI Workout Generator")
@@ -31,7 +31,7 @@ struct WorkoutView: View {
                     .frame(maxWidth: .infinity)
                     .background(
                         LinearGradient(
-                            colors: [Color.pickleballGreen.opacity(0.08), Color.pickleballYellow.opacity(0.05)],
+                            colors: [Color.neonMagenta.opacity(0.10), Color.neonCyan.opacity(0.06)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
@@ -39,7 +39,7 @@ struct WorkoutView: View {
                     .cornerRadius(24)
                     .overlay(
                         RoundedRectangle(cornerRadius: 24)
-                            .stroke(Color.kitchenGreen.opacity(0.2), lineWidth: 1.5)
+                            .stroke(Color.neonCyan.opacity(0.25), lineWidth: 1.5)
                     )
                     .padding(.horizontal)
 
@@ -105,7 +105,7 @@ struct WorkoutView: View {
             }
             .navigationTitle("Workout")
             .navigationBarTitleDisplayMode(.large)
-            .background(Color(.systemGroupedBackground))
+            .background(Color.deepSpace)
         }
     }
 }
@@ -122,7 +122,7 @@ private struct DurationButton: View {
                 .fontWeight(isSelected ? .bold : .regular)
                 .foregroundColor(isSelected ? .black : .primary)
                 .frame(maxWidth: .infinity, minHeight: 48)
-                .background(isSelected ? Color.neonVolt : Color(.systemGray5))
+                .background(isSelected ? Color.neonMagenta : Color(.systemGray5))
                 .cornerRadius(10)
         }
     }
@@ -136,13 +136,13 @@ private struct WorkoutResultView: View {
             HStack {
                 Label("Your Workout Plan", systemImage: "list.bullet.clipboard.fill")
                     .font(.headline)
-                    .foregroundColor(.pickleballDarkGreen)
+                    .foregroundColor(.starlight)
                 Spacer()
                 if let total = workout.totalDurationMinutes {
                     Text("\(total) min")
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.pickleballGreen)
+                        .foregroundColor(.neonCyan)
                 }
             }
 
@@ -186,7 +186,7 @@ private struct WorkoutResultView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .padding()
-                    .background(Color(.systemGray6))
+                    .background(Color.nebulaSurface)
                     .cornerRadius(12)
             }
         }
@@ -230,12 +230,12 @@ private struct WorkoutDrillCard: View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(Color.pickleballGreen)
+                    .fill(Color.neonCyan)
                     .frame(width: 28, height: 28)
                 Text("\(index)")
                     .font(.caption)
                     .fontWeight(.bold)
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -247,10 +247,10 @@ private struct WorkoutDrillCard: View {
                     Text("\(item.durationMinutes)m")
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(.pickleballGreen)
+                        .foregroundColor(.neonCyan)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(Color.pickleballGreen.opacity(0.1))
+                        .background(Color.neonCyan.opacity(0.1))
                         .cornerRadius(6)
                 }
                 CategoryBadge(category: item.category)
@@ -261,7 +261,7 @@ private struct WorkoutDrillCard: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.nebulaSurface)
         .cornerRadius(12)
     }
 }

@@ -24,7 +24,7 @@ struct TournamentDetailView: View {
                             HStack {
                                 Image(systemName: "checkmark.seal.fill")
                                     .font(.title3)
-                                    .foregroundColor(.pickleballGreen)
+                                    .foregroundColor(.neonCyan)
                                 VStack(alignment: .leading) {
                                     Text("Register")
                                         .font(.subheadline)
@@ -58,7 +58,7 @@ struct TournamentDetailView: View {
                                     .foregroundColor(.secondary)
                             }
                             .padding()
-                            .background(Color(.systemGray6))
+                            .background(Color.nebulaSurface)
                             .cornerRadius(12)
                         }
                         .padding(.horizontal)
@@ -68,11 +68,12 @@ struct TournamentDetailView: View {
                 }
                 .padding(.bottom, 24)
             }
+            .background(Color.deepSpace)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
-                        .foregroundColor(.pickleballGreen)
+                        .foregroundColor(.neonCyan)
                 }
             }
             .task(id: tournament.id) {
@@ -87,7 +88,7 @@ struct TournamentDetailView: View {
     private var header: some View {
         ZStack(alignment: .bottomLeading) {
             LinearGradient(
-                colors: [Color.pickleballDarkGreen, Color.pickleballGreen],
+                colors: [Color.cosmicPurple, Color.deepSpace],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -103,7 +104,7 @@ struct TournamentDetailView: View {
                             .foregroundColor(.white)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color.outRed)
+                            .background(Color.cometRed)
                             .cornerRadius(8)
                     }
                 }
@@ -125,7 +126,7 @@ struct TournamentDetailView: View {
         VStack(alignment: .leading, spacing: 12) {
             Label("Details", systemImage: "info.circle.fill")
                 .font(.headline)
-                .foregroundColor(.pickleballDarkGreen)
+                .foregroundColor(.starlight)
 
             if let venueName = tournament.venueName {
                 DetailRow(label: "Venue", value: venueName)
@@ -155,7 +156,7 @@ struct TournamentDetailView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Label("Also Listed On", systemImage: "square.on.square")
                     .font(.headline)
-                    .foregroundColor(.pickleballDarkGreen)
+                    .foregroundColor(.starlight)
 
                 ForEach(related) { listing in
                     if let url = URL(string: listing.sourceUrl) {
@@ -167,7 +168,7 @@ struct TournamentDetailView: View {
                                     .foregroundColor(.secondary)
                             }
                             .padding()
-                            .background(Color(.systemGray6))
+                            .background(Color.nebulaSurface)
                             .cornerRadius(12)
                         }
                     }

@@ -8,7 +8,7 @@ struct PickleballTrainingGenieApp: App {
     var body: some Scene {
         WindowGroup {
             if showSplash {
-                SplashVideoView {
+                SynthwaveSplashView {
                     withAnimation { showSplash = false }
                 }
             } else {

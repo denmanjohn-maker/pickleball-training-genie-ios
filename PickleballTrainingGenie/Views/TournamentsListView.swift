@@ -13,7 +13,7 @@ struct TournamentsListView: View {
                 } label: {
                     HStack {
                         Image(systemName: "mappin.circle.fill")
-                            .foregroundColor(.pickleballGreen)
+                            .foregroundColor(.neonCyan)
                         Text(viewModel.selectedCity.map { "\($0.name), \($0.state)" } ?? "Choose a City")
                             .font(.subheadline)
                             .fontWeight(.semibold)
@@ -26,7 +26,7 @@ struct TournamentsListView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
-                .background(Color(.systemBackground))
+                .background(Color.deepSpace)
 
                 Divider()
 
@@ -44,7 +44,7 @@ struct TournamentsListView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                 }
-                .background(Color(.systemBackground))
+                .background(Color.deepSpace)
 
                 Divider()
 
@@ -80,13 +80,13 @@ struct TournamentsListView: View {
             } actions: {
                 Button("Choose City") { showCityPicker = true }
                     .buttonStyle(.borderedProminent)
-                    .tint(.neonVolt)
+                    .tint(.neonMagenta)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if viewModel.isLoadingTournaments && viewModel.tournaments.isEmpty {
             ProgressView("Loading tournaments…")
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .tint(.neonVolt)
+                .tint(.neonMagenta)
         } else if let error = viewModel.tournamentsError {
             ContentUnavailableView {
                 Label("Could Not Load Tournaments", systemImage: "wifi.slash")
@@ -97,7 +97,7 @@ struct TournamentsListView: View {
                     Task { await viewModel.loadTournaments(resetPage: true) }
                 }
                 .buttonStyle(.borderedProminent)
-                .tint(.neonVolt)
+                .tint(.neonMagenta)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if viewModel.tournaments.isEmpty {
@@ -133,12 +133,12 @@ struct TournamentsListView: View {
                             Spacer()
                             if viewModel.isLoadingMore {
                                 ProgressView()
-                                    .tint(.neonVolt)
+                                    .tint(.neonMagenta)
                             } else {
                                 Button("Load More") {
                                     Task { await viewModel.loadMoreTournaments() }
                                 }
-                                .foregroundColor(.pickleballGreen)
+                                .foregroundColor(.neonCyan)
                             }
                             Spacer()
                         }
@@ -148,7 +148,8 @@ struct TournamentsListView: View {
                 }
             }
             .listStyle(.plain)
-            .background(Color(.systemGroupedBackground))
+            .scrollContentBackground(.hidden)
+            .background(Color.deepSpace)
         }
     }
 }
@@ -176,10 +177,10 @@ struct TournamentRowView: View {
                     Text("CANCELED")
                         .font(.caption2)
                         .fontWeight(.bold)
-                        .foregroundColor(.outRed)
+                        .foregroundColor(.cometRed)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
-                        .background(Color.outRed.opacity(0.12))
+                        .background(Color.cometRed.opacity(0.12))
                         .cornerRadius(8)
                 }
             }
@@ -200,7 +201,7 @@ struct TournamentRowView: View {
                     Text(feeText)
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(.courtBlue)
+                        .foregroundColor(.cosmicPurple)
                 }
             }
         }
