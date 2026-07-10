@@ -31,7 +31,7 @@
 		AAAA0000000000000043CAFE /* CityPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000044CAFE /* CityPickerView.swift */; };
 		AAAA0000000000000045CAFE /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000046CAFE /* DateFormatting.swift */; };
 		AAAA0000000000000049CAFE /* LoopingVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000048CAFE /* LoopingVideoPlayerView.swift */; };
-		AAAA000000000000004BCAFE /* SplashVideo.mov in Resources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004ACAFE /* SplashVideo.mov */; };
+		AAAA000000000000004BCAFE /* SplashVideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004ACAFE /* SplashVideo.mp4 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,7 +61,7 @@
 		AAAA0000000000000046CAFE /* DateFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatting.swift; sourceTree = "<group>"; };
 		AAAA0000000000000047CAFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAAA0000000000000048CAFE /* LoopingVideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopingVideoPlayerView.swift; sourceTree = "<group>"; };
-		AAAA000000000000004ACAFE /* SplashVideo.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = SplashVideo.mov; sourceTree = "<group>"; };
+		AAAA000000000000004ACAFE /* SplashVideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = video.mpeg4; path = SplashVideo.mp4; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,7 +167,7 @@
 		AAAA000000000000004CCAFE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AAAA000000000000004ACAFE /* SplashVideo.mov */,
+				AAAA000000000000004ACAFE /* SplashVideo.mp4 */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -231,7 +231,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAAA0000000000000021CAFE /* Assets.xcassets in Resources */,
-				AAAA000000000000004BCAFE /* SplashVideo.mov in Resources */,
+				AAAA000000000000004BCAFE /* SplashVideo.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +282,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PickleballTrainingGenie/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pickleball Genie";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
@@ -312,6 +313,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PickleballTrainingGenie/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Pickleball Genie";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
