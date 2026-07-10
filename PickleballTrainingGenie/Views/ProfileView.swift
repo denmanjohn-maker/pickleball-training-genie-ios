@@ -11,21 +11,11 @@ struct ProfileView: View {
                 VStack(spacing: 24) {
                     // Profile Header
                     VStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(
-                                    LinearGradient(
-                                        colors: [Color.neonMagenta, Color.cosmicPurple],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-                                .frame(width: 100, height: 100)
-                            Image(systemName: "figure.racquetball")
-                                .font(.system(size: 48))
-                                .foregroundColor(.white)
-                        }
-                        .shadow(color: .neonMagenta.opacity(0.45), radius: 12, x: 0, y: 6)
+                        Image("Genie")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                            .shadow(color: .neonMagenta.opacity(0.45), radius: 12, x: 0, y: 6)
 
                         if let user = authViewModel.currentUser {
                             Text(user.email)
