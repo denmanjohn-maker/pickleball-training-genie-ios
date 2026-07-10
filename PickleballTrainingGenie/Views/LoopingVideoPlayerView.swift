@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 import AVFoundation
 
 /// Plays a bundled video on a silent, indefinite loop with no playback controls.
@@ -8,6 +9,7 @@ struct LoopingVideoPlayerView: UIViewRepresentable {
 
     func makeUIView(context: Context) -> PlayerContainerView {
         let view = PlayerContainerView()
+        view.isUserInteractionEnabled = false
 
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: resourceExtension) else {
             return view
@@ -30,6 +32,13 @@ struct LoopingVideoPlayerView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: PlayerContainerView, context: Context) {}
+
+    static func dismantleUIView(_ uiView: PlayerContainerView, coordinator: Coordinator) {
+        coordinator.player?.pause()
+        uiView.playerLayer.player = nil
+        coordinator.player = nil
+        coordinator.looper = nil
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator()
