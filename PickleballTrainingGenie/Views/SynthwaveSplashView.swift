@@ -41,6 +41,23 @@ struct SynthwaveSplashView: View {
                         )
                     )
                     .neonGlow(.neonMagenta, radius: 10)
+
+                LoopingVideoPlayerView(resourceName: "SplashVideo", resourceExtension: "mov")
+                    .frame(maxWidth: 320)
+                    .aspectRatio(16.0 / 9.0, contentMode: .fit)
+                    .clipShape(RoundedRectangle(cornerRadius: 24))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24)
+                            .strokeBorder(
+                                LinearGradient(
+                                    colors: [.neonMagenta, .neonCyan],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .neonGlow(.neonCyan, radius: 14)
             }
             .padding(.horizontal, 24)
             .scaleEffect(appeared ? 1.0 : 0.94)
