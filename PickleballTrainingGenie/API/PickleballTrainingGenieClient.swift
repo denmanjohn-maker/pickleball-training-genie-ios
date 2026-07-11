@@ -18,15 +18,95 @@ struct Drill: Codable, Equatable, Identifiable, Sendable {
 struct User: Codable, Equatable, Sendable {
     let id: String
     let email: String
+    let firstName: String?
+    let lastName: String?
+    let zipCode: String?
+    let homeCityId: Int?
+    let homeCityName: String?
+    let dominantHand: String?
+    let yearsPlaying: Int?
+    let preferredPlayStyle: String?
+    let avatarId: String?
     let singlesDUPR: Decimal?
     let doublesDUPR: Decimal?
     let isDuprLinked: Bool
     let preferredSessionDurationMinutes: Int?
     let targetDUPR: Decimal
+    // Optional so the app still works against a backend that predates profiles.
+    let isProfileComplete: Bool?
+    let hasCustomAvatar: Bool?
+
+    var displayName: String {
+        let name = [firstName, lastName].compactMap { $0 }.joined(separator: " ")
+        return name.isEmpty ? email : name
+    }
+
+    var needsOnboarding: Bool { !(isProfileComplete ?? true) }
 }
 
 struct LoginResponse: Codable, Equatable, Sendable {
     let token: String
+    let isProfileComplete: Bool?
+}
+
+struct UpdateProfileRequest: Encodable, Sendable {
+    var firstName: String?
+    var lastName: String?
+    var zipCode: String?
+    var homeCityId: Int?
+    var homeCityName: String?
+    var dominantHand: String?
+    var yearsPlaying: Int?
+    var preferredPlayStyle: String?
+    var avatarId: String?
+    // Doubles (not Decimal) so JSONEncoder emits clean values like 3.5.
+    var singlesDUPR: Double?
+    var doublesDUPR: Double?
+    var targetDUPR: Double?
+    var preferredSessionDurationMinutes: Int?
+}
+
+struct WorkoutSessionDrillPayload: Codable, Identifiable, Sendable {
+    let title: String
+    let category: String
+    let durationMinutes: Int
+    let coachingNotes: String?
+    let isCompleted: Bool
+
+    var id: String { title }
+}
+
+struct CompleteWorkoutSessionRequest: Encodable, Sendable {
+    let durationMinutes: Int
+    let warmup: String?
+    let cooldown: String?
+    let drills: [WorkoutSessionDrillPayload]
+}
+
+struct WorkoutSessionResponse: Codable, Identifiable, Sendable {
+    let id: String
+    let completedAt: String
+    let durationMinutes: Int
+    let warmup: String?
+    let cooldown: String?
+    let drills: [WorkoutSessionDrillPayload]
+}
+
+struct WorkoutSessionListResponse: Codable, Sendable {
+    let items: [WorkoutSessionResponse]
+    let totalCount: Int
+    let page: Int
+    let pageSize: Int
+}
+
+struct DrillProgressItem: Codable, Identifiable, Sendable {
+    let drillId: String
+    let title: String
+    let category: String
+    let status: String
+    let completedAt: String?
+
+    var id: String { drillId }
 }
 
 struct MessageResponse: Codable, Equatable, Sendable {
@@ -138,6 +218,115 @@ class PickleballTrainingGenieClient {
             throw PickleballTrainingGenieError.invalidResponse(statusCode: httpResponse.statusCode)
         }
         return try decoder.decode(MessageResponse.self, from: responseData)
+    }
+
+    func googleLogin(idToken: String) async throws -> LoginResponse {
+        let payload = ["idToken": idToken]
+        let response: LoginResponse = try await request(
+            url(path: "api/Users/google-login"),
+            method: "POST",
+            body: payload,
+            requireAuth: false
+        )
+        self.jwtToken = response.token
+        return response
+    }
+
+    func appleLogin(identityToken: String, firstName: String?, lastName: String?) async throws -> LoginResponse {
+        var payload = ["identityToken": identityToken]
+        if let firstName { payload["firstName"] = firstName }
+        if let lastName { payload["lastName"] = lastName }
+        let response: LoginResponse = try await request(
+            url(path: "api/Users/apple-login"),
+            method: "POST",
+            body: payload,
+            requireAuth: false
+        )
+        self.jwtToken = response.token
+        return response
+    }
+
+    func updateProfile(_ profile: UpdateProfileRequest) async throws -> User {
+        return try await request(
+            url(path: "api/Users/profile"),
+            method: "PUT",
+            body: profile,
+            requireAuth: true
+        )
+    }
+
+    func uploadAvatar(imageData: Data, contentType: String = "image/jpeg") async throws -> User {
+        var requestObj = URLRequest(url: url(path: "api/Users/profile/avatar"))
+        requestObj.httpMethod = "POST"
+        requestObj.setValue("application/json", forHTTPHeaderField: "Accept")
+        requestObj.setValue(contentType, forHTTPHeaderField: "Content-Type")
+        if let token = jwtToken {
+            requestObj.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        requestObj.httpBody = imageData
+        let (data, response) = try await session.data(for: requestObj)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw PickleballTrainingGenieError.invalidResponse(statusCode: 0)
+        }
+        guard 200..<300 ~= httpResponse.statusCode else {
+            throw PickleballTrainingGenieError.invalidResponse(statusCode: httpResponse.statusCode)
+        }
+        return try decoder.decode(User.self, from: data)
+    }
+
+    /// Returns the user's custom avatar image bytes, or nil if none is set.
+    func fetchAvatarData() async throws -> Data? {
+        var requestObj = URLRequest(url: url(path: "api/Users/profile/avatar"))
+        requestObj.httpMethod = "GET"
+        if let token = jwtToken {
+            requestObj.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        let (data, response) = try await session.data(for: requestObj)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw PickleballTrainingGenieError.invalidResponse(statusCode: 0)
+        }
+        if httpResponse.statusCode == 404 { return nil }
+        guard 200..<300 ~= httpResponse.statusCode else {
+            throw PickleballTrainingGenieError.invalidResponse(statusCode: httpResponse.statusCode)
+        }
+        return data
+    }
+
+    func deleteAvatar() async throws -> User {
+        return try await request(
+            url(path: "api/Users/profile/avatar"),
+            method: "DELETE",
+            requireAuth: true
+        )
+    }
+
+    func completeWorkoutSession(_ session: CompleteWorkoutSessionRequest) async throws -> WorkoutSessionResponse {
+        return try await request(
+            url(path: "api/Workouts/sessions"),
+            method: "POST",
+            body: session,
+            requireAuth: true
+        )
+    }
+
+    func workoutSessions(page: Int = 1, pageSize: Int = 20) async throws -> WorkoutSessionListResponse {
+        var components = try urlComponents(path: "api/Workouts/sessions")
+        components.queryItems = [
+            URLQueryItem(name: "page", value: String(page)),
+            URLQueryItem(name: "pageSize", value: String(pageSize))
+        ]
+        guard let url = components.url else {
+            throw PickleballTrainingGenieError.invalidURL
+        }
+        return try await request(url, method: "GET", requireAuth: true)
+    }
+
+    func drillProgress() async throws -> [DrillProgressItem] {
+        return try await request(
+            url(path: "api/Drills/progress"),
+            method: "GET",
+            requireAuth: true
+        )
     }
 
     func drills(category: String? = nil, level: Decimal? = nil) async throws -> [Drill] {

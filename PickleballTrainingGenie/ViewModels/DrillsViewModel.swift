@@ -16,6 +16,8 @@ class DrillsViewModel: ObservableObject {
     @Published var selectedCategory: String?
     @Published var selectedLevel: Decimal?
     @Published var workoutDuration: Int = 30
+    @Published var isCompletingWorkout = false
+    @Published var workoutCompletedSuccessfully = false
 
     let drillCategories = [
         "Dinking", "Drops", "Volleys", "Serving", "Returns",
@@ -74,6 +76,54 @@ class DrillsViewModel: ObservableObject {
         } catch {
             // API call failed; do not mark as completed
         }
+    }
+
+    /// Seeds completedDrillIds from the server so completions survive app restarts.
+    func loadDrillProgress() async {
+        do {
+            let progress = try await client.drillProgress()
+            completedDrillIds.formUnion(progress.map(\.drillId))
+        } catch {
+            // Non-critical; completions just won't be pre-checked this launch.
+        }
+    }
+
+    /// Records the current workout plan as a completed session, marking which
+    /// drills (by index) the user actually finished.
+    func completeWorkout(completedIndices: Set<Int>) async {
+        guard let workout else { return }
+        isCompletingWorkout = true
+        workoutError = nil
+        let drills = workout.drills.enumerated().map { index, item in
+            WorkoutSessionDrillPayload(
+                title: item.title,
+                category: item.category,
+                durationMinutes: item.durationMinutes,
+                coachingNotes: item.coachingNotes,
+                isCompleted: completedIndices.contains(index)
+            )
+        }
+        let request = CompleteWorkoutSessionRequest(
+            durationMinutes: workout.totalDurationMinutes ?? workoutDuration,
+            warmup: workout.warmup,
+            cooldown: workout.cooldown,
+            drills: drills
+        )
+        do {
+            _ = try await client.completeWorkoutSession(request)
+            workoutCompletedSuccessfully = true
+            self.workout = nil
+        } catch let error as PickleballTrainingGenieError {
+            switch error {
+            case .invalidResponse(let code) where code == 404:
+                workoutError = "The server doesn't support workout history yet."
+            default:
+                workoutError = "Could not save your workout. Please try again."
+            }
+        } catch {
+            workoutError = "Could not save your workout: \(error.localizedDescription)"
+        }
+        isCompletingWorkout = false
     }
 
     func generateWorkout() async {

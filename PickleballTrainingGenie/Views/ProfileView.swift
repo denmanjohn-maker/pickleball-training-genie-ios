@@ -4,6 +4,8 @@ struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showLogoutConfirmation = false
     @State private var showEditRatings = false
+    @State private var showEditProfile = false
+    @State private var showAvatarPicker = false
 
     var body: some View {
         NavigationStack {
@@ -11,16 +13,38 @@ struct ProfileView: View {
                 VStack(spacing: 24) {
                     // Profile Header
                     VStack(spacing: 16) {
-                        Image("Genie")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .shadow(color: .neonMagenta.opacity(0.45), radius: 12, x: 0, y: 6)
+                        Button {
+                            showAvatarPicker = true
+                        } label: {
+                            AvatarView(
+                                avatarId: authViewModel.currentUser?.avatarId,
+                                customImage: authViewModel.avatarImage,
+                                size: 100
+                            )
+                            .overlay(alignment: .bottomTrailing) {
+                                Image(systemName: "pencil.circle.fill")
+                                    .font(.title3)
+                                    .foregroundStyle(.white, Color.neonMagenta)
+                            }
+                        }
+                        .buttonStyle(.plain)
 
                         if let user = authViewModel.currentUser {
-                            Text(user.email)
-                                .font(.title3)
-                                .fontWeight(.semibold)
+                            VStack(spacing: 4) {
+                                Text(user.displayName)
+                                    .font(.title3)
+                                    .fontWeight(.semibold)
+                                if user.displayName != user.email {
+                                    Text(user.email)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                if let cityName = user.homeCityName {
+                                    Label(cityName, systemImage: "mappin.and.ellipse")
+                                        .font(.caption)
+                                        .foregroundColor(.neonCyan)
+                                }
+                            }
                         } else {
                             Text("Pickleball Player")
                                 .font(.title3)
@@ -97,6 +121,79 @@ struct ProfileView: View {
                                 color: .neonCyan
                             )
                         }
+                        .pickleballCard()
+                        .padding(.horizontal)
+                    }
+
+                    // Training + Profile actions
+                    VStack(spacing: 0) {
+                        NavigationLink {
+                            WorkoutHistoryView(client: authViewModel.client)
+                                .environmentObject(authViewModel)
+                        } label: {
+                            HStack {
+                                Image(systemName: "clock.arrow.circlepath")
+                                    .foregroundColor(.neonMagenta)
+                                    .frame(width: 28)
+                                Text("Training History")
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                        }
+                        .foregroundColor(.primary)
+
+                        Divider().padding(.horizontal)
+
+                        Button {
+                            showEditProfile = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "person.text.rectangle.fill")
+                                    .foregroundColor(.neonCyan)
+                                    .frame(width: 28)
+                                Text("Edit Profile")
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                        }
+                        .foregroundColor(.primary)
+                    }
+                    .pickleballCard()
+                    .padding(.horizontal)
+
+                    // Player details
+                    if let user = authViewModel.currentUser, hasPlayerDetails(user) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Label("Player Details", systemImage: "figure.pickleball")
+                                .font(.headline)
+                                .foregroundColor(.starlight)
+
+                            if let hand = user.dominantHand {
+                                ProfileDetailRow(icon: "hand.raised.fill", title: "Dominant Hand", value: hand.capitalized)
+                            }
+                            if let style = user.preferredPlayStyle {
+                                ProfileDetailRow(icon: "person.2.fill", title: "Play Style", value: style.capitalized)
+                            }
+                            if let years = user.yearsPlaying {
+                                ProfileDetailRow(
+                                    icon: "calendar",
+                                    title: "Years Playing",
+                                    value: years == 0 ? "Less than a year" : "\(years)"
+                                )
+                            }
+                            if let duration = user.preferredSessionDurationMinutes {
+                                ProfileDetailRow(icon: "timer", title: "Preferred Session", value: "\(duration) min")
+                            }
+                        }
+                        .padding()
                         .pickleballCard()
                         .padding(.horizontal)
                     }
@@ -183,7 +280,38 @@ struct ProfileView: View {
                         }
                 }
             }
+            .sheet(isPresented: $showEditProfile) {
+                NavigationStack {
+                    EditProfileView()
+                        .environmentObject(authViewModel)
+                        .navigationTitle("Edit Profile")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Cancel") { showEditProfile = false }
+                            }
+                        }
+                }
+            }
+            .sheet(isPresented: $showAvatarPicker) {
+                NavigationStack {
+                    AvatarPickerSheet()
+                        .environmentObject(authViewModel)
+                        .navigationTitle("Choose Avatar")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Cancel") { showAvatarPicker = false }
+                            }
+                        }
+                }
+            }
         }
+    }
+
+    private func hasPlayerDetails(_ user: User) -> Bool {
+        user.dominantHand != nil || user.preferredPlayStyle != nil
+            || user.yearsPlaying != nil || user.preferredSessionDurationMinutes != nil
     }
 
     private var duprInfo: [(level: String, title: String, description: String, color: Color)] {
@@ -214,6 +342,27 @@ private struct DUPRStatRow: View {
             DUPRBadge(level: level)
         }
         .padding()
+    }
+}
+
+private struct ProfileDetailRow: View {
+    let icon: String
+    let title: String
+    let value: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: icon)
+                .foregroundColor(.neonCyan)
+                .frame(width: 24)
+            Text(title)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+            Spacer()
+            Text(value)
+                .font(.subheadline)
+                .fontWeight(.medium)
+        }
     }
 }
 

@@ -6,23 +6,12 @@ struct RegisterView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var confirmPassword = ""
-    @State private var singlesDUPR: Decimal = 3.0
-        @State private var doublesDUPR: Decimal = 3.0
-    @State private var targetDUPR: Decimal = 3.5
     @State private var registrationSuccess = false
-
-    let duprOptions: [(Decimal, String)] = [
-        (3.0, "3.0 – Beginner"),
-        (3.5, "3.5 – Intermediate"),
-        (4.0, "4.0 – Advanced"),
-        (5.0, "5.0 – Professional")
-    ]
 
     var passwordsMatch: Bool { password == confirmPassword }
     var formValid: Bool {
-            !email.isEmpty && !password.isEmpty && password.count >= 6
-                && passwordsMatch && targetDUPR >= max(singlesDUPR, doublesDUPR)
-        }
+        !email.isEmpty && !password.isEmpty && password.count >= 6 && passwordsMatch
+    }
 
     var body: some View {
         ZStack {
@@ -39,7 +28,7 @@ struct RegisterView: View {
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
-                        Text("Set your DUPR level and start improving")
+                        Text("Create your account, then set up your player profile")
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(0.8))
                             .multilineTextAlignment(.center)
@@ -78,65 +67,6 @@ struct RegisterView: View {
                             }
                         }
 
-                        Divider()
-
-                        // DUPR Section
-                        VStack(alignment: .leading, spacing: 12) {
-                            Label("Your DUPR Level", systemImage: "chart.bar.fill")
-                                .font(.subheadline)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.neonCyan)
-
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("Singles DUPR")
-                                                                    .font(.caption)
-                                                                    .fontWeight(.semibold)
-                                                                    .foregroundColor(.secondary)
-                                                                Picker("Singles DUPR", selection: $singlesDUPR) {
-                                                                    ForEach(duprOptions, id: \.0) { value, label in
-                                                                        Text(label).tag(value)
-                                                                    }
-                                                                }
-                                                                .pickerStyle(.segmented)
-                                                            }
-
-                                                            VStack(alignment: .leading, spacing: 6) {
-                                                                Text("Doubles DUPR")
-                                                                    .font(.caption)
-                                                                    .fontWeight(.semibold)
-                                                                    .foregroundColor(.secondary)
-                                                                Picker("Doubles DUPR", selection: $doublesDUPR) {
-                                                                    ForEach(duprOptions, id: \.0) { value, label in
-                                                                        Text(label).tag(value)
-                                                                    }
-                                                                }
-                                                                .pickerStyle(.segmented)
-                                                            }
-
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("Target DUPR")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.secondary)
-                                Picker("Target DUPR", selection: $targetDUPR) {
-                                    ForEach(duprOptions, id: \.0) { value, label in
-                                        Text(label).tag(value)
-                                    }
-                                }
-                                .pickerStyle(.segmented)
-                            }
-
-                            if targetDUPR < max(singlesDUPR, doublesDUPR) {
-                                HStack {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundColor(.orange)
-                                    Text("Target must be ≥ current DUPR")
-                                        .font(.caption)
-                                        .foregroundColor(.orange)
-                                }
-                            }
-                        }
-
                         if let error = authViewModel.errorMessage {
                             HStack {
                                 Image(systemName: "exclamationmark.triangle.fill")
@@ -150,12 +80,12 @@ struct RegisterView: View {
                         Button {
                             Task {
                                 let success = await authViewModel.register(
-                                                                    email: email,
-                                                                    password: password,
-                                                                    singlesDUPR: singlesDUPR,
-                                                                    doublesDUPR: doublesDUPR,
-                                                                    targetDUPR: targetDUPR
-                                                                )
+                                    email: email,
+                                    password: password,
+                                    singlesDUPR: nil,
+                                    doublesDUPR: nil,
+                                    targetDUPR: 0
+                                )
                                 if success {
                                     registrationSuccess = true
                                 }
@@ -199,7 +129,7 @@ struct RegisterView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .alert("Account Created! 🎉", isPresented: $registrationSuccess) {
-            Button("Sign In Now") {
+            Button("Set Up My Profile") {
                 let registeredEmail = email
                 let registeredPassword = password
                 // Clear sensitive fields before async login
@@ -211,7 +141,7 @@ struct RegisterView: View {
                 }
             }
         } message: {
-            Text("Your account has been created. Sign in to start training!")
+            Text("Next, tell us about your game so the genie can build your training plan.")
         }
     }
 }

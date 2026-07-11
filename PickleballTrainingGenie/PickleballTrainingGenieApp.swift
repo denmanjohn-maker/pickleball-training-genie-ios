@@ -1,4 +1,5 @@
 import SwiftUI
+import GoogleSignIn
 
 @main
 struct PickleballTrainingGenieApp: App {
@@ -7,13 +8,18 @@ struct PickleballTrainingGenieApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if showSplash {
-                SynthwaveSplashView {
-                    withAnimation { showSplash = false }
+            Group {
+                if showSplash {
+                    SynthwaveSplashView {
+                        withAnimation { showSplash = false }
+                    }
+                } else {
+                    RootView()
+                        .environmentObject(authViewModel)
                 }
-            } else {
-                RootView()
-                    .environmentObject(authViewModel)
+            }
+            .onOpenURL { url in
+                GIDSignIn.sharedInstance.handle(url)
             }
         }
     }

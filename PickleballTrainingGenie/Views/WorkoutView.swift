@@ -2,6 +2,7 @@ import SwiftUI
 
 struct WorkoutView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
+    @State private var completedDrillIndices: Set<Int> = []
 
     var body: some View {
         NavigationStack {
@@ -97,8 +98,36 @@ struct WorkoutView: View {
 
                     // Workout Results
                     if let workout = drillsViewModel.workout {
-                        WorkoutResultView(workout: workout)
+                        WorkoutResultView(workout: workout, completedDrillIndices: $completedDrillIndices)
                             .padding(.horizontal)
+
+                        // Complete Workout
+                        VStack(spacing: 8) {
+                            Button {
+                                Task {
+                                    await drillsViewModel.completeWorkout(completedIndices: completedDrillIndices)
+                                }
+                            } label: {
+                                HStack {
+                                    if drillsViewModel.isCompletingWorkout {
+                                        ProgressView().tint(.black)
+                                    } else {
+                                        Image(systemName: "checkmark.seal.fill")
+                                    }
+                                    Text(drillsViewModel.isCompletingWorkout
+                                         ? "Saving Workout…"
+                                         : "Complete Workout")
+                                }
+                            }
+                            .buttonStyle(PrimaryButtonStyle())
+                            .disabled(drillsViewModel.isCompletingWorkout)
+
+                            Text("Check off the drills you finished, then save it to your history.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.horizontal)
                     }
                 }
                 .padding(.vertical)
@@ -106,6 +135,14 @@ struct WorkoutView: View {
             .navigationTitle("Workout")
             .navigationBarTitleDisplayMode(.large)
             .background(Color.deepSpace)
+            .onChange(of: drillsViewModel.workout?.drills.count) { _, _ in
+                completedDrillIndices = []
+            }
+            .alert("Workout Saved! 💪", isPresented: $drillsViewModel.workoutCompletedSuccessfully) {
+                Button("Nice!") {}
+            } message: {
+                Text("Your session was added to your training history. Check it out on the Profile tab.")
+            }
         }
     }
 }
@@ -130,6 +167,7 @@ private struct DurationButton: View {
 
 private struct WorkoutResultView: View {
     let workout: WorkoutPlanResponse
+    @Binding var completedDrillIndices: Set<Int>
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -165,7 +203,17 @@ private struct WorkoutResultView: View {
                         .foregroundColor(.secondary)
 
                     ForEach(Array(workout.drills.enumerated()), id: \.element.id) { index, item in
-                        WorkoutDrillCard(index: index + 1, item: item)
+                        WorkoutDrillCard(
+                            index: index + 1,
+                            item: item,
+                            isCompleted: completedDrillIndices.contains(index)
+                        ) {
+                            if completedDrillIndices.contains(index) {
+                                completedDrillIndices.remove(index)
+                            } else {
+                                completedDrillIndices.insert(index)
+                            }
+                        }
                     }
                 }
             }
@@ -225,17 +273,25 @@ private struct WorkoutSectionCard: View {
 private struct WorkoutDrillCard: View {
     let index: Int
     let item: WorkoutDrillItem
+    let isCompleted: Bool
+    let onToggle: () -> Void
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             ZStack {
                 Circle()
-                    .fill(Color.neonCyan)
+                    .fill(isCompleted ? Color.green : Color.neonCyan)
                     .frame(width: 28, height: 28)
-                Text("\(index)")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundColor(.black)
+                if isCompleted {
+                    Image(systemName: "checkmark")
+                        .font(.caption.bold())
+                        .foregroundColor(.black)
+                } else {
+                    Text("\(index)")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                }
             }
 
             VStack(alignment: .leading, spacing: 4) {
@@ -243,6 +299,7 @@ private struct WorkoutDrillCard: View {
                     Text(item.title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
+                        .strikethrough(isCompleted, color: .secondary)
                     Spacer()
                     Text("\(item.durationMinutes)m")
                         .font(.caption)
@@ -259,10 +316,19 @@ private struct WorkoutDrillCard: View {
                     .foregroundColor(.secondary)
                     .lineSpacing(2)
             }
+
+            Button(action: onToggle) {
+                Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.title3)
+                    .foregroundColor(isCompleted ? .green : .secondary)
+            }
+            .buttonStyle(.plain)
         }
         .padding()
         .background(Color.nebulaSurface)
         .cornerRadius(12)
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onToggle)
     }
 }
 
