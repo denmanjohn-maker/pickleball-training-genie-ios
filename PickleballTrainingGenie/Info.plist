@@ -2,8 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>UIUserInterfaceStyle</key>
-	<string>Dark</string>
 	<!-- Google Sign-In: replace both placeholders with your iOS OAuth client ID
 	     from Google Cloud Console (and its reversed form for the URL scheme). -->
 	<key>GIDClientID</key>
@@ -17,11 +15,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>UILaunchScreen</key>
-	<dict>
-		<key>UIColorName</key>
-		<string>DeepSpace</string>
-	</dict>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -34,6 +27,11 @@
 				<true/>
 			</dict>
 		</dict>
+	</dict>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>DeepSpace</string>
 	</dict>
 </dict>
 </plist>
