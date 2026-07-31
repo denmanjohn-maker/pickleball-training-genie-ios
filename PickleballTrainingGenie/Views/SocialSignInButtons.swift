@@ -1,9 +1,10 @@
 import SwiftUI
 import AuthenticationServices
 
-/// Reusable "or continue with" divider plus Sign in with Apple and Google buttons.
-/// Used by both `LoginView` and `RegisterView` — social sign-in doubles as account
+/// Reusable "or continue with" divider plus Continue-with-Apple and Continue-with-Google
+/// buttons. Used by both `LoginView` and `RegisterView` — social sign-in doubles as account
 /// creation (the first sign-in provisions the account), so the same block belongs on both.
+/// The neutral "Continue with…" wording reads correctly on the login and create-account screens alike.
 struct SocialSignInButtons: View {
     @EnvironmentObject var authViewModel: AuthViewModel
 
@@ -23,7 +24,7 @@ struct SocialSignInButtons: View {
                     .frame(height: 1)
             }
 
-            SignInWithAppleButton(.signIn) { request in
+            SignInWithAppleButton(.continue) { request in
                 request.requestedScopes = [.fullName, .email]
             } onCompletion: { result in
                 Task { await authViewModel.handleAppleSignIn(result) }
@@ -38,7 +39,7 @@ struct SocialSignInButtons: View {
                 HStack(spacing: 8) {
                     Image(systemName: "g.circle.fill")
                         .font(.title3)
-                    Text("Sign in with Google")
+                    Text("Continue with Google")
                         .fontWeight(.medium)
                 }
                 .frame(maxWidth: .infinity, minHeight: 48)

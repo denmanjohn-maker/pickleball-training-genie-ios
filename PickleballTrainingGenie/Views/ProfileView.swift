@@ -252,6 +252,7 @@ struct ProfileView: View {
                         }
                     }
                     .buttonStyle(SecondaryButtonStyle())
+                    .disabled(authViewModel.isLoading)
                     .padding(.horizontal)
 
                     // Delete Account — permanent; required for App Store (Guideline 5.1.1(v))
