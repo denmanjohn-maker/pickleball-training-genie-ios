@@ -32,7 +32,9 @@ struct LoopingVideoPlayerView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: PlayerContainerView, context: Context) {}
+    func updateUIView(_ uiView: PlayerContainerView, context: Context) {
+        uiView.playerLayer.videoGravity = videoGravity
+    }
 
     static func dismantleUIView(_ uiView: PlayerContainerView, coordinator: Coordinator) {
         coordinator.player?.pause()
