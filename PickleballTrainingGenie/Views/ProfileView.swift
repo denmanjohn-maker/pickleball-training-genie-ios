@@ -3,6 +3,8 @@ import SwiftUI
 struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var showLogoutConfirmation = false
+    @State private var showDeleteConfirmation = false
+    @State private var showDeleteError = false
     @State private var showEditRatings = false
     @State private var showEditProfile = false
     @State private var showAvatarPicker = false
@@ -240,7 +242,7 @@ struct ProfileView: View {
                             .foregroundColor(.secondary)
                     }
 
-                    // Logout
+                    // Account actions
                     Button {
                         showLogoutConfirmation = true
                     } label: {
@@ -250,6 +252,25 @@ struct ProfileView: View {
                         }
                     }
                     .buttonStyle(SecondaryButtonStyle())
+                    .padding(.horizontal)
+
+                    // Delete Account — permanent; required for App Store (Guideline 5.1.1(v))
+                    Button(role: .destructive) {
+                        showDeleteConfirmation = true
+                    } label: {
+                        HStack {
+                            if authViewModel.isLoading {
+                                ProgressView()
+                            } else {
+                                Image(systemName: "trash")
+                            }
+                            Text("Delete Account")
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(.red)
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                    }
+                    .disabled(authViewModel.isLoading)
                     .padding(.horizontal)
                     .padding(.bottom, 20)
                 }
@@ -266,6 +287,26 @@ struct ProfileView: View {
                     authViewModel.logout()
                 }
                 Button("Cancel", role: .cancel) {}
+            }
+            .confirmationDialog(
+                "Delete your account?",
+                isPresented: $showDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Delete Account", role: .destructive) {
+                    Task {
+                        let success = await authViewModel.deleteAccount()
+                        if !success { showDeleteError = true }
+                    }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This permanently deletes your account and all your data — profile, ratings, and workout history. This can't be undone.")
+            }
+            .alert("Couldn't Delete Account", isPresented: $showDeleteError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(authViewModel.errorMessage ?? "Something went wrong. Please try again.")
             }
             .sheet(isPresented: $showEditRatings) {
                 NavigationStack {

@@ -100,6 +100,9 @@ struct RegisterView: View {
                         }
                         .buttonStyle(PrimaryButtonStyle())
                         .disabled(!formValid || authViewModel.isLoading)
+
+                        // Social sign-in (Apple + Google) — first sign-in creates the account
+                        SocialSignInButtons()
                     }
                     .padding(24)
                     .background(Color.nebulaSurface)

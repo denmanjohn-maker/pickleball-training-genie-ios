@@ -2,16 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<!-- Google Sign-In: replace both placeholders with your iOS OAuth client ID
-	     from Google Cloud Console (and its reversed form for the URL scheme). -->
+	<!-- Google Sign-In iOS OAuth client (Google Cloud Console) for bundle
+	     com.jdtechprojects.pickleballgenie. GIDClientID is the client ID; the
+	     CFBundleURLSchemes entry below is its reversed form. Not a secret (ships
+	     in the app binary). Backend must also set Google:ClientId to match. -->
 	<key>GIDClientID</key>
-	<string>YOUR_GOOGLE_IOS_CLIENT_ID.apps.googleusercontent.com</string>
+	<string>615646301815-bj6i5enl6avrk7bri4r4vvbbm9tuoufj.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.YOUR_GOOGLE_IOS_CLIENT_ID</string>
+				<string>com.googleusercontent.apps.615646301815-bj6i5enl6avrk7bri4r4vvbbm9tuoufj</string>
 			</array>
 		</dict>
 	</array>

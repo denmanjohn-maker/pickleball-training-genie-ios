@@ -283,6 +283,40 @@ class AuthViewModel: ObservableObject {
         return false
     }
 
+    /// Permanently deletes the current account, then tears down the local session (same
+    /// cleanup as `logout()`) so `RootView` returns to the login screen. Returns `true` on
+    /// success; on failure sets `errorMessage` and returns `false`.
+    func deleteAccount() async -> Bool {
+        isLoading = true
+        errorMessage = nil
+        do {
+            try await client.deleteAccount()
+            isLoading = false
+            logout()
+            return true
+        } catch let error as PickleballTrainingGenieError {
+            switch error {
+            case .invalidResponse(let code) where code == 401:
+                errorMessage = "Your session has expired. Please sign in again before deleting your account."
+            case .invalidResponse(let code) where code == 404 || code == 405:
+                // 405 = the api/Users/profile route exists but has no DELETE handler yet.
+                errorMessage = "Account deletion isn't available yet. Please try again later."
+            case .invalidResponse(let code) where code == 0:
+                errorMessage = connectionErrorMessage()
+            case .invalidResponse(let code):
+                errorMessage = "Couldn't delete your account (error \(code))."
+            case .invalidURL:
+                errorMessage = "Invalid server configuration."
+            }
+        } catch let error as URLError {
+            errorMessage = networkErrorMessage(for: error)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isLoading = false
+        return false
+    }
+
     func logout() {
         KeychainHelper.delete(forKey: "jwtToken")
         client.jwtToken = nil
