@@ -10,6 +10,7 @@
 		AAAA000000000000001FCAFE /* PickleballTrainingGenieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000013CAFE /* PickleballTrainingGenieApp.swift */; };
 		AAAA0000000000000020CAFE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000014CAFE /* ContentView.swift */; };
 		AAAA0000000000000021CAFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000015CAFE /* Assets.xcassets */; };
+		AAAA0000000000000064CAFE /* SocialSignInButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000063CAFE /* SocialSignInButtons.swift */; };
 		AAAA0000000000000022CAFE /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000016CAFE /* LoginView.swift */; };
 		AAAA0000000000000023CAFE /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000017CAFE /* RegisterView.swift */; };
 		AAAA0000000000000024CAFE /* DrillsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000018CAFE /* DrillsListView.swift */; };
@@ -49,6 +50,7 @@
 		AAAA0000000000000013CAFE /* PickleballTrainingGenieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickleballTrainingGenieApp.swift; sourceTree = "<group>"; };
 		AAAA0000000000000014CAFE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000015CAFE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AAAA0000000000000063CAFE /* SocialSignInButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialSignInButtons.swift; sourceTree = "<group>"; };
 		AAAA0000000000000016CAFE /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000017CAFE /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000018CAFE /* DrillsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillsListView.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 			isa = PBXGroup;
 			children = (
 				AAAA0000000000000016CAFE /* LoginView.swift */,
+				AAAA0000000000000063CAFE /* SocialSignInButtons.swift */,
 				AAAA0000000000000017CAFE /* RegisterView.swift */,
 				AAAA0000000000000018CAFE /* DrillsListView.swift */,
 				AAAA0000000000000019CAFE /* DrillDetailView.swift */,
@@ -303,6 +306,7 @@
 				AAAA0000000000000020CAFE /* ContentView.swift in Sources */,
 				AAAA000000000000002BCAFE /* PickleballTrainingGenieClient.swift in Sources */,
 				AAAA0000000000000022CAFE /* LoginView.swift in Sources */,
+				AAAA0000000000000064CAFE /* SocialSignInButtons.swift in Sources */,
 				AAAA0000000000000023CAFE /* RegisterView.swift in Sources */,
 				AAAA0000000000000024CAFE /* DrillsListView.swift in Sources */,
 				AAAA0000000000000025CAFE /* DrillDetailView.swift in Sources */,

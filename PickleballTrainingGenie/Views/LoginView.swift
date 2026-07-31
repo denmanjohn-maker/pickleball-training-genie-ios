@@ -1,5 +1,4 @@
 import SwiftUI
-import AuthenticationServices
 
 struct LoginView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
@@ -109,44 +108,8 @@ struct LoginView: View {
                             .buttonStyle(PrimaryButtonStyle())
                             .disabled(authViewModel.isLoading || email.isEmpty || password.isEmpty)
 
-                            // Social sign-in
-                            HStack {
-                                Rectangle()
-                                    .fill(Color.white.opacity(0.2))
-                                    .frame(height: 1)
-                                Text("or continue with")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .fixedSize()
-                                Rectangle()
-                                    .fill(Color.white.opacity(0.2))
-                                    .frame(height: 1)
-                            }
-
-                            SignInWithAppleButton(.signIn) { request in
-                                request.requestedScopes = [.fullName, .email]
-                            } onCompletion: { result in
-                                Task { await authViewModel.handleAppleSignIn(result) }
-                            }
-                            .signInWithAppleButtonStyle(.white)
-                            .frame(height: 48)
-                            .cornerRadius(12)
-
-                            Button {
-                                Task { await authViewModel.signInWithGoogle() }
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "g.circle.fill")
-                                        .font(.title3)
-                                    Text("Sign in with Google")
-                                        .fontWeight(.medium)
-                                }
-                                .frame(maxWidth: .infinity, minHeight: 48)
-                                .background(Color.white)
-                                .foregroundColor(.black)
-                                .cornerRadius(12)
-                            }
-                            .disabled(authViewModel.isLoading)
+                            // Social sign-in (Apple + Google)
+                            SocialSignInButtons()
 
                             Button {
                                 showRegister = true

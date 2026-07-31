@@ -300,6 +300,26 @@ class PickleballTrainingGenieClient {
         )
     }
 
+    /// Permanently deletes the authenticated user's account and all associated data.
+    /// Assumes the backend exposes `DELETE api/Users/profile`. Deliberately does NOT use
+    /// the generic decoding `request` helper: a deleted account returns no user JSON, so we
+    /// only validate the status code and tolerate an empty body (e.g. 204 No Content).
+    func deleteAccount() async throws {
+        var requestObj = URLRequest(url: url(path: "api/Users/profile"))
+        requestObj.httpMethod = "DELETE"
+        requestObj.setValue("application/json", forHTTPHeaderField: "Accept")
+        if let token = jwtToken {
+            requestObj.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
+        let (_, response) = try await session.data(for: requestObj)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw PickleballTrainingGenieError.invalidResponse(statusCode: 0)
+        }
+        guard 200..<300 ~= httpResponse.statusCode else {
+            throw PickleballTrainingGenieError.invalidResponse(statusCode: httpResponse.statusCode)
+        }
+    }
+
     func completeWorkoutSession(_ session: CompleteWorkoutSessionRequest) async throws -> WorkoutSessionResponse {
         return try await request(
             url(path: "api/Workouts/sessions"),
