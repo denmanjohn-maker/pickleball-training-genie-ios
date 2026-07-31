@@ -6,6 +6,7 @@ import AVFoundation
 struct LoopingVideoPlayerView: UIViewRepresentable {
     let resourceName: String
     let resourceExtension: String
+    var videoGravity: AVLayerVideoGravity = .resizeAspect
 
     func makeUIView(context: Context) -> PlayerContainerView {
         let view = PlayerContainerView()
@@ -21,7 +22,7 @@ struct LoopingVideoPlayerView: UIViewRepresentable {
         queuePlayer.isMuted = true
 
         view.playerLayer.player = queuePlayer
-        view.playerLayer.videoGravity = .resizeAspect
+        view.playerLayer.videoGravity = videoGravity
 
         context.coordinator.player = queuePlayer
         context.coordinator.looper = looper
@@ -31,7 +32,9 @@ struct LoopingVideoPlayerView: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: PlayerContainerView, context: Context) {}
+    func updateUIView(_ uiView: PlayerContainerView, context: Context) {
+        uiView.playerLayer.videoGravity = videoGravity
+    }
 
     static func dismantleUIView(_ uiView: PlayerContainerView, coordinator: Coordinator) {
         coordinator.player?.pause()

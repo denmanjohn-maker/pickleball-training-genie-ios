@@ -17,21 +17,19 @@ struct LoginView: View {
                     VStack(spacing: 32) {
                         // Header
                         VStack(spacing: 16) {
-                            Image("Logo")
+                            Image("Genie")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 110)
-                                .clipShape(RoundedRectangle(cornerRadius: 20))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 20)
-                                        .strokeBorder(
-                                            LinearGradient(
-                                                colors: [.neonMagenta, .neonCyan],
-                                                startPoint: .topLeading,
-                                                endPoint: .bottomTrailing
-                                            ),
-                                            lineWidth: 1.5
-                                        )
+                                .frame(height: 130)
+                                .background(
+                                    RadialGradient(
+                                        colors: [Color.cosmicPurple.opacity(0.5), .clear],
+                                        center: .center,
+                                        startRadius: 0,
+                                        endRadius: 110
+                                    )
+                                    .frame(width: 220, height: 220)
+                                    .allowsHitTesting(false)
                                 )
                                 .neonGlow(.neonMagenta, radius: 14)
 
