@@ -2,7 +2,7 @@ import Foundation
 
 enum TournamentsAPIConfig {
     static let baseURL = ProcessInfo.processInfo.environment["TOURNAMENTS_API_BASE_URL"]
-        ?? "http://pickleballtournamentapi.com/"
+        ?? "https://pickleballtournamentapi.com/"
 }
 
 enum TournamentsAPIError: Error, Equatable {

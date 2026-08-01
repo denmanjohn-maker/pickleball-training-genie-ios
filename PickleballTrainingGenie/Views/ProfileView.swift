@@ -231,13 +231,23 @@ struct ProfileView: View {
                     .pickleballCard()
                     .padding(.horizontal)
 
+                    // Legal & Support
+                    VStack(spacing: 0) {
+                        externalLinkRow("Privacy Policy", systemImage: "hand.raised.fill", url: AppLinks.privacyPolicy)
+                        Divider().overlay(Color.starlight.opacity(0.15))
+                        externalLinkRow("Support", systemImage: "lifepreserver.fill", url: AppLinks.support)
+                    }
+                    .padding(.vertical, 4)
+                    .pickleballCard()
+                    .padding(.horizontal)
+
                     // App Info
                     VStack(spacing: 4) {
                         Text("Pickleball Training Genie")
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
-                        Text("Version 1.0")
+                        Text(AppInfo.versionString)
                             .font(.caption2)
                             .foregroundColor(.secondary)
                     }
@@ -348,6 +358,23 @@ struct ProfileView: View {
                         }
                 }
             }
+        }
+    }
+
+    private func externalLinkRow(_ title: String, systemImage: String, url: URL) -> some View {
+        Link(destination: url) {
+            HStack {
+                Label(title, systemImage: systemImage)
+                    .font(.subheadline)
+                    .foregroundColor(.starlight)
+                Spacer()
+                Image(systemName: "arrow.up.right.square")
+                    .font(.footnote)
+                    .foregroundColor(.neonCyan)
+            }
+            .contentShape(Rectangle())
+            .padding(.horizontal)
+            .frame(minHeight: 44)
         }
     }
 
