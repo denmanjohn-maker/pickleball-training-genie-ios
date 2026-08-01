@@ -17,19 +17,10 @@
 			</array>
 		</dict>
 	</array>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>pickleballtournamentapi.com</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-				<key>NSIncludesSubdomains</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
+	<!-- The app talks only to HTTPS endpoints, so no ATS exceptions are needed
+	     and no non-exempt encryption is used (standard TLS + Keychain only). -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

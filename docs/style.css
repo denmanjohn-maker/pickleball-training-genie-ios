@@ -1,0 +1,142 @@
+:root {
+  --deep-space: #0b0a1a;
+  --nebula: #16142e;
+  --starlight: #eceaff;
+  --muted: #a7a2c8;
+  --cyan: #4fe3ff;
+  --magenta: #ff5cc8;
+  --gold: #ffc857;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--deep-space);
+  color: var(--starlight);
+  font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+header {
+  border-bottom: 1px solid rgba(236, 234, 255, 0.12);
+  padding-bottom: 24px;
+  margin-bottom: 32px;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand .tag {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+nav {
+  margin-top: 16px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: var(--cyan);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+nav a:hover { text-decoration: underline; }
+
+h2 {
+  margin: 36px 0 10px;
+  font-size: 1.15rem;
+  color: var(--gold);
+}
+
+h3 {
+  margin: 24px 0 8px;
+  font-size: 1rem;
+  color: var(--starlight);
+}
+
+p, li { color: var(--starlight); }
+
+ul { padding-left: 22px; }
+
+li { margin-bottom: 8px; }
+
+a { color: var(--cyan); }
+
+.meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.card {
+  background: var(--nebula);
+  border: 1px solid rgba(236, 234, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin: 24px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-size: 0.95rem;
+}
+
+th, td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(236, 234, 255, 0.1);
+  vertical-align: top;
+}
+
+th { color: var(--muted); font-weight: 600; }
+
+footer {
+  margin-top: 56px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(236, 234, 255, 0.12);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 520px) {
+  .wrap { padding: 32px 18px 64px; }
+  table, thead, tbody, th, td, tr { display: block; }
+  thead { display: none; }
+  td { border: none; padding: 4px 0; }
+  tr {
+    border-bottom: 1px solid rgba(236, 234, 255, 0.1);
+    padding: 12px 0;
+  }
+  td::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--muted);
+    font-size: 0.82rem;
+  }
+}
