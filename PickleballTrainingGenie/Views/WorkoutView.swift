@@ -3,6 +3,7 @@ import SwiftUI
 struct WorkoutView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
     @State private var completedDrillIndices: Set<Int> = []
+    @State private var showGuidedSession = false
 
     var body: some View {
         NavigationStack {
@@ -98,6 +99,41 @@ struct WorkoutView: View {
 
                     // Workout Results
                     if let workout = drillsViewModel.workout {
+                        if let savedAt = drillsViewModel.cachedWorkoutDate {
+                            HStack(spacing: 8) {
+                                Image(systemName: "internaldrive.fill")
+                                    .foregroundColor(.solarGold)
+                                Text("Saved workout from \(savedAt.formatted(date: .abbreviated, time: .shortened)) — ready to run, no signal needed.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            .padding(10)
+                            .background(Color.solarGold.opacity(0.08))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                        }
+
+                        // Guided session is the primary way to run the plan —
+                        // the checklist below stays for players who self-pace.
+                        // (Hidden for raw-text fallback plans with no drills.)
+                        if !workout.drills.isEmpty {
+                            Button {
+                                showGuidedSession = true
+                            } label: {
+                                HStack {
+                                    Image(systemName: "play.circle.fill")
+                                    Text("Start Guided Session")
+                                }
+                            }
+                            .buttonStyle(PrimaryButtonStyle(color: .neonCyan))
+                            .padding(.horizontal)
+                            .fullScreenCover(isPresented: $showGuidedSession) {
+                                GuidedSessionView(workout: workout)
+                                    .environmentObject(drillsViewModel)
+                            }
+                        }
+
                         WorkoutResultView(workout: workout, completedDrillIndices: $completedDrillIndices)
                             .padding(.horizontal)
 

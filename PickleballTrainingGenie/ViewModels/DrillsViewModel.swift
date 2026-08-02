@@ -18,6 +18,23 @@ class DrillsViewModel: ObservableObject {
     @Published var workoutDuration: Int = 30
     @Published var isCompletingWorkout = false
     @Published var workoutCompletedSuccessfully = false
+    /// Set when the drills list is showing cached content because the network
+    /// failed — the value is when that cache was saved.
+    @Published var cachedDrillsDate: Date?
+    /// Set when recommendations are being served from cache after a network
+    /// failure.
+    @Published var cachedRecommendationsDate: Date?
+    /// Set when the current workout was restored from disk (e.g. generated at
+    /// home, opened later at the court with no signal).
+    @Published var cachedWorkoutDate: Date?
+
+    /// The drill library is public content and cached globally; the
+    /// recommendations and workout caches are personalized, so their keys are
+    /// scoped per user — a shared device must never surface one account's
+    /// workout to another.
+    private let drillsCacheKey = "drills"
+    private let recommendationsCacheKey: String
+    private let workoutCacheKey: String
 
     let drillCategories = [
         "Dinking", "Drops", "Volleys", "Serving", "Returns",
@@ -60,8 +77,17 @@ class DrillsViewModel: ObservableObject {
 
     private let client: PickleballTrainingGenieClient
 
-    init(client: PickleballTrainingGenieClient) {
+    init(client: PickleballTrainingGenieClient, userId: String? = nil) {
         self.client = client
+        let scope = userId.map { "-\($0)" } ?? ""
+        recommendationsCacheKey = "recommendations\(scope)"
+        workoutCacheKey = "currentWorkout\(scope)"
+        // A workout generated earlier survives restarts, so it's still there
+        // at a court with no signal. Cleared when a session is saved.
+        if let cached = OfflineCache.load(WorkoutPlanResponse.self, key: workoutCacheKey) {
+            workout = cached.value
+            cachedWorkoutDate = cached.savedAt
+        }
     }
 
     func loadDrills() async {
@@ -69,8 +95,15 @@ class DrillsViewModel: ObservableObject {
         drillsError = nil
         do {
             drills = try await client.drills()
+            cachedDrillsDate = nil
+            OfflineCache.save(drills, key: drillsCacheKey)
         } catch {
-            drillsError = "Could not load drills: \(error.localizedDescription)"
+            if let cached = OfflineCache.load([Drill].self, key: drillsCacheKey) {
+                drills = cached.value
+                cachedDrillsDate = cached.savedAt
+            } else {
+                drillsError = "Could not load drills: \(error.localizedDescription)"
+            }
         }
         isLoadingDrills = false
     }
@@ -80,6 +113,8 @@ class DrillsViewModel: ObservableObject {
         recommendationsError = nil
         do {
             var fetched = try await client.recommendations()
+            cachedRecommendationsDate = nil
+            OfflineCache.save(fetched, key: recommendationsCacheKey)
             // The server only knows the player's DUPR; if they took the skill
             // check, lead with drills for their weakest categories.
             if let assessment = SkillAssessment.load() {
@@ -94,7 +129,17 @@ class DrillsViewModel: ObservableObject {
                 recommendationsError = "Could not load recommendations."
             }
         } catch {
-            recommendationsError = "Could not load recommendations: \(error.localizedDescription)"
+            // Plain network failure — fall back to the last good fetch.
+            if let cached = OfflineCache.load([Drill].self, key: recommendationsCacheKey) {
+                var fetched = cached.value
+                if let assessment = SkillAssessment.load() {
+                    fetched = SkillAssessment.rank(fetched, by: assessment)
+                }
+                recommendations = fetched
+                cachedRecommendationsDate = cached.savedAt
+            } else {
+                recommendationsError = "Could not load recommendations: \(error.localizedDescription)"
+            }
         }
         isLoadingRecommendations = false
     }
@@ -143,6 +188,8 @@ class DrillsViewModel: ObservableObject {
             _ = try await client.completeWorkoutSession(request)
             workoutCompletedSuccessfully = true
             self.workout = nil
+            cachedWorkoutDate = nil
+            OfflineCache.remove(key: workoutCacheKey)
         } catch let error as PickleballTrainingGenieError {
             switch error {
             case .invalidResponse(let code) where code == 404:
@@ -159,9 +206,15 @@ class DrillsViewModel: ObservableObject {
     func generateWorkout() async {
         isGeneratingWorkout = true
         workoutError = nil
-        workout = nil
+        // The old plan (possibly restored from cache) is only replaced on
+        // success — a failed generate at the court must not cost the player
+        // the workout they already had.
         do {
             workout = try await client.generateWorkout(durationMinutes: workoutDuration)
+            cachedWorkoutDate = nil
+            if let workout {
+                OfflineCache.save(workout, key: workoutCacheKey)
+            }
         } catch let error as PickleballTrainingGenieError {
             switch error {
             case .invalidResponse(let code) where code == 401:

@@ -13,7 +13,7 @@ struct RootView: View {
                     MainTabView()
                         .environmentObject(authViewModel)
                         .environmentObject(
-                            DrillsViewModel(client: authViewModel.client)
+                            DrillsViewModel(client: authViewModel.client, userId: user.id)
                         )
                         .environmentObject(
                             TournamentsViewModel(

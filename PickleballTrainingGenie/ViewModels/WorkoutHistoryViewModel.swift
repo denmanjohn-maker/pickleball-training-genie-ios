@@ -84,6 +84,21 @@ class WorkoutHistoryViewModel: ObservableObject {
 
     var drillsMasteredCount: Int { drillCompletions.count }
 
+    /// Streak/weekly stats computed from loaded pages. The first page (20
+    /// sessions) covers any realistic streak window; older history can't
+    /// extend a *current* streak anyway.
+    private var sessionDates: [Date] {
+        sessions.compactMap { APIDateParsing.parse($0.completedAt) }
+    }
+
+    var currentStreakDays: Int {
+        TrainingStats.currentStreakDays(sessionDates: sessionDates)
+    }
+
+    var sessionsThisWeek: Int {
+        TrainingStats.sessionsThisWeek(sessionDates: sessionDates)
+    }
+
     func load() async {
         isLoading = true
         errorMessage = nil
