@@ -206,21 +206,21 @@ struct ProfileView: View {
                             .font(.headline)
                             .foregroundColor(.starlight)
 
-                        ForEach(duprInfo, id: \.level) { info in
+                        ForEach(SkillLevel.allCases) { level in
                             HStack(alignment: .top, spacing: 12) {
-                                Text(info.level)
+                                Text(level.shortLabel)
                                     .font(.caption)
                                     .fontWeight(.bold)
                                     .foregroundColor(.white)
                                     .frame(width: 36)
                                     .padding(.vertical, 3)
-                                    .background(info.color)
+                                    .background(level.color)
                                     .cornerRadius(6)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(info.title)
+                                    Text(level.name)
                                         .font(.caption)
                                         .fontWeight(.semibold)
-                                    Text(info.description)
+                                    Text(level.summary)
                                         .font(.caption2)
                                         .foregroundColor(.secondary)
                                 }
@@ -383,14 +383,6 @@ struct ProfileView: View {
             || user.yearsPlaying != nil || user.preferredSessionDurationMinutes != nil
     }
 
-    private var duprInfo: [(level: String, title: String, description: String, color: Color)] {
-        [
-            ("3.0", "Beginner", "Learning basic strokes, court positioning", .blue),
-            ("3.5", "Intermediate", "Third shot drop, kitchen game, transitions", .orange),
-            ("4.0", "Advanced", "Pattern recognition, speed-up/reset sequences", .red),
-            ("5.0", "Pro", "ATP, Erne, tournament-level tactics", .purple)
-        ]
-    }
 }
 
 private struct DUPRStatRow: View {
@@ -467,13 +459,7 @@ struct EditRatingsView: View {
     @State private var singlesDUPR: Decimal = 3.0
     @State private var doublesDUPR: Decimal = 3.0
     @State private var targetDUPR: Decimal = 3.5
-
-    let duprOptions: [(Decimal, String)] = [
-        (3.0, "3.0 – Beginner"),
-        (3.5, "3.5 – Intermediate"),
-        (4.0, "4.0 – Advanced"),
-        (5.0, "5.0 – Professional")
-    ]
+    @State private var showSkillCheck = false
 
     var currentDUPR: Decimal { max(singlesDUPR, doublesDUPR) }
     var targetValid: Bool { targetDUPR >= currentDUPR }
@@ -481,49 +467,37 @@ struct EditRatingsView: View {
     var body: some View {
         Form {
             Section {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Singles DUPR")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                    Picker("Singles DUPR", selection: $singlesDUPR) {
-                        ForEach(duprOptions, id: \.0) { value, label in
-                            Text(label).tag(value)
-                        }
+                Button {
+                    showSkillCheck = true
+                } label: {
+                    HStack {
+                        Image(systemName: "questionmark.circle.fill")
+                            .foregroundColor(.neonMagenta)
+                        Text("Not sure? Take the 60-second skill check")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
-                    .pickerStyle(.segmented)
                 }
-                .padding(.vertical, 4)
+                .foregroundColor(.primary)
+            }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Doubles DUPR")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                    Picker("Doubles DUPR", selection: $doublesDUPR) {
-                        ForEach(duprOptions, id: \.0) { value, label in
-                            Text(label).tag(value)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                }
-                .padding(.vertical, 4)
+            Section {
+                SkillLevelPicker(title: "Singles DUPR", selection: $singlesDUPR)
+                    .padding(.vertical, 4)
+
+                SkillLevelPicker(title: "Doubles DUPR", selection: $doublesDUPR)
+                    .padding(.vertical, 4)
             } header: {
                 Text("Current Ratings")
             }
 
             Section {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Target DUPR")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                    Picker("Target DUPR", selection: $targetDUPR) {
-                        ForEach(duprOptions, id: \.0) { value, label in
-                            Text(label).tag(value)
-                        }
-                    }
-                    .pickerStyle(.segmented)
+                    SkillLevelPicker(title: "Target DUPR", selection: $targetDUPR)
 
                     if !targetValid {
                         HStack(spacing: 6) {
@@ -593,6 +567,15 @@ struct EditRatingsView: View {
                 singlesDUPR = user.singlesDUPR ?? 3.0
                 doublesDUPR = user.doublesDUPR ?? 3.0
                 targetDUPR = user.targetDUPR
+            }
+        }
+        .sheet(isPresented: $showSkillCheck) {
+            SkillAssessmentView { result in
+                let level = Decimal(result.estimatedLevel)
+                singlesDUPR = level
+                doublesDUPR = level
+                targetDUPR = SkillLevel.nearest(to: level).nextUp.value
+                showSkillCheck = false
             }
         }
     }

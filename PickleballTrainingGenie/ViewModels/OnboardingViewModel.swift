@@ -55,13 +55,6 @@ class OnboardingViewModel: ObservableObject {
     @Published var isSubmitting = false
     @Published var errorMessage: String?
 
-    let duprOptions: [(Decimal, String)] = [
-        (3.0, "3.0 – Beginner"),
-        (3.5, "3.5 – Intermediate"),
-        (4.0, "4.0 – Advanced"),
-        (5.0, "5.0 – Professional")
-    ]
-
     private let tournamentsClient: TournamentsAPIClient
 
     init(tournamentsClient: TournamentsAPIClient = TournamentsAPIClient(baseURL: URL(string: TournamentsAPIConfig.baseURL)!)) {
@@ -77,6 +70,15 @@ class OnboardingViewModel: ObservableObject {
     }
 
     var targetValid: Bool { targetDUPR >= max(singlesDUPR, doublesDUPR) }
+
+    /// Adopts the skill-check estimate: both ratings start at the estimated
+    /// level, with the target one tier up.
+    func apply(assessment result: AssessmentResult) {
+        let level = Decimal(result.estimatedLevel)
+        singlesDUPR = level
+        doublesDUPR = level
+        targetDUPR = SkillLevel.nearest(to: level).nextUp.value
+    }
 
     func prefill(from user: User?) {
         guard let user else { return }

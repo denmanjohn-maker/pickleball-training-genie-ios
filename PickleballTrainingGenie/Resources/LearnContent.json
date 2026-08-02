@@ -1,0 +1,182 @@
+{
+  "topics": [
+    {
+      "id": "scoring",
+      "title": "How to Keep Score",
+      "icon": "number.circle.fill",
+      "summary": "The three numbers, side-outs, and why you only score on your serve.",
+      "sections": [
+        {
+          "heading": "The basics",
+          "body": "Games are played to 11 points and you must win by 2. Only the serving team can score a point — if the receiving team wins the rally, no point is scored; instead the serve changes hands (a side-out in singles, or the next server in doubles)."
+        },
+        {
+          "heading": "Doubles: the three numbers",
+          "body": "The score is called as three numbers: your team's score, the other team's score, then the server number (1 or 2). Example: \"4–2–1\" means your team has 4, they have 2, and you're the first server. Both players on a team get to serve before the serve passes to the other team — except at the very start of the game."
+        },
+        {
+          "heading": "Why games start at 0–0–2",
+          "body": "To offset the advantage of serving first, the team that serves first only gets ONE server for their first turn. That first server is called \"2\", so the game starts at 0–0–2. When they lose a rally, the serve goes straight to the other team."
+        },
+        {
+          "heading": "When do we switch sides of our own court?",
+          "body": "You and your partner swap left/right sides every time your team scores a point while serving. If your score is even, the first server of the game stands on the right; odd, on the left. If nobody has scored since your team got the serve, nobody moves."
+        },
+        {
+          "heading": "Singles",
+          "body": "Same idea without server numbers: call your score, then your opponent's. Serve from the right side when your score is even, the left when it's odd."
+        }
+      ]
+    },
+    {
+      "id": "serving",
+      "title": "Serving Rules",
+      "icon": "figure.tennis",
+      "summary": "Underhand, behind the baseline, diagonal — and the drop serve option.",
+      "sections": [
+        {
+          "heading": "The legal serve",
+          "body": "Serve underhand with the paddle moving in an upward arc, making contact below your waist with the paddle head below your wrist. Both feet must be behind the baseline, and the serve travels diagonally cross-court into the opposite service box, clearing the kitchen and the kitchen line."
+        },
+        {
+          "heading": "The drop serve (easier!)",
+          "body": "You may instead drop the ball from any height (no throwing it down) and hit it after the bounce. The paddle restrictions don't apply to the drop serve, which makes it a great option while you're learning."
+        },
+        {
+          "heading": "One try",
+          "body": "You get one serve attempt. If it lands in the kitchen, hits the net and lands short, or misses the box, it's a fault and the serve moves on. (A serve that clips the net but lands in the correct box is a live \"let\" — you play it.)"
+        },
+        {
+          "heading": "Where to aim",
+          "body": "Deep. A serve that lands in the back third of the box keeps your opponent pinned at the baseline and makes their third shot harder. Consistency beats power — get every serve in before you worry about pace."
+        }
+      ]
+    },
+    {
+      "id": "kitchen",
+      "title": "The Kitchen (Non-Volley Zone)",
+      "icon": "rectangle.split.3x1.fill",
+      "summary": "The 7-foot zone where you can't volley — pickleball's most misunderstood rule.",
+      "sections": [
+        {
+          "heading": "What it is",
+          "body": "The kitchen is the 7-foot zone on each side of the net (officially the non-volley zone). You may stand in it any time you like — what you may NOT do is hit a volley (a ball out of the air, before it bounces) while touching it."
+        },
+        {
+          "heading": "The details that catch people",
+          "body": "The kitchen line counts as part of the kitchen. If your momentum after a volley carries you into the kitchen — even a toe on the line, even after the ball is dead — it's a fault. If the ball bounces first, you can step in and hit it from inside the kitchen legally."
+        },
+        {
+          "heading": "Why it exists",
+          "body": "Without it, tall players would stand at the net and smash everything. The kitchen forces the soft game — dinks, drops, and resets — which is where pickleball strategy lives."
+        },
+        {
+          "heading": "Playing around it",
+          "body": "Stand just behind the kitchen line, toes an inch or two back. Volley anything you can reach; let anything soft bounce, then step in and dink it back. After hitting a ball that bounced in the kitchen, step back out so you're ready to volley the next one."
+        }
+      ]
+    },
+    {
+      "id": "two-bounce",
+      "title": "The Two-Bounce Rule",
+      "icon": "arrow.up.and.down.circle.fill",
+      "summary": "Why you can't rush the net right away.",
+      "sections": [
+        {
+          "heading": "The rule",
+          "body": "After the serve, the ball must bounce once on each side before anyone may volley. The receiving team must let the serve bounce, and the serving team must let the return bounce. From the third shot on, volleys are allowed (outside the kitchen)."
+        },
+        {
+          "heading": "What it means for you",
+          "body": "The serving team should stay back at the baseline until they've hit the third shot — if you creep forward, the return will bounce at your feet. The receiver's partner can already stand at the kitchen line; the receiver moves up right after returning."
+        }
+      ]
+    },
+    {
+      "id": "faults",
+      "title": "Common Faults",
+      "icon": "xmark.octagon.fill",
+      "summary": "The ways a rally ends — and the ones beginners forget.",
+      "sections": [
+        {
+          "heading": "The obvious ones",
+          "body": "Hitting the ball into the net or out of bounds, letting it bounce twice, or missing the serve. A ball landing ON a line is in — except the kitchen line on a serve, which is a fault."
+        },
+        {
+          "heading": "The sneaky ones",
+          "body": "Volleying while touching the kitchen or its line (including momentum afterward). Volleying the serve or the return before it bounces (two-bounce rule). Touching the net, or the ball touching you or your clothing during a rally. Serving from the wrong side or when it isn't your serve."
+        },
+        {
+          "heading": "Etiquette worth knowing",
+          "body": "You call lines on your own side, and the benefit of the doubt goes to your opponent. If the ball hits you — even on a winning shot — it's their point. Announce the score clearly before every serve; it prevents most arguments before they start."
+        }
+      ]
+    },
+    {
+      "id": "positioning",
+      "title": "Where to Stand",
+      "icon": "figure.stand.line.dotted.figure.stand",
+      "summary": "Court positioning basics: the kitchen line is home.",
+      "sections": [
+        {
+          "heading": "The golden rule",
+          "body": "Points are won at the kitchen line. Whichever team gets both players established there first usually wins the rally — that's the entire reason the third-shot drop exists."
+        },
+        {
+          "heading": "Serving team",
+          "body": "Both players start at the baseline and STAY there until the third shot is struck (the return has to bounce on your side). Hit a drop or drive, then advance together — through the transition zone, splitting your steps as the opponents hit."
+        },
+        {
+          "heading": "Receiving team",
+          "body": "The receiver's partner starts at the kitchen line. The receiver returns deep, then follows the return forward. Done right, the receiving team owns the net before the serving team has even moved."
+        },
+        {
+          "heading": "Move as a pair",
+          "body": "In doubles, imagine a rope between you and your partner. Slide left and right together, following the ball, so there's never a wide-open gap in the middle. If your partner gets pulled wide, you shift to cover the middle."
+        }
+      ]
+    },
+    {
+      "id": "equipment",
+      "title": "Choosing Your First Paddle",
+      "icon": "sportscourt.fill",
+      "summary": "What actually matters when you're starting out — and what doesn't.",
+      "sections": [
+        {
+          "heading": "Don't overspend",
+          "body": "A mid-priced composite or fiberglass paddle is all a new player needs. Expensive carbon paddles reward skills you haven't built yet. Spend the difference on a bucket of outdoor balls and court time."
+        },
+        {
+          "heading": "What to look for",
+          "body": "Weight around 7.5–8.2 oz — light enough for quick hands at the net, heavy enough for drives. A standard shape with a large sweet spot beats an elongated paddle for beginners. Grip size: with the paddle in hand, you should fit an index finger between your fingertips and palm."
+        },
+        {
+          "heading": "Balls are not all the same",
+          "body": "Outdoor balls are harder with smaller holes; indoor balls are softer with bigger holes. They play very differently — practice with the type your local courts use."
+        },
+        {
+          "heading": "Shoes matter more than paddles",
+          "body": "Running shoes are built for straight lines and will roll an ankle on lateral movement. Court shoes (tennis, volleyball, or pickleball-specific) are the single best equipment upgrade a new player can make."
+        }
+      ]
+    }
+  ],
+  "glossary": [
+    { "term": "Dink", "definition": "A soft shot from at or near the kitchen line that lands in the opponent's kitchen, too low to attack." },
+    { "term": "Third-shot drop", "definition": "A soft shot by the serving team on the third shot of the rally, arcing into the opponent's kitchen so the servers can advance to the net." },
+    { "term": "Drive", "definition": "A hard, flat groundstroke — the aggressive alternative to a drop on the third shot." },
+    { "term": "Volley", "definition": "Hitting the ball out of the air before it bounces. Illegal while touching the kitchen or its line." },
+    { "term": "Kitchen", "definition": "Nickname for the non-volley zone: the 7-foot area on each side of the net where volleying is not allowed." },
+    { "term": "Two-bounce rule", "definition": "After the serve, the ball must bounce once on each side before anyone may volley." },
+    { "term": "Side-out", "definition": "When the serve passes to the other team after the serving team loses the rally (or both servers lose it, in doubles)." },
+    { "term": "Reset", "definition": "A defensive soft shot that takes the pace off a hard ball and drops it into the kitchen, neutralizing an attack." },
+    { "term": "Speed-up", "definition": "Deliberately hitting a fast, aggressive shot out of a slow dink rally to catch the opponent off guard." },
+    { "term": "Erne", "definition": "An advanced volley hit from outside the court, next to the kitchen, letting you take the ball out of the air close to the net legally." },
+    { "term": "ATP (Around the Post)", "definition": "A shot hit around the outside of the net post — legal at any height, since it never crosses the net." },
+    { "term": "Stacking", "definition": "A doubles formation where partners line up on the same side before the serve so each ends up on their preferred half of the court." },
+    { "term": "Transition zone", "definition": "The mid-court area between the baseline and the kitchen line — a place to pass through carefully, not to camp in." },
+    { "term": "Split step", "definition": "A small hop onto both feet as your opponent strikes the ball, keeping you balanced and ready to move either way." },
+    { "term": "Let", "definition": "A serve that clips the net but still lands in the correct service box — it's live, play it." },
+    { "term": "DUPR", "definition": "Dynamic Universal Pickleball Rating — the rating system this app uses. Roughly 2.0 for brand-new players up to 5.0+ for pros." }
+  ]
+}

@@ -24,13 +24,37 @@ class DrillsViewModel: ObservableObject {
         "Lobs", "Resets", "Attacking", "Movement", "General"
     ]
 
-    let duprLevels: [Decimal] = [3.0, 3.5, 4.0, 5.0]
-
     var filteredDrills: [Drill] {
-        drills.filter { drill in
-            let categoryMatch = selectedCategory == nil || drill.category == selectedCategory
-            let levelMatch = selectedLevel == nil || drill.targetDUPRLevel == selectedLevel
-            return categoryMatch && levelMatch
+        let base = categoryFilteredDrills
+        guard let level = selectedLevel else { return base }
+        let exact = base.filter { $0.targetDUPRLevel == level }
+        if !exact.isEmpty { return exact }
+        guard let fallback = nearestPopulatedLevel(to: level, in: base) else { return [] }
+        return base.filter { $0.targetDUPRLevel == fallback }
+    }
+
+    /// Non-nil when the selected level has no drills and the list is showing
+    /// the nearest level that does (e.g. a backend that hasn't tagged 2.0/2.5
+    /// content yet). A brand-new player should never meet an empty screen.
+    var levelFallbackNotice: (requested: Decimal, showing: Decimal)? {
+        guard let level = selectedLevel else { return nil }
+        let base = categoryFilteredDrills
+        guard !base.contains(where: { $0.targetDUPRLevel == level }),
+              let fallback = nearestPopulatedLevel(to: level, in: base) else { return nil }
+        return (requested: level, showing: fallback)
+    }
+
+    private var categoryFilteredDrills: [Drill] {
+        drills.filter { selectedCategory == nil || $0.category == selectedCategory }
+    }
+
+    /// Closest level (by absolute distance) that has at least one drill,
+    /// preferring the easier level on a tie.
+    private func nearestPopulatedLevel(to level: Decimal, in drills: [Drill]) -> Decimal? {
+        let populated = Set(drills.map(\.targetDUPRLevel))
+        return populated.min { a, b in
+            let da = abs(a - level), db = abs(b - level)
+            return da == db ? a < b : da < db
         }
     }
 
@@ -55,7 +79,13 @@ class DrillsViewModel: ObservableObject {
         isLoadingRecommendations = true
         recommendationsError = nil
         do {
-            recommendations = try await client.recommendations()
+            var fetched = try await client.recommendations()
+            // The server only knows the player's DUPR; if they took the skill
+            // check, lead with drills for their weakest categories.
+            if let assessment = SkillAssessment.load() {
+                fetched = SkillAssessment.rank(fetched, by: assessment)
+            }
+            recommendations = fetched
         } catch let error as PickleballTrainingGenieError {
             switch error {
             case .invalidResponse(let code) where code == 401:
