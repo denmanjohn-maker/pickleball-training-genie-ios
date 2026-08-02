@@ -21,6 +21,12 @@
 	     and no non-exempt encryption is used (standard TLS + Keychain only). -->
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<!-- Video Self-Review records practice clips with the system camera.
+	     Clips are stored only on this device and never uploaded. -->
+	<key>NSCameraUsageDescription</key>
+	<string>Pickleball Genie uses the camera to record practice clips so you can review your form in slow motion. Clips stay on your device.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The microphone records audio with your practice clips. Recordings stay on your device.</string>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

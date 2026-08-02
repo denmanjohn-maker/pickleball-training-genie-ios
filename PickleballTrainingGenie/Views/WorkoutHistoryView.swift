@@ -45,6 +45,10 @@ private struct HistoryListView: View {
                     VStack(spacing: 16) {
                         statsHeader
 
+                        if !viewModel.categoryTrends.isEmpty {
+                            SkillTrendsCard(trends: viewModel.categoryTrends)
+                        }
+
                         ForEach(viewModel.timeline) { entry in
                             switch entry {
                             case .workout(let session):
@@ -152,6 +156,58 @@ private struct HistoryStatCard: View {
     }
 }
 
+/// Skill movement, not volume: average self-rating per category over the last
+/// five sessions, with an arrow against the ten sessions before them.
+private struct SkillTrendsCard: View {
+    let trends: [WorkoutHistoryViewModel.CategoryTrend]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Label("Skill Trends", systemImage: "chart.line.uptrend.xyaxis")
+                .font(.headline)
+                .foregroundColor(.starlight)
+
+            ForEach(trends) { trend in
+                HStack {
+                    CategoryBadge(category: trend.category)
+                    Spacer()
+                    Text(String(format: "%.1f / 5", trend.recentAverage))
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .monospacedDigit()
+                    trendArrow(trend.direction)
+                }
+            }
+
+            Text("From your post-session drill ratings — rate drills after guided sessions to sharpen this.")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .pickleballCard()
+    }
+
+    @ViewBuilder
+    private func trendArrow(_ direction: WorkoutHistoryViewModel.CategoryTrend.Direction?) -> some View {
+        switch direction {
+        case .up:
+            Image(systemName: "arrow.up.right")
+                .font(.caption.bold())
+                .foregroundColor(.green)
+        case .down:
+            Image(systemName: "arrow.down.right")
+                .font(.caption.bold())
+                .foregroundColor(.orange)
+        case .flat:
+            Image(systemName: "arrow.right")
+                .font(.caption.bold())
+                .foregroundColor(.secondary)
+        case nil:
+            EmptyView()
+        }
+    }
+}
+
 private struct WorkoutSessionCard: View {
     let session: WorkoutSessionResponse
     @State private var isExpanded = false
@@ -216,13 +272,41 @@ private struct WorkoutSessionCard: View {
                                     .foregroundColor(.secondary)
                             }
                             Spacer()
+                            if let rating = drill.selfRating {
+                                RatingGlyph(rating: rating)
+                            }
                         }
+                    }
+                    if let notes = session.notes, !notes.isEmpty {
+                        HStack(alignment: .top, spacing: 8) {
+                            Image(systemName: "note.text")
+                                .font(.caption)
+                                .foregroundColor(.solarGold)
+                            Text(notes)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .italic()
+                        }
+                        .padding(.top, 4)
                     }
                 }
             }
         }
         .padding()
         .pickleballCard()
+    }
+}
+
+/// Compact glyph for a drill's 1–5 self-rating in history rows.
+private struct RatingGlyph: View {
+    let rating: Int
+
+    var body: some View {
+        Image(systemName: rating >= 4 ? "hand.thumbsup.fill"
+              : rating <= 2 ? "hand.thumbsdown.fill" : "minus.circle.fill")
+            .font(.caption)
+            .foregroundColor(rating >= 4 ? .green : rating <= 2 ? .orange : .secondary)
+            .accessibilityLabel("Rated \(rating) out of 5")
     }
 }
 

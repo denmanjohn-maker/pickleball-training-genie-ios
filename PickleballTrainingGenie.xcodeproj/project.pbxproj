@@ -55,6 +55,9 @@
 		AAAA0000000000000079CAFE /* OfflineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000078CAFE /* OfflineCache.swift */; };
 		AAAA000000000000007BCAFE /* TrainingReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007ACAFE /* TrainingReminders.swift */; };
 		AAAA000000000000007DCAFE /* TrainingStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007CCAFE /* TrainingStats.swift */; };
+		AAAA000000000000007FCAFE /* FavoriteDrills.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007ECAFE /* FavoriteDrills.swift */; };
+		AAAA0000000000000081CAFE /* VideoReviewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000080CAFE /* VideoReviewStore.swift */; };
+		AAAA0000000000000083CAFE /* VideoReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000082CAFE /* VideoReviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -108,6 +111,9 @@
 		AAAA0000000000000078CAFE /* OfflineCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCache.swift; sourceTree = "<group>"; };
 		AAAA000000000000007ACAFE /* TrainingReminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingReminders.swift; sourceTree = "<group>"; };
 		AAAA000000000000007CCAFE /* TrainingStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingStats.swift; sourceTree = "<group>"; };
+		AAAA000000000000007ECAFE /* FavoriteDrills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteDrills.swift; sourceTree = "<group>"; };
+		AAAA0000000000000080CAFE /* VideoReviewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoReviewStore.swift; sourceTree = "<group>"; };
+		AAAA0000000000000082CAFE /* VideoReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoReviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +186,7 @@
 				AAAA000000000000006ECAFE /* SkillAssessmentView.swift */,
 				AAAA0000000000000070CAFE /* LearnView.swift */,
 				AAAA0000000000000076CAFE /* GuidedSessionView.swift */,
+				AAAA0000000000000082CAFE /* VideoReviewView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -236,6 +243,8 @@
 				AAAA0000000000000067CAFE /* AppInfo.swift */,
 				AAAA0000000000000078CAFE /* OfflineCache.swift */,
 				AAAA000000000000007ACAFE /* TrainingReminders.swift */,
+				AAAA000000000000007ECAFE /* FavoriteDrills.swift */,
+				AAAA0000000000000080CAFE /* VideoReviewStore.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -390,6 +399,9 @@
 				AAAA0000000000000079CAFE /* OfflineCache.swift in Sources */,
 				AAAA000000000000007BCAFE /* TrainingReminders.swift in Sources */,
 				AAAA000000000000007DCAFE /* TrainingStats.swift in Sources */,
+				AAAA000000000000007FCAFE /* FavoriteDrills.swift in Sources */,
+				AAAA0000000000000081CAFE /* VideoReviewStore.swift in Sources */,
+				AAAA0000000000000083CAFE /* VideoReviewView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

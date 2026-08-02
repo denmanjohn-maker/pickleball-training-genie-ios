@@ -164,8 +164,13 @@ class DrillsViewModel: ObservableObject {
     }
 
     /// Records the current workout plan as a completed session, marking which
-    /// drills (by index) the user actually finished.
-    func completeWorkout(completedIndices: Set<Int>) async {
+    /// drills (by index) the user actually finished, with optional per-drill
+    /// self-ratings (1–5) and a journal note.
+    func completeWorkout(
+        completedIndices: Set<Int>,
+        ratings: [Int: Int] = [:],
+        notes: String? = nil
+    ) async {
         guard let workout else { return }
         isCompletingWorkout = true
         workoutError = nil
@@ -175,13 +180,16 @@ class DrillsViewModel: ObservableObject {
                 category: item.category,
                 durationMinutes: item.durationMinutes,
                 coachingNotes: item.coachingNotes,
-                isCompleted: completedIndices.contains(index)
+                isCompleted: completedIndices.contains(index),
+                selfRating: ratings[index]
             )
         }
+        let trimmedNotes = notes?.trimmingCharacters(in: .whitespacesAndNewlines)
         let request = CompleteWorkoutSessionRequest(
             durationMinutes: workout.totalDurationMinutes ?? workoutDuration,
             warmup: workout.warmup,
             cooldown: workout.cooldown,
+            notes: (trimmedNotes?.isEmpty ?? true) ? nil : trimmedNotes,
             drills: drills
         )
         do {

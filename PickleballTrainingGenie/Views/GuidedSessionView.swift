@@ -17,9 +17,13 @@ struct GuidedSessionView: View {
         ZStack {
             SynthwaveGradient()
             if session.isFinished {
-                SessionSummaryView(session: session) {
+                SessionSummaryView(session: session) { ratings, notes in
                     Task {
-                        await drillsViewModel.completeWorkout(completedIndices: session.completedDrillIndices)
+                        await drillsViewModel.completeWorkout(
+                            completedIndices: session.completedDrillIndices,
+                            ratings: ratings,
+                            notes: notes
+                        )
                         // Stay on the summary if the save failed (e.g. no
                         // signal) so the player can retry without losing
                         // their completed/skipped state. completeWorkout
@@ -244,84 +248,160 @@ private struct ControlButton: View {
 
 private struct SessionSummaryView: View {
     @ObservedObject var session: GuidedSessionViewModel
-    let onSave: () -> Void
+    let onSave: (_ ratings: [Int: Int], _ notes: String?) -> Void
     let onDiscard: () -> Void
     @EnvironmentObject var drillsViewModel: DrillsViewModel
+    @State private var ratings: [Int: Int] = [:]
+    @State private var journalNote = ""
 
     var body: some View {
-        VStack(spacing: 24) {
-            Spacer()
-
-            ZStack {
-                Circle()
-                    .fill(Color.green.opacity(0.15))
-                    .frame(width: 96, height: 96)
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 48))
-                    .foregroundColor(.green)
-            }
-
-            Text("Session Complete!")
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.white)
-
-            Text("\(session.completedDrillCount) of \(session.totalDrillCount) drills completed")
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.8))
-
-            VStack(alignment: .leading, spacing: 10) {
-                ForEach(Array(session.workout.drills.enumerated()), id: \.element.id) { index, item in
-                    HStack(spacing: 10) {
-                        Image(systemName: session.completedDrillIndices.contains(index)
-                              ? "checkmark.circle.fill" : "forward.circle")
-                            .foregroundColor(session.completedDrillIndices.contains(index) ? .green : .white.opacity(0.4))
-                        Text(item.title)
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.9))
-                            .lineLimit(1)
-                        Spacer()
-                    }
+        ScrollView {
+            VStack(spacing: 24) {
+                ZStack {
+                    Circle()
+                        .fill(Color.green.opacity(0.15))
+                        .frame(width: 96, height: 96)
+                    Image(systemName: "checkmark.seal.fill")
+                        .font(.system(size: 48))
+                        .foregroundColor(.green)
                 }
-            }
-            .padding()
-            .background(Color.white.opacity(0.06))
-            .cornerRadius(16)
-            .padding(.horizontal)
+                .padding(.top, 24)
 
-            Spacer()
+                Text("Session Complete!")
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
 
-            VStack(spacing: 10) {
-                Button {
-                    onSave()
-                } label: {
-                    HStack {
-                        if drillsViewModel.isCompletingWorkout {
-                            ProgressView().tint(.black)
-                        } else {
-                            Image(systemName: "square.and.arrow.down.fill")
+                Text("\(session.completedDrillCount) of \(session.totalDrillCount) drills completed")
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.8))
+
+                // Per-drill "how did that go?" — the feedback the AI needs to
+                // adapt future workouts. Skipped drills aren't rated.
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("How did each drill go?")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    ForEach(Array(session.workout.drills.enumerated()), id: \.element.id) { index, item in
+                        VStack(alignment: .leading, spacing: 6) {
+                            HStack(spacing: 10) {
+                                Image(systemName: session.completedDrillIndices.contains(index)
+                                      ? "checkmark.circle.fill" : "forward.circle")
+                                    .foregroundColor(session.completedDrillIndices.contains(index) ? .green : .white.opacity(0.4))
+                                Text(item.title)
+                                    .font(.subheadline)
+                                    .foregroundColor(.white.opacity(0.9))
+                                    .lineLimit(1)
+                                Spacer()
+                            }
+                            if session.completedDrillIndices.contains(index) {
+                                DrillRatingControl(rating: ratingBinding(for: index))
+                                    .padding(.leading, 30)
+                            }
                         }
-                        Text(drillsViewModel.isCompletingWorkout ? "Saving…" : "Save to History")
                     }
                 }
-                .buttonStyle(PrimaryButtonStyle())
-                .disabled(drillsViewModel.isCompletingWorkout)
+                .padding()
+                .background(Color.white.opacity(0.06))
+                .cornerRadius(16)
+                .padding(.horizontal)
 
-                Button("Discard Session") {
-                    onDiscard()
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Session notes (optional)")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.8))
+                    TextField(
+                        "",
+                        text: $journalNote,
+                        prompt: Text("What worked? What felt off?")
+                            .foregroundColor(.white.opacity(0.35)),
+                        axis: .vertical
+                    )
+                    .lineLimit(2...4)
+                    .padding(10)
+                    .foregroundColor(.white)
+                    .background(Color.white.opacity(0.06))
+                    .cornerRadius(12)
                 }
-                .font(.subheadline)
-                .foregroundColor(.white.opacity(0.6))
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 12)
+                .padding(.horizontal)
 
-            if let error = drillsViewModel.workoutError {
-                Text(error)
-                    .font(.caption)
-                    .foregroundColor(.orange)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
+                VStack(spacing: 10) {
+                    Button {
+                        onSave(ratings, journalNote)
+                    } label: {
+                        HStack {
+                            if drillsViewModel.isCompletingWorkout {
+                                ProgressView().tint(.black)
+                            } else {
+                                Image(systemName: "square.and.arrow.down.fill")
+                            }
+                            Text(drillsViewModel.isCompletingWorkout ? "Saving…" : "Save to History")
+                        }
+                    }
+                    .buttonStyle(PrimaryButtonStyle())
+                    .disabled(drillsViewModel.isCompletingWorkout)
+
+                    Button("Discard Session") {
+                        onDiscard()
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.white.opacity(0.6))
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 12)
+
+                if let error = drillsViewModel.workoutError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.orange)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+            }
+        }
+        .scrollDismissesKeyboard(.interactively)
+    }
+
+    private func ratingBinding(for index: Int) -> Binding<Int?> {
+        Binding(
+            get: { ratings[index] },
+            set: { ratings[index] = $0 }
+        )
+    }
+}
+
+/// Three-option feel rating mapping onto the backend's 1–5 scale:
+/// struggled = 1, getting there = 3, nailed it = 5. Tap again to clear.
+struct DrillRatingControl: View {
+    @Binding var rating: Int?
+
+    private static let options: [(value: Int, icon: String, label: String)] = [
+        (1, "hand.thumbsdown.fill", "Struggled"),
+        (3, "minus.circle.fill", "Getting there"),
+        (5, "hand.thumbsup.fill", "Nailed it")
+    ]
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(Self.options, id: \.value) { option in
+                let isSelected = rating == option.value
+                Button {
+                    rating = isSelected ? nil : option.value
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: option.icon)
+                            .font(.caption)
+                        Text(option.label)
+                            .font(.caption2)
+                    }
+                    .foregroundColor(isSelected ? .black : .white.opacity(0.7))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 5)
+                    .background(isSelected ? Color.neonCyan : Color.white.opacity(0.08))
+                    .cornerRadius(8)
+                }
+                .accessibilityLabel(option.label)
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
             }
         }
     }
