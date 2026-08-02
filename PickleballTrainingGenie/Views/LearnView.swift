@@ -35,6 +35,9 @@ struct LearnContent: Decodable {
               let data = try? Data(contentsOf: url),
               let content = try? JSONDecoder().decode(LearnContent.self, from: data)
         else {
+            // A missing or malformed bundle resource is a packaging bug —
+            // fail loudly in debug builds instead of shipping an empty screen.
+            assertionFailure("LearnContent.json is missing from the bundle or failed to decode")
             return LearnContent(topics: [], glossary: [])
         }
         return content

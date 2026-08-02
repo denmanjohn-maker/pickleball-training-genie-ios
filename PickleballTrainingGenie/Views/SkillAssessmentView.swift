@@ -39,7 +39,7 @@ struct SkillAssessmentView: View {
     private var questionScreen: some View {
         let question = questions[questionIndex]
         return VStack(spacing: 24) {
-            ProgressView(value: Double(questionIndex), total: Double(questions.count))
+            ProgressView(value: Double(questionIndex + 1), total: Double(questions.count))
                 .tint(.neonMagenta)
                 .padding(.horizontal)
 
