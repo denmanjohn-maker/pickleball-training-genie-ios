@@ -2,11 +2,16 @@ import SwiftUI
 
 struct DrillsListView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
+    @ObservedObject private var favorites = FavoriteDrills.shared
     @State private var searchText = ""
     @State private var selectedDrill: Drill?
+    @State private var showFavoritesOnly = false
 
     var displayedDrills: [Drill] {
-        let filtered = drillsViewModel.filteredDrills
+        var filtered = drillsViewModel.filteredDrills
+        if showFavoritesOnly {
+            filtered = filtered.filter { favorites.contains($0.id) }
+        }
         if searchText.isEmpty { return filtered }
         return filtered.filter {
             $0.title.localizedCaseInsensitiveContains(searchText)
@@ -21,12 +26,20 @@ struct DrillsListView: View {
                 // Filter Bar
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
+                        // Favorites first — the player's own shortlist.
+                        FilterChip(
+                            label: "♥ Favorites",
+                            isSelected: showFavoritesOnly
+                        ) {
+                            showFavoritesOnly.toggle()
+                        }
                         // Category filters
                         FilterChip(
                             label: "All",
-                            isSelected: drillsViewModel.selectedCategory == nil
+                            isSelected: drillsViewModel.selectedCategory == nil && !showFavoritesOnly
                         ) {
                             drillsViewModel.selectedCategory = nil
+                            showFavoritesOnly = false
                         }
                         ForEach(drillsViewModel.drillCategories, id: \.self) { category in
                             FilterChip(
@@ -189,6 +202,7 @@ private struct LevelFallbackBanner: View {
 struct DrillRowView: View {
     let drill: Drill
     let isCompleted: Bool
+    @ObservedObject private var favorites = FavoriteDrills.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -207,6 +221,11 @@ struct DrillRowView: View {
 
                 Spacer()
 
+                if favorites.contains(drill.id) {
+                    Image(systemName: "heart.fill")
+                        .foregroundColor(.neonMagenta)
+                        .font(.caption)
+                }
                 if isCompleted {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.neonCyan)

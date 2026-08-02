@@ -1,11 +1,20 @@
 import SwiftUI
+import SafariServices
 
 struct DrillDetailView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var favorites = FavoriteDrills.shared
     let drill: Drill
     @State private var completing = false
     @State private var showCompleteSuccess = false
+    @State private var browserURL: BrowserURL?
+
+    /// Identifiable wrapper so `.sheet(item:)` can present a tapped link.
+    private struct BrowserURL: Identifiable {
+        let url: URL
+        var id: String { url.absoluteString }
+    }
 
     var isCompleted: Bool {
         drillsViewModel.completedDrillIds.contains(drill.id)
@@ -54,9 +63,12 @@ struct DrillDetailView: View {
                     .pickleballCard()
                     .padding(.horizontal)
 
-                    // Video Link
+                    // Video — opens in-app so the player doesn't lose their
+                    // place mid-session.
                     if let videoUrl = drill.videoUrl, let url = URL(string: videoUrl) {
-                        Link(destination: url) {
+                        Button {
+                            browserURL = BrowserURL(url: url)
+                        } label: {
                             HStack {
                                 Image(systemName: "play.rectangle.fill")
                                     .font(.title3)
@@ -66,12 +78,12 @@ struct DrillDetailView: View {
                                         .font(.subheadline)
                                         .fontWeight(.semibold)
                                         .foregroundColor(.primary)
-                                    Text("Tap to open in browser")
+                                    Text("Plays right here in the app")
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                 }
                                 Spacer()
-                                Image(systemName: "arrow.up.right.square")
+                                Image(systemName: "play.circle")
                                     .foregroundColor(.secondary)
                             }
                             .padding()
@@ -80,9 +92,11 @@ struct DrillDetailView: View {
                         .padding(.horizontal)
                     }
 
-                    // Source Link
+                    // Source
                     if let sourceURL = URL(string: drill.sourceUrl) {
-                        Link(destination: sourceURL) {
+                        Button {
+                            browserURL = BrowserURL(url: sourceURL)
+                        } label: {
                             HStack {
                                 Image(systemName: "link.circle.fill")
                                     .font(.title3)
@@ -144,10 +158,23 @@ struct DrillDetailView: View {
             .background(Color.deepSpace)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        favorites.toggle(drill.id)
+                    } label: {
+                        Image(systemName: favorites.contains(drill.id) ? "heart.fill" : "heart")
+                            .foregroundColor(.neonMagenta)
+                    }
+                    .accessibilityLabel(favorites.contains(drill.id) ? "Remove from favorites" : "Add to favorites")
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") { dismiss() }
                         .foregroundColor(.neonCyan)
                 }
+            }
+            .sheet(item: $browserURL) { item in
+                SafariView(url: item.url)
+                    .ignoresSafeArea()
             }
             .alert("Great Work! 🏆", isPresented: $showCompleteSuccess) {
                 Button("Keep Training!") {}
@@ -156,6 +183,20 @@ struct DrillDetailView: View {
             }
         }
     }
+}
+
+/// In-app browser so drill videos and sources don't bounce the player out to
+/// Safari. Handles YouTube links (which AVPlayer cannot).
+struct SafariView: UIViewControllerRepresentable {
+    let url: URL
+
+    func makeUIViewController(context: Context) -> SFSafariViewController {
+        let controller = SFSafariViewController(url: url)
+        controller.preferredControlTintColor = UIColor(Color.neonMagenta)
+        return controller
+    }
+
+    func updateUIViewController(_ controller: SFSafariViewController, context: Context) {}
 }
 
 #Preview {

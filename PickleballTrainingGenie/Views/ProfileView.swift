@@ -150,6 +150,26 @@ struct ProfileView: View {
 
                         Divider().padding(.horizontal)
 
+                        NavigationLink {
+                            VideoReviewView()
+                        } label: {
+                            HStack {
+                                Image(systemName: "video.fill")
+                                    .foregroundColor(.solarGold)
+                                    .frame(width: 28)
+                                Text("Video Self-Review")
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                        }
+                        .foregroundColor(.primary)
+
+                        Divider().padding(.horizontal)
+
                         Button {
                             showEditProfile = true
                         } label: {

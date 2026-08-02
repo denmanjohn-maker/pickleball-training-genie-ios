@@ -99,6 +99,62 @@ class WorkoutHistoryViewModel: ObservableObject {
         TrainingStats.sessionsThisWeek(sessionDates: sessionDates)
     }
 
+    /// Per-category self-rating averages: the last 5 sessions vs the 10
+    /// before them. This is skill movement, not volume — the number a
+    /// coach would actually watch.
+    struct CategoryTrend: Identifiable {
+        enum Direction {
+            case up, down, flat
+        }
+
+        let category: String
+        let recentAverage: Double
+        let direction: Direction?  // nil when there's no earlier data to compare
+
+        var id: String { category }
+    }
+
+    var categoryTrends: [CategoryTrend] {
+        // `sessions` is newest-first from the API.
+        let recentRatings = ratingsByCategory(in: sessions.prefix(5))
+        guard !recentRatings.isEmpty else { return [] }
+        let earlierRatings = ratingsByCategory(in: sessions.dropFirst(5).prefix(10))
+
+        return recentRatings
+            .map { category, ratings in
+                let recent = average(ratings)
+                var direction: CategoryTrend.Direction?
+                if let earlier = earlierRatings[category].map(average) {
+                    if recent > earlier + 0.25 {
+                        direction = .up
+                    } else if recent < earlier - 0.25 {
+                        direction = .down
+                    } else {
+                        direction = .flat
+                    }
+                }
+                return CategoryTrend(category: category, recentAverage: recent, direction: direction)
+            }
+            .sorted { $0.recentAverage < $1.recentAverage }
+    }
+
+    private func ratingsByCategory<S: Sequence>(in sessions: S) -> [String: [Int]]
+    where S.Element == WorkoutSessionResponse {
+        var result: [String: [Int]] = [:]
+        for session in sessions {
+            for drill in session.drills {
+                if let rating = drill.selfRating {
+                    result[drill.category, default: []].append(rating)
+                }
+            }
+        }
+        return result
+    }
+
+    private func average(_ values: [Int]) -> Double {
+        values.isEmpty ? 0 : Double(values.reduce(0, +)) / Double(values.count)
+    }
+
     func load() async {
         isLoading = true
         errorMessage = nil

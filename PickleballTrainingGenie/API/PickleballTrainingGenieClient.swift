@@ -72,6 +72,9 @@ struct WorkoutSessionDrillPayload: Codable, Identifiable, Sendable {
     let durationMinutes: Int
     let coachingNotes: String?
     let isCompleted: Bool
+    /// 1 (struggled) … 5 (nailed it); nil when the player didn't rate.
+    /// Optional so decoding stays compatible with backends that predate it.
+    var selfRating: Int?
 
     var id: String { title }
 }
@@ -80,6 +83,8 @@ struct CompleteWorkoutSessionRequest: Encodable, Sendable {
     let durationMinutes: Int
     let warmup: String?
     let cooldown: String?
+    /// Free-form journal note. Optional; older backends ignore unknown fields.
+    let notes: String?
     let drills: [WorkoutSessionDrillPayload]
 }
 
@@ -89,6 +94,7 @@ struct WorkoutSessionResponse: Codable, Identifiable, Sendable {
     let durationMinutes: Int
     let warmup: String?
     let cooldown: String?
+    let notes: String?
     let drills: [WorkoutSessionDrillPayload]
 }
 
