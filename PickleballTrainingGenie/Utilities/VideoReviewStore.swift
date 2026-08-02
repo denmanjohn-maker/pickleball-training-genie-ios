@@ -25,8 +25,13 @@ final class VideoReviewStore: ObservableObject {
     private init() {
         let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         directory = documents?.appendingPathComponent("VideoReview", isDirectory: true)
-        if let directory {
+        if var directory {
             try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            // "Clips never leave your device" must include iCloud backup —
+            // exclude the whole folder so recordings are never uploaded.
+            var values = URLResourceValues()
+            values.isExcludedFromBackup = true
+            try? directory.setResourceValues(values)
         }
         load()
     }

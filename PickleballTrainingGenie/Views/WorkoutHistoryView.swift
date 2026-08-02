@@ -171,7 +171,7 @@ private struct SkillTrendsCard: View {
                 HStack {
                     CategoryBadge(category: trend.category)
                     Spacer()
-                    Text(String(format: "%.1f / 5", trend.recentAverage))
+                    Text("\(trend.recentAverage.formatted(.number.precision(.fractionLength(1)))) / 5")
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .monospacedDigit()
