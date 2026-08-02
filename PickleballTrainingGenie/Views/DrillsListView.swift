@@ -88,6 +88,9 @@ struct DrillsListView: View {
                 } else if displayedDrills.isEmpty {
                     ContentUnavailableView.search(text: searchText)
                 } else {
+                    if let cachedDate = drillsViewModel.cachedDrillsDate {
+                        OfflineBanner(savedAt: cachedDate)
+                    }
                     if let notice = drillsViewModel.levelFallbackNotice {
                         LevelFallbackBanner(
                             requested: notice.requested,
@@ -141,6 +144,25 @@ struct DrillsListView: View {
         }
     }
 
+}
+
+/// Shown when the network failed and the list is serving the last good fetch.
+private struct OfflineBanner: View {
+    let savedAt: Date
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "wifi.slash")
+                .foregroundColor(.solarGold)
+            Text("Offline — showing drills saved \(savedAt.formatted(date: .abbreviated, time: .shortened)).")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color.solarGold.opacity(0.08))
+    }
 }
 
 /// Shown when the selected level has no drills yet and the list is

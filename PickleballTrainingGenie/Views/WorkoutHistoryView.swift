@@ -87,25 +87,41 @@ private struct HistoryListView: View {
     }
 
     private var statsHeader: some View {
-        HStack(spacing: 12) {
-            HistoryStatCard(
-                value: "\(viewModel.totalSessionCount)",
-                label: "Workouts",
-                icon: "bolt.fill",
-                color: .neonMagenta
-            )
-            HistoryStatCard(
-                value: "\(viewModel.totalMinutesTrained)",
-                label: "Minutes",
-                icon: "timer",
-                color: .neonCyan
-            )
-            HistoryStatCard(
-                value: "\(viewModel.drillsMasteredCount)",
-                label: "Drills Mastered",
-                icon: "checkmark.seal.fill",
-                color: .solarGold
-            )
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                HistoryStatCard(
+                    value: "\(viewModel.totalSessionCount)",
+                    label: "Workouts",
+                    icon: "bolt.fill",
+                    color: .neonMagenta
+                )
+                HistoryStatCard(
+                    value: "\(viewModel.totalMinutesTrained)",
+                    label: "Minutes",
+                    icon: "timer",
+                    color: .neonCyan
+                )
+                HistoryStatCard(
+                    value: "\(viewModel.drillsMasteredCount)",
+                    label: "Drills Mastered",
+                    icon: "checkmark.seal.fill",
+                    color: .solarGold
+                )
+            }
+            HStack(spacing: 12) {
+                HistoryStatCard(
+                    value: "\(viewModel.currentStreakDays)",
+                    label: "Day Streak",
+                    icon: "flame.fill",
+                    color: .orange
+                )
+                HistoryStatCard(
+                    value: "\(viewModel.sessionsThisWeek)/\(TrainingStats.weeklyGoal)",
+                    label: "This Week",
+                    icon: "calendar",
+                    color: .green
+                )
+            }
         }
     }
 }

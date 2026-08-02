@@ -50,6 +50,11 @@
 		AAAA000000000000006FCAFE /* SkillAssessmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000006ECAFE /* SkillAssessmentView.swift */; };
 		AAAA0000000000000071CAFE /* LearnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000070CAFE /* LearnView.swift */; };
 		AAAA0000000000000073CAFE /* LearnContent.json in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000072CAFE /* LearnContent.json */; };
+		AAAA0000000000000075CAFE /* GuidedSessionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000074CAFE /* GuidedSessionViewModel.swift */; };
+		AAAA0000000000000077CAFE /* GuidedSessionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000076CAFE /* GuidedSessionView.swift */; };
+		AAAA0000000000000079CAFE /* OfflineCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000078CAFE /* OfflineCache.swift */; };
+		AAAA000000000000007BCAFE /* TrainingReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007ACAFE /* TrainingReminders.swift */; };
+		AAAA000000000000007DCAFE /* TrainingStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007CCAFE /* TrainingStats.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +103,11 @@
 		AAAA000000000000006ECAFE /* SkillAssessmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillAssessmentView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000070CAFE /* LearnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000072CAFE /* LearnContent.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LearnContent.json; sourceTree = "<group>"; };
+		AAAA0000000000000074CAFE /* GuidedSessionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidedSessionViewModel.swift; sourceTree = "<group>"; };
+		AAAA0000000000000076CAFE /* GuidedSessionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidedSessionView.swift; sourceTree = "<group>"; };
+		AAAA0000000000000078CAFE /* OfflineCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCache.swift; sourceTree = "<group>"; };
+		AAAA000000000000007ACAFE /* TrainingReminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingReminders.swift; sourceTree = "<group>"; };
+		AAAA000000000000007CCAFE /* TrainingStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingStats.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +179,7 @@
 				AAAA0000000000000055CAFE /* EditProfileView.swift */,
 				AAAA000000000000006ECAFE /* SkillAssessmentView.swift */,
 				AAAA0000000000000070CAFE /* LearnView.swift */,
+				AAAA0000000000000076CAFE /* GuidedSessionView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -178,6 +189,7 @@
 			children = (
 				AAAA000000000000006ACAFE /* SkillLevel.swift */,
 				AAAA000000000000006CCAFE /* SkillAssessment.swift */,
+				AAAA000000000000007CCAFE /* TrainingStats.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -190,6 +202,7 @@
 				AAAA000000000000003ECAFE /* TournamentsViewModel.swift */,
 				AAAA000000000000004DCAFE /* OnboardingViewModel.swift */,
 				AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */,
+				AAAA0000000000000074CAFE /* GuidedSessionViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -221,6 +234,8 @@
 				AAAA0000000000000059CAFE /* ZipCityMatcher.swift */,
 				AAAA000000000000005BCAFE /* ImageResizing.swift */,
 				AAAA0000000000000067CAFE /* AppInfo.swift */,
+				AAAA0000000000000078CAFE /* OfflineCache.swift */,
+				AAAA000000000000007ACAFE /* TrainingReminders.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -370,6 +385,11 @@
 				AAAA000000000000006DCAFE /* SkillAssessment.swift in Sources */,
 				AAAA000000000000006FCAFE /* SkillAssessmentView.swift in Sources */,
 				AAAA0000000000000071CAFE /* LearnView.swift in Sources */,
+				AAAA0000000000000075CAFE /* GuidedSessionViewModel.swift in Sources */,
+				AAAA0000000000000077CAFE /* GuidedSessionView.swift in Sources */,
+				AAAA0000000000000079CAFE /* OfflineCache.swift in Sources */,
+				AAAA000000000000007BCAFE /* TrainingReminders.swift in Sources */,
+				AAAA000000000000007DCAFE /* TrainingStats.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -171,6 +171,10 @@ struct ProfileView: View {
                     .pickleballCard()
                     .padding(.horizontal)
 
+                    // Training habits — weekly goal + reminders
+                    TrainingHabitsCard()
+                        .padding(.horizontal)
+
                     // Player details
                     if let user = authViewModel.currentUser, hasPlayerDetails(user) {
                         VStack(alignment: .leading, spacing: 12) {
@@ -383,6 +387,125 @@ struct ProfileView: View {
             || user.yearsPlaying != nil || user.preferredSessionDurationMinutes != nil
     }
 
+}
+
+/// Weekly training goal and local reminder notifications. All state is
+/// on-device: goal in UserDefaults, reminders via UNUserNotificationCenter.
+private struct TrainingHabitsCard: View {
+    @State private var weeklyGoal = TrainingStats.weeklyGoal
+    @State private var remindersEnabled = TrainingReminders.isEnabled
+    @State private var selectedWeekdays = TrainingReminders.savedWeekdays
+    @State private var reminderTime = TrainingHabitsCard.initialTime
+    @State private var showPermissionDenied = false
+
+    // 1 = Sunday … 7 = Saturday, matching DateComponents.weekday.
+    private static let weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"]
+
+    private static var initialTime: Date {
+        let saved = TrainingReminders.savedTime
+        return Calendar.current.date(
+            bySettingHour: saved.hour, minute: saved.minute, second: 0, of: Date()
+        ) ?? Date()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Label("Training Habits", systemImage: "flame.fill")
+                .font(.headline)
+                .foregroundColor(.starlight)
+
+            Stepper(value: $weeklyGoal, in: 1...14) {
+                HStack {
+                    Text("Weekly goal")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("\(weeklyGoal) session\(weeklyGoal == 1 ? "" : "s")")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                }
+            }
+            .onChange(of: weeklyGoal) { _, newValue in
+                TrainingStats.weeklyGoal = newValue
+            }
+
+            Divider()
+
+            Toggle(isOn: $remindersEnabled) {
+                Text("Training reminders")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+            .tint(.neonMagenta)
+            .onChange(of: remindersEnabled) { _, isOn in
+                Task {
+                    if isOn {
+                        let allowed = await TrainingReminders.requestAuthorization()
+                        if !allowed {
+                            remindersEnabled = false
+                            showPermissionDenied = true
+                            return
+                        }
+                    }
+                    TrainingReminders.isEnabled = remindersEnabled
+                    await TrainingReminders.reschedule()
+                }
+            }
+
+            if remindersEnabled {
+                HStack(spacing: 8) {
+                    ForEach(1...7, id: \.self) { weekday in
+                        let isOn = selectedWeekdays.contains(weekday)
+                        Button {
+                            if isOn {
+                                selectedWeekdays.remove(weekday)
+                            } else {
+                                selectedWeekdays.insert(weekday)
+                            }
+                        } label: {
+                            Text(Self.weekdayLabels[weekday - 1])
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(isOn ? .black : .secondary)
+                                .frame(width: 32, height: 32)
+                                .background(isOn ? Color.neonMagenta : Color(.systemGray5))
+                                .clipShape(Circle())
+                        }
+                        .accessibilityLabel(accessibilityName(for: weekday))
+                        .accessibilityAddTraits(isOn ? .isSelected : [])
+                    }
+                }
+                .onChange(of: selectedWeekdays) { _, newValue in
+                    TrainingReminders.savedWeekdays = newValue
+                    Task { await TrainingReminders.reschedule() }
+                }
+
+                DatePicker(
+                    "Reminder time",
+                    selection: $reminderTime,
+                    displayedComponents: .hourAndMinute
+                )
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .onChange(of: reminderTime) { _, newValue in
+                    let components = Calendar.current.dateComponents([.hour, .minute], from: newValue)
+                    TrainingReminders.savedTime = (components.hour ?? 17, components.minute ?? 0)
+                    Task { await TrainingReminders.reschedule() }
+                }
+            }
+        }
+        .padding()
+        .pickleballCard()
+        .alert("Notifications Are Off", isPresented: $showPermissionDenied) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Enable notifications for Pickleball Genie in Settings to get training reminders.")
+        }
+    }
+
+    private func accessibilityName(for weekday: Int) -> String {
+        Calendar.current.weekdaySymbols[weekday - 1]
+    }
 }
 
 private struct DUPRStatRow: View {
