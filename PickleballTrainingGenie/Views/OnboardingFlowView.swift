@@ -269,6 +269,7 @@ private struct OnboardingCityPicker: View {
 
 private struct RatingsStepView: View {
     @ObservedObject var viewModel: OnboardingViewModel
+    @State private var showSkillCheck = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -280,6 +281,30 @@ private struct RatingsStepView: View {
             Text("Don't have an official DUPR rating? Pick your best guess — you can change it anytime.")
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+            Button {
+                showSkillCheck = true
+            } label: {
+                HStack {
+                    Image(systemName: "questionmark.circle.fill")
+                    Text("Not sure? Take the 60-second skill check")
+                        .fontWeight(.medium)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                }
+                .font(.subheadline)
+                .foregroundColor(.neonMagenta)
+                .padding(12)
+                .background(Color.neonMagenta.opacity(0.1))
+                .cornerRadius(10)
+            }
+            .sheet(isPresented: $showSkillCheck) {
+                SkillAssessmentView { result in
+                    viewModel.apply(assessment: result)
+                    showSkillCheck = false
+                }
+            }
 
             duprPicker(title: "Singles DUPR", selection: $viewModel.singlesDUPR)
             duprPicker(title: "Doubles DUPR", selection: $viewModel.doublesDUPR)
@@ -298,17 +323,31 @@ private struct RatingsStepView: View {
     }
 
     private func duprPicker(title: String, selection: Binding<Decimal>) -> some View {
+        SkillLevelPicker(title: title, selection: selection)
+    }
+}
+
+/// Segmented level picker that scales to the full 2.0–5.0 range: numeric
+/// segments, with the selected tier's plain-language name underneath.
+struct SkillLevelPicker: View {
+    let title: String
+    @Binding var selection: Decimal
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title)
                 .font(.caption)
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)
-            Picker(title, selection: selection) {
-                ForEach(viewModel.duprOptions, id: \.0) { value, label in
-                    Text(label).tag(value)
+            Picker(title, selection: $selection) {
+                ForEach(SkillLevel.allCases) { level in
+                    Text(level.shortLabel).tag(level.value)
                 }
             }
             .pickerStyle(.segmented)
+            Text(SkillLevel.nearest(to: selection).name)
+                .font(.caption2)
+                .foregroundColor(SkillLevel.nearest(to: selection).color)
         }
     }
 }

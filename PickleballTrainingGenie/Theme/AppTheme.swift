@@ -178,23 +178,11 @@ struct SecondaryButtonStyle: ButtonStyle {
 struct DUPRBadge: View {
     let level: Decimal
 
-    var label: String {
-        switch level {
-        case 5.0...: return "Pro"
-        case 4.0..<5.0: return "Advanced"
-        case 3.5..<4.0: return "Intermediate"
-        default: return "Beginner"
-        }
-    }
+    private var skillLevel: SkillLevel { .nearest(to: level) }
 
-    var color: Color {
-        switch level {
-        case 5.0...: return .neonMagenta
-        case 4.0..<5.0: return .cosmicPurple
-        case 3.5..<4.0: return .solarGold
-        default: return .neonCyan
-        }
-    }
+    var label: String { skillLevel.name }
+
+    var color: Color { skillLevel.color }
 
     var body: some View {
         Text("DUPR \(level.duprString()) · \(label)")

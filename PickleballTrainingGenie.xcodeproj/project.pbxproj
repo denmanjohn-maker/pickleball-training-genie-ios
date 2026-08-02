@@ -45,6 +45,11 @@
 		AAAA0000000000000062CAFE /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = AAAA0000000000000061CAFE /* GoogleSignIn */; };
 		AAAA0000000000000066CAFE /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000065CAFE /* PrivacyInfo.xcprivacy */; };
 		AAAA0000000000000068CAFE /* AppInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000067CAFE /* AppInfo.swift */; };
+		AAAA000000000000006BCAFE /* SkillLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000006ACAFE /* SkillLevel.swift */; };
+		AAAA000000000000006DCAFE /* SkillAssessment.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000006CCAFE /* SkillAssessment.swift */; };
+		AAAA000000000000006FCAFE /* SkillAssessmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000006ECAFE /* SkillAssessmentView.swift */; };
+		AAAA0000000000000071CAFE /* LearnView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000070CAFE /* LearnView.swift */; };
+		AAAA0000000000000073CAFE /* LearnContent.json in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000072CAFE /* LearnContent.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +93,11 @@
 		AAAA000000000000005FCAFE /* PickleballTrainingGenie.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PickleballTrainingGenie.entitlements; sourceTree = "<group>"; };
 		AAAA0000000000000065CAFE /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AAAA0000000000000067CAFE /* AppInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInfo.swift; sourceTree = "<group>"; };
+		AAAA000000000000006ACAFE /* SkillLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillLevel.swift; sourceTree = "<group>"; };
+		AAAA000000000000006CCAFE /* SkillAssessment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillAssessment.swift; sourceTree = "<group>"; };
+		AAAA000000000000006ECAFE /* SkillAssessmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillAssessmentView.swift; sourceTree = "<group>"; };
+		AAAA0000000000000070CAFE /* LearnView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LearnView.swift; sourceTree = "<group>"; };
+		AAAA0000000000000072CAFE /* LearnContent.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = LearnContent.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +134,7 @@
 				AAAA0000000000000013CAFE /* PickleballTrainingGenieApp.swift */,
 				AAAA0000000000000014CAFE /* ContentView.swift */,
 				AAAA000000000000002DCAFE /* API */,
+				AAAA0000000000000069CAFE /* Models */,
 				AAAA000000000000000FCAFE /* Views */,
 				AAAA0000000000000010CAFE /* ViewModels */,
 				AAAA0000000000000011CAFE /* Theme */,
@@ -156,8 +167,19 @@
 				AAAA0000000000000051CAFE /* OnboardingFlowView.swift */,
 				AAAA0000000000000053CAFE /* WorkoutHistoryView.swift */,
 				AAAA0000000000000055CAFE /* EditProfileView.swift */,
+				AAAA000000000000006ECAFE /* SkillAssessmentView.swift */,
+				AAAA0000000000000070CAFE /* LearnView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AAAA0000000000000069CAFE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AAAA000000000000006ACAFE /* SkillLevel.swift */,
+				AAAA000000000000006CCAFE /* SkillAssessment.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		AAAA0000000000000010CAFE /* ViewModels */ = {
@@ -208,6 +230,7 @@
 			children = (
 				AAAA000000000000004ACAFE /* SplashVideo.mp4 */,
 				AAAA000000000000005DCAFE /* ZipPrefixCentroids.json */,
+				AAAA0000000000000072CAFE /* LearnContent.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -299,6 +322,7 @@
 				AAAA000000000000004BCAFE /* SplashVideo.mp4 in Resources */,
 				AAAA000000000000005ECAFE /* ZipPrefixCentroids.json in Resources */,
 				AAAA0000000000000066CAFE /* PrivacyInfo.xcprivacy in Resources */,
+				AAAA0000000000000073CAFE /* LearnContent.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +366,10 @@
 				AAAA000000000000005ACAFE /* ZipCityMatcher.swift in Sources */,
 				AAAA000000000000005CCAFE /* ImageResizing.swift in Sources */,
 				AAAA0000000000000068CAFE /* AppInfo.swift in Sources */,
+				AAAA000000000000006BCAFE /* SkillLevel.swift in Sources */,
+				AAAA000000000000006DCAFE /* SkillAssessment.swift in Sources */,
+				AAAA000000000000006FCAFE /* SkillAssessmentView.swift in Sources */,
+				AAAA0000000000000071CAFE /* LearnView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

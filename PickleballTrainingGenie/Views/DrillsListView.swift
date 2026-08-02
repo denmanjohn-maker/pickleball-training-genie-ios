@@ -52,13 +52,13 @@ struct DrillsListView: View {
                         ) {
                             drillsViewModel.selectedLevel = nil
                         }
-                        ForEach(drillsViewModel.duprLevels, id: \.self) { level in
+                        ForEach(SkillLevel.allCases) { level in
                             FilterChip(
-                                label: duprLabel(level),
-                                isSelected: drillsViewModel.selectedLevel == level
+                                label: "\(level.shortLabel) \(level.name)",
+                                isSelected: drillsViewModel.selectedLevel == level.value
                             ) {
                                 drillsViewModel.selectedLevel =
-                                    drillsViewModel.selectedLevel == level ? nil : level
+                                    drillsViewModel.selectedLevel == level.value ? nil : level.value
                             }
                         }
                     }
@@ -88,6 +88,12 @@ struct DrillsListView: View {
                 } else if displayedDrills.isEmpty {
                     ContentUnavailableView.search(text: searchText)
                 } else {
+                    if let notice = drillsViewModel.levelFallbackNotice {
+                        LevelFallbackBanner(
+                            requested: notice.requested,
+                            showing: notice.showing
+                        )
+                    }
                     List(displayedDrills) { drill in
                         DrillRowView(drill: drill, isCompleted: drillsViewModel.completedDrillIds.contains(drill.id))
                             .onTapGesture { selectedDrill = drill }
@@ -103,6 +109,15 @@ struct DrillsListView: View {
             .navigationTitle("Drills")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink {
+                        LearnView()
+                    } label: {
+                        Label("Learn", systemImage: "book.fill")
+                            .foregroundColor(.solarGold)
+                    }
+                    .accessibilityLabel("Learn the rules and fundamentals")
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         Task { await drillsViewModel.loadDrills() }
@@ -110,6 +125,7 @@ struct DrillsListView: View {
                         Image(systemName: "arrow.clockwise")
                             .foregroundColor(.neonCyan)
                     }
+                    .accessibilityLabel("Refresh drills")
                 }
             }
             .searchable(text: $searchText, prompt: "Search drills…")
@@ -125,13 +141,26 @@ struct DrillsListView: View {
         }
     }
 
-    private func duprLabel(_ level: Decimal) -> String {
-        switch level {
-        case 5.0...: return "5.0 Pro"
-        case 4.0..<5.0: return "4.0 Advanced"
-        case 3.5..<4.0: return "3.5 Intermediate"
-        default: return "3.0 Beginner"
+}
+
+/// Shown when the selected level has no drills yet and the list is
+/// substituting the nearest populated level.
+private struct LevelFallbackBanner: View {
+    let requested: Decimal
+    let showing: Decimal
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "info.circle.fill")
+                .foregroundColor(.neonCyan)
+            Text("No \(requested.duprString()) drills yet — showing the closest level (\(showing.duprString())).")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            Spacer()
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color.neonCyan.opacity(0.08))
     }
 }
 
