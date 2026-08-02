@@ -123,7 +123,7 @@ struct GenerateWorkoutRequest: Codable, Sendable {
     let durationMinutes: Int?
 }
 
-struct WorkoutDrillItem: Codable, Identifiable, Sendable {
+struct WorkoutDrillItem: Codable, Identifiable, Sendable, Equatable {
     let title: String
     let category: String
     let durationMinutes: Int
