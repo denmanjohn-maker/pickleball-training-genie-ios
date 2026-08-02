@@ -37,19 +37,34 @@ struct RecommendationsView: View {
                         .tint(.neonMagenta)
                     }
                 } else {
-                    List(drillsViewModel.recommendations) { drill in
-                        DrillRowView(
-                            drill: drill,
-                            isCompleted: drillsViewModel.completedDrillIds.contains(drill.id)
-                        )
-                        .onTapGesture { selectedDrill = drill }
-                        .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
+                    VStack(spacing: 0) {
+                        if let savedAt = drillsViewModel.cachedRecommendationsDate {
+                            HStack(spacing: 8) {
+                                Image(systemName: "wifi.slash")
+                                    .foregroundColor(.solarGold)
+                                Text("Offline — showing recommendations saved \(savedAt.formatted(date: .abbreviated, time: .shortened)).")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.solarGold.opacity(0.08))
+                        }
+                        List(drillsViewModel.recommendations) { drill in
+                            DrillRowView(
+                                drill: drill,
+                                isCompleted: drillsViewModel.completedDrillIds.contains(drill.id)
+                            )
+                            .onTapGesture { selectedDrill = drill }
+                            .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
+                        }
+                        .listStyle(.plain)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.deepSpace)
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                    .background(Color.deepSpace)
                 }
             }
             .navigationTitle("For You")

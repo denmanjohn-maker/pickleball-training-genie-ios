@@ -20,7 +20,14 @@ struct GuidedSessionView: View {
                 SessionSummaryView(session: session) {
                     Task {
                         await drillsViewModel.completeWorkout(completedIndices: session.completedDrillIndices)
-                        dismiss()
+                        // Stay on the summary if the save failed (e.g. no
+                        // signal) so the player can retry without losing
+                        // their completed/skipped state. completeWorkout
+                        // clears workoutError on entry, so nil here means
+                        // this save succeeded.
+                        if drillsViewModel.workoutError == nil {
+                            dismiss()
+                        }
                     }
                 } onDiscard: {
                     dismiss()

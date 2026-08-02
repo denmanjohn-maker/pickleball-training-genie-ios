@@ -74,9 +74,11 @@ final class GuidedSessionViewModel: ObservableObject {
 
     var totalDrillCount: Int { workout.drills.count }
 
+    /// 1-based so the bar shows progress on the first step and fills
+    /// completely on the last, matching the "Step x of N" label beside it.
     var progressFraction: Double {
         guard !steps.isEmpty else { return 0 }
-        return Double(min(stepIndex, steps.count)) / Double(steps.count)
+        return Double(min(stepIndex + 1, steps.count)) / Double(steps.count)
     }
 
     // MARK: - Lifecycle

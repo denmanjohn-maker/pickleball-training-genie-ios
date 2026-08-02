@@ -438,7 +438,7 @@ private struct TrainingHabitsCard: View {
             }
             .tint(.neonMagenta)
             .onChange(of: remindersEnabled) { _, isOn in
-                Task {
+                Task { @MainActor in
                     if isOn {
                         let allowed = await TrainingReminders.requestAuthorization()
                         if !allowed {
@@ -447,7 +447,10 @@ private struct TrainingHabitsCard: View {
                             return
                         }
                     }
-                    TrainingReminders.isEnabled = remindersEnabled
+                    // Persist the captured value, not current state — the
+                    // toggle may have flipped again while authorization was
+                    // in flight (each flip runs its own task).
+                    TrainingReminders.isEnabled = isOn
                     await TrainingReminders.reschedule()
                 }
             }
