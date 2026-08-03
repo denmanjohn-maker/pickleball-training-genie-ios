@@ -8,6 +8,7 @@ struct ProfileView: View {
     @State private var showEditRatings = false
     @State private var showEditProfile = false
     @State private var showAvatarPicker = false
+    @State private var showTutorial = false
 
     var body: some View {
         NavigationStack {
@@ -178,6 +179,26 @@ struct ProfileView: View {
                                     .foregroundColor(.neonCyan)
                                     .frame(width: 28)
                                 Text("Edit Profile")
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                        }
+                        .foregroundColor(.primary)
+
+                        Divider().padding(.horizontal)
+
+                        Button {
+                            showTutorial = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "questionmark.circle.fill")
+                                    .foregroundColor(.solarGold)
+                                    .frame(width: 28)
+                                Text("App Tutorial")
                                     .fontWeight(.medium)
                                 Spacer()
                                 Image(systemName: "chevron.right")
@@ -368,6 +389,9 @@ struct ProfileView: View {
                             }
                         }
                 }
+            }
+            .fullScreenCover(isPresented: $showTutorial) {
+                AppTutorialView(onComplete: { showTutorial = false })
             }
             .sheet(isPresented: $showAvatarPicker) {
                 NavigationStack {

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
+    @AppStorage("tutorial.hasSeenAppIntro") private var hasSeenAppIntro = false
 
     var body: some View {
         if authViewModel.isAuthenticated {
@@ -9,6 +10,8 @@ struct RootView: View {
                 if user.needsOnboarding {
                     OnboardingFlowView()
                         .environmentObject(authViewModel)
+                } else if !hasSeenAppIntro {
+                    AppTutorialView(onComplete: { hasSeenAppIntro = true })
                 } else {
                     MainTabView()
                         .environmentObject(authViewModel)
