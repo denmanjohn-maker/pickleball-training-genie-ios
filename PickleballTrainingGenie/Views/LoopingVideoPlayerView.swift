@@ -11,6 +11,10 @@ struct LoopingVideoPlayerView: UIViewRepresentable {
     func makeUIView(context: Context) -> PlayerContainerView {
         let view = PlayerContainerView()
         view.isUserInteractionEnabled = false
+        view.backgroundColor = .clear
+        view.isOpaque = false
+        view.playerLayer.backgroundColor = UIColor.clear.cgColor
+        view.playerLayer.isOpaque = false
 
         guard let url = Bundle.main.url(forResource: resourceName, withExtension: resourceExtension) else {
             return view

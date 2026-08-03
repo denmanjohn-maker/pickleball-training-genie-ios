@@ -32,7 +32,7 @@
 		AAAA0000000000000043CAFE /* CityPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000044CAFE /* CityPickerView.swift */; };
 		AAAA0000000000000045CAFE /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000046CAFE /* DateFormatting.swift */; };
 		AAAA0000000000000049CAFE /* LoopingVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000048CAFE /* LoopingVideoPlayerView.swift */; };
-		AAAA000000000000004BCAFE /* SplashVideo.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004ACAFE /* SplashVideo.mp4 */; };
+		AAAA000000000000004BCAFE /* SplashVideo.mov in Resources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004ACAFE /* SplashVideo.mov */; };
 		AAAA000000000000004ECAFE /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004DCAFE /* OnboardingViewModel.swift */; };
 		AAAA0000000000000050CAFE /* WorkoutHistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */; };
 		AAAA0000000000000052CAFE /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000051CAFE /* OnboardingFlowView.swift */; };
@@ -89,7 +89,7 @@
 		AAAA0000000000000046CAFE /* DateFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateFormatting.swift; sourceTree = "<group>"; };
 		AAAA0000000000000047CAFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAAA0000000000000048CAFE /* LoopingVideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopingVideoPlayerView.swift; sourceTree = "<group>"; };
-		AAAA000000000000004ACAFE /* SplashVideo.mp4 */ = {isa = PBXFileReference; lastKnownFileType = video.mpeg4; path = SplashVideo.mp4; sourceTree = "<group>"; };
+		AAAA000000000000004ACAFE /* SplashVideo.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = SplashVideo.mov; sourceTree = "<group>"; };
 		AAAA000000000000004DCAFE /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryViewModel.swift; sourceTree = "<group>"; };
 		AAAA0000000000000051CAFE /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
@@ -255,7 +255,7 @@
 		AAAA000000000000004CCAFE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				AAAA000000000000004ACAFE /* SplashVideo.mp4 */,
+				AAAA000000000000004ACAFE /* SplashVideo.mov */,
 				AAAA000000000000005DCAFE /* ZipPrefixCentroids.json */,
 				AAAA0000000000000072CAFE /* LearnContent.json */,
 			);
@@ -346,7 +346,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAAA0000000000000021CAFE /* Assets.xcassets in Resources */,
-				AAAA000000000000004BCAFE /* SplashVideo.mp4 in Resources */,
+				AAAA000000000000004BCAFE /* SplashVideo.mov in Resources */,
 				AAAA000000000000005ECAFE /* ZipPrefixCentroids.json in Resources */,
 				AAAA0000000000000066CAFE /* PrivacyInfo.xcprivacy in Resources */,
 				AAAA0000000000000073CAFE /* LearnContent.json in Resources */,

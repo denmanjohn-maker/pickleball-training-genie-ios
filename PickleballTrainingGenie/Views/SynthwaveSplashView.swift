@@ -45,35 +45,16 @@ struct SynthwaveSplashView: View {
         }
     }
 
-    /// Center-cropped genie video framed in neon, floating on a cosmic aura
-    /// so the footage's dark backdrop melts into the synthwave gradient.
+    /// Genie video with a real alpha channel, floating on a cosmic aura
+    /// with no frame or crop needed since the background is transparent.
     private var genieHero: some View {
         LoopingVideoPlayerView(
             resourceName: "SplashVideo",
-            resourceExtension: "mp4",
-            videoGravity: .resizeAspectFill
+            resourceExtension: "mov",
+            videoGravity: .resizeAspect
         )
-        .aspectRatio(1, contentMode: .fit)
+        .aspectRatio(854.0 / 480.0, contentMode: .fit)
         .frame(maxWidth: 320)
-        .clipShape(RoundedRectangle(cornerRadius: 28))
-        .overlay(
-            // Soft inner vignette so the crop line fades into the frame
-            RoundedRectangle(cornerRadius: 28)
-                .strokeBorder(Color.deepSpace.opacity(0.55), lineWidth: 12)
-                .blur(radius: 10)
-                .clipShape(RoundedRectangle(cornerRadius: 28))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 28)
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [.neonMagenta, .neonCyan],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1.5
-                )
-        )
         .background(
             RadialGradient(
                 colors: [Color.cosmicPurple.opacity(0.55), .clear],
