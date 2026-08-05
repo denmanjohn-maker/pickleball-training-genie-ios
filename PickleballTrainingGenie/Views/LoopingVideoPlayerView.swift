@@ -123,7 +123,7 @@ struct EdgeTrimmedLoopingVideoView: UIViewRepresentable {
                 object: item,
                 queue: .main
             ) { [weak player] _ in
-                player?.seek(to: .zero)
+                player?.seek(to: .zero, toleranceBefore: .zero, toleranceAfter: .zero)
                 player?.play()
             }
 
@@ -162,8 +162,10 @@ struct EdgeTrimmedLoopingVideoView: UIViewRepresentable {
             super.didMoveToWindow()
             displayLink?.invalidate()
             displayLink = nil
-            guard window != nil else { return }
+            guard window != nil, videoOutput != nil else { return }
             let link = CADisplayLink(target: self, selector: #selector(renderFrame))
+            // The source video is 30fps; don't tick at ProMotion's 120Hz.
+            link.preferredFrameRateRange = CAFrameRateRange(minimum: 24, maximum: 60, preferred: 30)
             link.add(to: .main, forMode: .common)
             displayLink = link
         }
@@ -194,6 +196,7 @@ struct EdgeTrimmedLoopingVideoView: UIViewRepresentable {
         /// Shrinks the frame's alpha matte by `radius` pixels and feathers the
         /// cut, so the outermost edge pixels are dropped.
         private static func trimEdges(of source: CIImage, radius: CGFloat) -> CIImage {
+            guard radius > 0 else { return source }
             let alphaOnly = CIVector(x: 0, y: 0, z: 0, w: 1)
             let matte = source.applyingFilter("CIColorMatrix", parameters: [
                 "inputRVector": alphaOnly,
