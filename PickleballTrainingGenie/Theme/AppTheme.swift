@@ -91,6 +91,35 @@ struct SplitMix64: RandomNumberGenerator {
     }
 }
 
+// MARK: - Brand Wordmark
+
+/// Two-line brand wordmark: "PICKLEBALL" stretched to the available width,
+/// "GENIE" centered underneath. Used on the splash and login screens.
+struct GenieWordmark: View {
+    var body: some View {
+        VStack(spacing: 2) {
+            Text("PICKLEBALL")
+                .font(.system(size: 64, weight: .heavy, design: .rounded))
+                .kerning(3)
+                .lineLimit(1)
+                .minimumScaleFactor(0.4)
+                .frame(maxWidth: .infinity)
+            Text("GENIE")
+                .font(.system(size: 40, weight: .heavy, design: .rounded))
+                .kerning(12)
+        }
+        .multilineTextAlignment(.center)
+        .foregroundStyle(
+            LinearGradient(
+                colors: [.neonMagenta, .neonCyan],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+        .neonGlow(.neonMagenta, radius: 10)
+    }
+}
+
 // MARK: - Card Modifier
 
 struct SynthwaveCardBackground: ViewModifier {

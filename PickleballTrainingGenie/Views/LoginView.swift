@@ -17,39 +17,19 @@ struct LoginView: View {
                     VStack(spacing: 32) {
                         // Header
                         VStack(spacing: 16) {
+                            GenieWordmark()
+
                             Image("Genie")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 130)
-                                .background(
-                                    RadialGradient(
-                                        colors: [Color.cosmicPurple.opacity(0.5), .clear],
-                                        center: .center,
-                                        startRadius: 0,
-                                        endRadius: 110
-                                    )
-                                    .frame(width: 220, height: 220)
-                                    .allowsHitTesting(false)
-                                )
-                                .neonGlow(.neonMagenta, radius: 14)
-
-                            Text("Pickleball Genie")
-                                .font(.system(size: 30, weight: .heavy, design: .rounded))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.neonMagenta, .neonCyan],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .neonGlow(.neonMagenta, radius: 8)
+                                .frame(height: 150)
 
                             Text("Your AI-powered training coach")
                                 .font(.subheadline)
                                 .fontWeight(.medium)
                                 .foregroundColor(.white.opacity(0.9))
                         }
-                        .padding(.top, 40)
+                        .padding(.top, 24)
 
                         // Form Card
                         VStack(spacing: 20) {
