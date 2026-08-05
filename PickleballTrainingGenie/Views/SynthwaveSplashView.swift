@@ -3,7 +3,6 @@ import SwiftUI
 struct SynthwaveSplashView: View {
     let onComplete: () -> Void
     @State private var appeared = false
-    @State private var auraBreathing = false
 
     var body: some View {
         ZStack {
@@ -11,23 +10,17 @@ struct SynthwaveSplashView: View {
             StarFieldView()
                 .ignoresSafeArea()
 
-            VStack(spacing: 32) {
+            VStack(spacing: 24) {
+                GenieWordmark()
+
+                Spacer(minLength: 0)
+
                 genieHero
 
-                Text("PICKLEBALL GENIE")
-                    .font(.system(size: 32, weight: .heavy, design: .rounded))
-                    .kerning(2)
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [.neonMagenta, .neonCyan],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .neonGlow(.neonMagenta, radius: 10)
+                Spacer(minLength: 0)
             }
-            .padding(.horizontal, 24)
+            .padding(.top, 16)
+            .padding(.horizontal, 16)
             .scaleEffect(appeared ? 1.0 : 0.94)
             .opacity(appeared ? 1 : 0)
         }
@@ -35,9 +28,6 @@ struct SynthwaveSplashView: View {
         .onTapGesture(perform: onComplete)
         .onAppear {
             withAnimation(ECAnimation.snappyVolley) { appeared = true }
-            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
-                auraBreathing = true
-            }
         }
         .task {
             try? await Task.sleep(for: .seconds(2.0))
@@ -45,29 +35,19 @@ struct SynthwaveSplashView: View {
         }
     }
 
-    /// Genie video with a real alpha channel, floating on a cosmic aura
-    /// with no frame or crop needed since the background is transparent.
+    /// Genie video with a real alpha channel. The source frame is wide
+    /// (854×480) with the genie centered in roughly the middle 432×448 px,
+    /// so an aspect-fill crop at that aspect trims the empty side margins
+    /// and lets the genie render large.
     private var genieHero: some View {
         LoopingVideoPlayerView(
             resourceName: "SplashVideo",
             resourceExtension: "mov",
-            videoGravity: .resizeAspect
+            videoGravity: .resizeAspectFill
         )
-        .aspectRatio(854.0 / 480.0, contentMode: .fit)
-        .frame(maxWidth: 320)
-        .background(
-            RadialGradient(
-                colors: [Color.cosmicPurple.opacity(0.55), .clear],
-                center: .center,
-                startRadius: 0,
-                endRadius: 230
-            )
-            .frame(width: 460, height: 460)
-            .scaleEffect(auraBreathing ? 1.08 : 0.92)
-            .opacity(auraBreathing ? 1.0 : 0.7)
-            .allowsHitTesting(false)
-        )
-        .neonGlow(.neonMagenta, radius: 18)
+        .aspectRatio(432.0 / 448.0, contentMode: .fit)
+        .frame(maxWidth: 340)
+        .clipped()
     }
 }
 
