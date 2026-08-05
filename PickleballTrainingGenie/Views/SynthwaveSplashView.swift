@@ -38,7 +38,7 @@ struct SynthwaveSplashView: View {
     /// Still of the genie extracted from the splash video, pre-cropped to the
     /// character with the matte cleaned up (edge rim removed and feathered).
     private var genieHero: some View {
-        Image("SplashGenie")
+        Image(decorative: "SplashGenie")
             .resizable()
             .scaledToFit()
             .frame(maxWidth: 340)
