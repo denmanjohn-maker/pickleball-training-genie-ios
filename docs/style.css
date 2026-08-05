@@ -1,11 +1,11 @@
 :root {
-  --deep-space: #0b0a1a;
-  --nebula: #16142e;
-  --starlight: #eceaff;
-  --muted: #a7a2c8;
-  --cyan: #4fe3ff;
-  --magenta: #ff5cc8;
-  --gold: #ffc857;
+  --deep-space: #120A38;
+  --nebula: #241457;
+  --starlight: #F2EDFF;
+  --muted: #BDB3E0;
+  --cyan: #3EE6FF;
+  --magenta: #FF3EC8;
+  --gold: #FFB454;
 }
 
 * { box-sizing: border-box; }
