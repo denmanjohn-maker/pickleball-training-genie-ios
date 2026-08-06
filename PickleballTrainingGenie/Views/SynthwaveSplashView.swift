@@ -10,16 +10,21 @@ struct SynthwaveSplashView: View {
             StarFieldView()
                 .ignoresSafeArea()
 
-            VStack(spacing: 24) {
-                GenieWordmark()
+            VStack(spacing: 20) {
+                Spacer(minLength: 24)
 
-                Spacer(minLength: 0)
+                GenieWordmark()
+                    .padding(.horizontal, 8)
 
                 genieHero
 
+                Text("Your AI-powered training coach")
+                    .font(.subheadline.weight(.medium))
+                    .foregroundColor(.starlight.opacity(0.85))
+
+                Spacer(minLength: 24)
                 Spacer(minLength: 0)
             }
-            .padding(.top, 16)
             .padding(.horizontal, 16)
             .scaleEffect(appeared ? 1.0 : 0.94)
             .opacity(appeared ? 1 : 0)
@@ -41,7 +46,7 @@ struct SynthwaveSplashView: View {
         Image(decorative: "SplashGenie")
             .resizable()
             .scaledToFit()
-            .frame(maxWidth: 340)
+            .frame(maxWidth: 360)
     }
 }
 

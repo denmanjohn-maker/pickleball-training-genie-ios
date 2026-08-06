@@ -143,6 +143,9 @@ struct DrillsListView: View {
                     }
                     .accessibilityLabel("Refresh drills")
                 }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    GenieBrandIcon()
+                }
             }
             .searchable(text: $searchText, prompt: "Search drills…")
             .sheet(item: $selectedDrill) { drill in

@@ -70,6 +70,9 @@ struct RecommendationsView: View {
             .navigationTitle("For You")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    GenieBrandIcon()
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {
                         Task { await drillsViewModel.loadRecommendations() }

@@ -33,6 +33,9 @@
 		AAAA0000000000000045CAFE /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000046CAFE /* DateFormatting.swift */; };
 		AAAA0000000000000049CAFE /* LoopingVideoPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000048CAFE /* LoopingVideoPlayerView.swift */; };
 		AAAA000000000000004BCAFE /* SplashVideo.mov in Resources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004ACAFE /* SplashVideo.mov */; };
+		AAAA0000000000000089CAFE /* Orbitron-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000086CAFE /* Orbitron-Black.ttf */; };
+		AAAA000000000000008ACAFE /* Orbitron-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000087CAFE /* Orbitron-Bold.ttf */; };
+		AAAA000000000000008BCAFE /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000088CAFE /* OFL.txt */; };
 		AAAA000000000000004ECAFE /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004DCAFE /* OnboardingViewModel.swift */; };
 		AAAA0000000000000050CAFE /* WorkoutHistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */; };
 		AAAA0000000000000052CAFE /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000051CAFE /* OnboardingFlowView.swift */; };
@@ -90,6 +93,9 @@
 		AAAA0000000000000047CAFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAAA0000000000000048CAFE /* LoopingVideoPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoopingVideoPlayerView.swift; sourceTree = "<group>"; };
 		AAAA000000000000004ACAFE /* SplashVideo.mov */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = SplashVideo.mov; sourceTree = "<group>"; };
+		AAAA0000000000000086CAFE /* Orbitron-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Black.ttf"; sourceTree = "<group>"; };
+		AAAA0000000000000087CAFE /* Orbitron-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Orbitron-Bold.ttf"; sourceTree = "<group>"; };
+		AAAA0000000000000088CAFE /* OFL.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
 		AAAA000000000000004DCAFE /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryViewModel.swift; sourceTree = "<group>"; };
 		AAAA0000000000000051CAFE /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
@@ -258,6 +264,9 @@
 				AAAA000000000000004ACAFE /* SplashVideo.mov */,
 				AAAA000000000000005DCAFE /* ZipPrefixCentroids.json */,
 				AAAA0000000000000072CAFE /* LearnContent.json */,
+				AAAA0000000000000086CAFE /* Orbitron-Black.ttf */,
+				AAAA0000000000000087CAFE /* Orbitron-Bold.ttf */,
+				AAAA0000000000000088CAFE /* OFL.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -350,6 +359,9 @@
 				AAAA000000000000005ECAFE /* ZipPrefixCentroids.json in Resources */,
 				AAAA0000000000000066CAFE /* PrivacyInfo.xcprivacy in Resources */,
 				AAAA0000000000000073CAFE /* LearnContent.json in Resources */,
+				AAAA0000000000000089CAFE /* Orbitron-Black.ttf in Resources */,
+				AAAA000000000000008ACAFE /* Orbitron-Bold.ttf in Resources */,
+				AAAA000000000000008BCAFE /* OFL.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -52,6 +52,11 @@ struct TournamentsListView: View {
             }
             .navigationTitle("Tournaments")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    GenieBrandIcon()
+                }
+            }
             .sheet(isPresented: $showCityPicker) {
                 CityPickerView(viewModel: viewModel)
             }

@@ -170,6 +170,11 @@ struct WorkoutView: View {
             }
             .navigationTitle("Workout")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    GenieBrandIcon()
+                }
+            }
             .background(Color.deepSpace)
             .onChange(of: drillsViewModel.workout?.drills.count) { _, _ in
                 completedDrillIndices = []

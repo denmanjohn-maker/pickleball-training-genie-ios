@@ -12,6 +12,16 @@ extension Font {
     static let ecBody      = Font.system(size: 15, weight: .regular)
 }
 
+// MARK: - Brand Display Font
+// Orbitron (bundled in Resources/, registered via UIAppFonts in Info.plist).
+// Names are PostScript names — Font.custom silently falls back to SF Pro if
+// they don't match the bundled files.
+
+enum BrandFont {
+    static func black(_ size: CGFloat) -> Font { .custom("Orbitron-Black", size: size) }
+    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron-Bold", size: size) }
+}
+
 // MARK: - Animation
 
 enum ECAnimation {
@@ -93,30 +103,36 @@ struct SplitMix64: RandomNumberGenerator {
 
 // MARK: - Brand Wordmark
 
-/// Two-line brand wordmark: "PICKLEBALL" stretched to the available width,
-/// "GENIE" centered underneath. Used on the splash and login screens.
+/// Two-line brand wordmark in Orbitron: "PICKLEBALL" in starlight with a soft
+/// glow, "GENIE" letter-spaced in lamp gold underneath. Used on the splash and
+/// login screens. Each line cancels its trailing kern space with negative
+/// padding — `.kerning` adds a phantom space after the last glyph that would
+/// otherwise push the line off-center.
 struct GenieWordmark: View {
+    private let topKerning: CGFloat = 2
+    private let bottomKerning: CGFloat = 14
+
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 6) {
             Text("PICKLEBALL")
-                .font(.system(size: 64, weight: .heavy, design: .rounded))
-                .kerning(3)
-                .lineLimit(1)
-                .minimumScaleFactor(0.4)
-                .frame(maxWidth: .infinity)
+                .font(BrandFont.black(40))
+                .kerning(topKerning)
+                .padding(.trailing, -topKerning)
+                .foregroundStyle(Color.starlight)
+                .neonGlow(.starlight, radius: 8)
             Text("GENIE")
-                .font(.system(size: 40, weight: .heavy, design: .rounded))
-                .kerning(12)
+                .font(BrandFont.bold(26))
+                .kerning(bottomKerning)
+                .padding(.trailing, -bottomKerning)
+                .foregroundStyle(Color.solarGold)
+                .neonGlow(.solarGold, radius: 10)
         }
+        .lineLimit(1)
+        .minimumScaleFactor(0.5)
         .multilineTextAlignment(.center)
-        .foregroundStyle(
-            LinearGradient(
-                colors: [.neonMagenta, .neonCyan],
-                startPoint: .leading,
-                endPoint: .trailing
-            )
-        )
-        .neonGlow(.neonMagenta, radius: 10)
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Pickleball Genie")
     }
 }
 
@@ -240,24 +256,31 @@ struct CategoryBadge: View {
     }
 }
 
-struct PickleballHeaderView: View {
+// MARK: - Brand Icon
+
+/// Small circular genie mark for navigation bars — establishes the genie as
+/// the brand image across the app's screens. Decorative only: every screen
+/// that shows it already carries its own title.
+struct GenieBrandIcon: View {
+    var size: CGFloat = 34
+
     var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "figure.racquetball")
-                .font(.title2)
-                .foregroundColor(.neonMagenta)
-                .neonGlow(.neonMagenta, radius: 6)
-            Text("Pickleball Genie")
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundStyle(
+        Image("Genie")
+            .resizable()
+            .scaledToFill()
+            .frame(width: size, height: size)
+            .clipShape(Circle())
+            .overlay(
+                Circle().strokeBorder(
                     LinearGradient(
-                        colors: [.neonMagenta, .neonCyan],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
+                        colors: [.neonMagenta.opacity(0.8), .neonCyan.opacity(0.8)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 1.5
                 )
-        }
+            )
+            .accessibilityHidden(true)
     }
 }
 
