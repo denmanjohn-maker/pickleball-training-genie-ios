@@ -284,6 +284,17 @@ struct GenieBrandIcon: View {
     }
 }
 
+extension View {
+    /// Places the genie brand mark in the navigation bar.
+    func genieBrandIconToolbar(placement: ToolbarItemPlacement = .navigationBarLeading) -> some View {
+        toolbar {
+            ToolbarItem(placement: placement) {
+                GenieBrandIcon()
+            }
+        }
+    }
+}
+
 // MARK: - Utilities
 
 extension Decimal {
