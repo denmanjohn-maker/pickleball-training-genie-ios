@@ -333,6 +333,7 @@ struct ProfileView: View {
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
+            .genieBrandIconToolbar()
             .background(Color.deepSpace)
             .confirmationDialog(
                 "Sign out of Pickleball Genie?",

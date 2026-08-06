@@ -170,6 +170,7 @@ struct WorkoutView: View {
             }
             .navigationTitle("Workout")
             .navigationBarTitleDisplayMode(.large)
+            .genieBrandIconToolbar()
             .background(Color.deepSpace)
             .onChange(of: drillsViewModel.workout?.drills.count) { _, _ in
                 completedDrillIndices = []

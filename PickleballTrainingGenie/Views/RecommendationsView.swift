@@ -69,6 +69,7 @@ struct RecommendationsView: View {
             }
             .navigationTitle("For You")
             .navigationBarTitleDisplayMode(.large)
+            .genieBrandIconToolbar()
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button {

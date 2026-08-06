@@ -29,7 +29,7 @@ struct LoginView: View {
                                 .fontWeight(.medium)
                                 .foregroundColor(.white.opacity(0.9))
                         }
-                        .padding(.top, 24)
+                        .padding(.top, 32)
 
                         // Form Card
                         VStack(spacing: 20) {

@@ -27,6 +27,12 @@
 	<string>Pickleball Genie uses the camera to record practice clips so you can review your form in slow motion. Clips stay on your device.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>The microphone records audio with your practice clips. Recordings stay on your device.</string>
+	<!-- Orbitron (SIL OFL, see Resources/OFL.txt) — brand wordmark font. -->
+	<key>UIAppFonts</key>
+	<array>
+		<string>Orbitron-Black.ttf</string>
+		<string>Orbitron-Bold.ttf</string>
+	</array>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>

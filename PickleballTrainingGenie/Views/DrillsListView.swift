@@ -134,7 +134,7 @@ struct DrillsListView: View {
                     }
                     .accessibilityLabel("Learn the rules and fundamentals")
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button {
                         Task { await drillsViewModel.loadDrills() }
                     } label: {
@@ -142,6 +142,7 @@ struct DrillsListView: View {
                             .foregroundColor(.neonCyan)
                     }
                     .accessibilityLabel("Refresh drills")
+                    GenieBrandIcon()
                 }
             }
             .searchable(text: $searchText, prompt: "Search drills…")
