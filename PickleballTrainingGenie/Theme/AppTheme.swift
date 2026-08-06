@@ -260,7 +260,8 @@ struct CategoryBadge: View {
 
 /// Small circular genie mark for navigation bars — establishes the genie as
 /// the brand image across the app's screens. Decorative only: every screen
-/// that shows it already carries its own title.
+/// that shows it already carries its own title, so it ignores touches and is
+/// hidden from assistive technologies.
 struct GenieBrandIcon: View {
     var size: CGFloat = 34
 
@@ -281,6 +282,7 @@ struct GenieBrandIcon: View {
                 )
             )
             .accessibilityHidden(true)
+            .allowsHitTesting(false)
     }
 }
 
