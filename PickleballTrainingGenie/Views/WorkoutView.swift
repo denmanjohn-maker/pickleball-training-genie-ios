@@ -167,6 +167,7 @@ struct WorkoutView: View {
                     }
                 }
                 .padding(.vertical)
+                .readableWidth()
             }
             .navigationTitle("Workout")
             .navigationBarTitleDisplayMode(.large)

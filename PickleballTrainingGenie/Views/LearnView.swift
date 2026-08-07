@@ -124,6 +124,7 @@ struct LearnView: View {
                 }
             }
             .padding()
+            .readableWidth()
         }
         .background(Color.deepSpace)
         .navigationTitle("Learn")
@@ -167,6 +168,7 @@ private struct LearnTopicView: View {
                 }
             }
             .padding()
+            .readableWidth()
         }
         .background(Color.deepSpace)
         .navigationTitle(topic.title)
@@ -208,6 +210,7 @@ private struct GlossaryView: View {
                 }
             }
             .padding()
+            .readableWidth()
         }
         .background(Color.deepSpace)
         .navigationTitle("Glossary")

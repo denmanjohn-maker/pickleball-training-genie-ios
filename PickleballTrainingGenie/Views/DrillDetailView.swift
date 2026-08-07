@@ -154,6 +154,7 @@ struct DrillDetailView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 24)
                 }
+                .readableWidth()
             }
             .background(Color.deepSpace)
             .navigationBarTitleDisplayMode(.inline)

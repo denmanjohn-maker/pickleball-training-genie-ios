@@ -171,7 +171,7 @@ struct AvatarPickerSheet: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var isSaving = false
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 16), count: 4)
+    private let columns = [GridItem(.adaptive(minimum: 72, maximum: 96), spacing: 16)]
 
     private var currentAvatarId: String? { authViewModel.currentUser?.avatarId }
 
@@ -213,6 +213,7 @@ struct AvatarPickerSheet: View {
                     }
                 }
                 .padding(.horizontal)
+                .readableWidth(max: 600)
 
                 PhotosPicker(selection: $photoItem, matching: .images, photoLibrary: .shared()) {
                     HStack {

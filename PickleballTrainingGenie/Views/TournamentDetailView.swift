@@ -67,6 +67,7 @@ struct TournamentDetailView: View {
                     statusSection
                 }
                 .padding(.bottom, 24)
+                .readableWidth()
             }
             .background(Color.deepSpace)
             .navigationBarTitleDisplayMode(.inline)

@@ -74,6 +74,7 @@ struct VideoReviewView: View {
                 }
             }
             .padding()
+            .readableWidth()
         }
         .background(Color.deepSpace)
         .navigationTitle("Video Review")
@@ -300,6 +301,7 @@ private struct ClipPlayerView: View {
                 .padding()
                 .pickleballCard()
                 .padding(.horizontal)
+                .readableWidth()
             }
         }
         .padding(.vertical)
@@ -315,18 +317,19 @@ private struct ClipPlayerView: View {
                         .foregroundColor(.red)
                 }
                 .accessibilityLabel("Delete clip")
+                // Anchored to the button so the iPad popover points at it.
+                .confirmationDialog(
+                    "Delete this clip?",
+                    isPresented: $showDeleteConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button("Delete Clip", role: .destructive) {
+                        store.delete(clip)
+                        dismiss()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                }
             }
-        }
-        .confirmationDialog(
-            "Delete this clip?",
-            isPresented: $showDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("Delete Clip", role: .destructive) {
-                store.delete(clip)
-                dismiss()
-            }
-            Button("Cancel", role: .cancel) {}
         }
         .onAppear {
             if player == nil, let url = store.url(for: clip),

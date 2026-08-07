@@ -150,6 +150,7 @@ struct TournamentsListView: View {
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
+            .readableWidth()
             .background(Color.deepSpace)
         }
     }
