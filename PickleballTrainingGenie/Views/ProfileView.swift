@@ -309,6 +309,17 @@ struct ProfileView: View {
                     .buttonStyle(SecondaryButtonStyle())
                     .disabled(authViewModel.isLoading)
                     .padding(.horizontal)
+                    // Anchored to the button so the iPad popover points at it.
+                    .confirmationDialog(
+                        "Sign out of Pickleball Genie?",
+                        isPresented: $showLogoutConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button("Sign Out", role: .destructive) {
+                            authViewModel.logout()
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    }
 
                     // Delete Account — permanent; required for App Store (Guideline 5.1.1(v))
                     Button(role: .destructive) {
@@ -329,37 +340,28 @@ struct ProfileView: View {
                     .disabled(authViewModel.isLoading)
                     .padding(.horizontal)
                     .padding(.bottom, 20)
+                    .confirmationDialog(
+                        "Delete your account?",
+                        isPresented: $showDeleteConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button("Delete Account", role: .destructive) {
+                            Task {
+                                let success = await authViewModel.deleteAccount()
+                                if !success { showDeleteError = true }
+                            }
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("This permanently deletes your account and all your data — profile, ratings, and workout history. This can't be undone.")
+                    }
                 }
+                .readableWidth()
             }
             .navigationTitle("Profile")
             .navigationBarTitleDisplayMode(.large)
             .genieBrandIconToolbar()
             .background(Color.deepSpace)
-            .confirmationDialog(
-                "Sign out of Pickleball Genie?",
-                isPresented: $showLogoutConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button("Sign Out", role: .destructive) {
-                    authViewModel.logout()
-                }
-                Button("Cancel", role: .cancel) {}
-            }
-            .confirmationDialog(
-                "Delete your account?",
-                isPresented: $showDeleteConfirmation,
-                titleVisibility: .visible
-            ) {
-                Button("Delete Account", role: .destructive) {
-                    Task {
-                        let success = await authViewModel.deleteAccount()
-                        if !success { showDeleteError = true }
-                    }
-                }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("This permanently deletes your account and all your data — profile, ratings, and workout history. This can't be undone.")
-            }
             .alert("Couldn't Delete Account", isPresented: $showDeleteError) {
                 Button("OK", role: .cancel) {}
             } message: {

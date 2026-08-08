@@ -297,6 +297,19 @@ extension View {
     }
 }
 
+// MARK: - Readable Width
+
+extension View {
+    /// Caps content to a readable column and centers it on wide screens (iPad,
+    /// landscape). Apply to the content root inside a ScrollView, or directly
+    /// to a List — full-bleed backgrounds belong outside this modifier.
+    func readableWidth(max: CGFloat = 700) -> some View {
+        self
+            .frame(maxWidth: max)
+            .frame(maxWidth: .infinity)
+    }
+}
+
 // MARK: - Utilities
 
 extension Decimal {

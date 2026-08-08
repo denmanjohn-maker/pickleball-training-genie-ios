@@ -42,16 +42,6 @@ struct GuidedSessionView: View {
         }
         .onAppear { session.start() }
         .onDisappear { session.stop() }
-        .confirmationDialog(
-            "End this session?",
-            isPresented: $showExitConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button("End Session", role: .destructive) { dismiss() }
-            Button("Keep Training", role: .cancel) {}
-        } message: {
-            Text("Progress from this session won't be saved.")
-        }
     }
 
     private var activeSession: some View {
@@ -65,6 +55,17 @@ struct GuidedSessionView: View {
                         .font(.headline)
                         .foregroundColor(.white.opacity(0.7))
                         .frame(width: 44, height: 44)
+                }
+                // Anchored to the button so the iPad popover points at it.
+                .confirmationDialog(
+                    "End this session?",
+                    isPresented: $showExitConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button("End Session", role: .destructive) { dismiss() }
+                    Button("Keep Training", role: .cancel) {}
+                } message: {
+                    Text("Progress from this session won't be saved.")
                 }
                 Spacer()
                 Text("Step \(session.stepIndex + 1) of \(session.steps.count)")
@@ -155,6 +156,7 @@ struct GuidedSessionView: View {
                     .lineSpacing(4)
                     .multilineTextAlignment(.center)
                     .padding()
+                    .readableWidth()
             }
             .frame(maxHeight: 140)
 
@@ -212,6 +214,7 @@ private struct UntimedStepCard: View {
                     .lineSpacing(4)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal)
+                    .readableWidth()
             }
             .frame(maxHeight: 180)
             Button(action: onContinue) {
@@ -358,6 +361,7 @@ private struct SessionSummaryView: View {
                         .padding(.horizontal)
                 }
             }
+            .readableWidth()
         }
         .scrollDismissesKeyboard(.interactively)
     }

@@ -89,6 +89,7 @@ struct SkillAssessmentView: View {
             Spacer()
         }
         .padding(.top)
+        .readableWidth()
     }
 
     private func select(_ answer: AssessmentQuestion.Answer, for question: AssessmentQuestion) {
@@ -172,6 +173,7 @@ private struct ResultView: View {
                     .foregroundColor(.secondary)
             }
             .padding()
+            .readableWidth()
         }
     }
 }

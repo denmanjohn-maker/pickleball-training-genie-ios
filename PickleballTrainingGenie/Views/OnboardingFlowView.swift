@@ -51,6 +51,7 @@ struct OnboardingFlowView: View {
                             .padding(.bottom, 24)
                     }
                     .padding(.top, 12)
+                    .readableWidth()
                 }
             }
         }
@@ -423,7 +424,7 @@ struct AvatarStepView: View {
     @ObservedObject var viewModel: OnboardingViewModel
     @State private var photoItem: PhotosPickerItem?
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 14), count: 4)
+    private let columns = [GridItem(.adaptive(minimum: 72, maximum: 96), spacing: 14)]
 
     var body: some View {
         VStack(spacing: 20) {

@@ -74,6 +74,7 @@ private struct HistoryListView: View {
                         }
                     }
                     .padding()
+                    .readableWidth()
                 }
                 .refreshable {
                     await viewModel.load()
