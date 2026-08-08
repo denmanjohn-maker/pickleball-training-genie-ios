@@ -79,7 +79,7 @@ private struct ProfileLoadFailedView: View {
 
 /// The app's five top-level destinations, shared by the iPhone tab bar and the
 /// iPad sidebar so both layouts stay in sync.
-enum AppSection: String, CaseIterable, Identifiable {
+private enum AppSection: String, CaseIterable, Identifiable {
     case drills, forYou, workout, tournaments, profile
 
     var id: String { rawValue }
@@ -185,10 +185,9 @@ struct MainTabView: View {
             .genieBrandIconToolbar()
             .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 300)
         } detail: {
-            // Each section owns its own NavigationStack; .id resets that stack
-            // when switching sections, mirroring tab-switch semantics.
+            // Each section owns its own NavigationStack; switching the
+            // @ViewBuilder branch recreates it, mirroring tab-switch semantics.
             selection.destination
-                .id(selection)
         }
         .navigationSplitViewStyle(.balanced)
     }
