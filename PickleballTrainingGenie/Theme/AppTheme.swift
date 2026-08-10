@@ -12,16 +12,6 @@ extension Font {
     static let ecBody      = Font.system(size: 15, weight: .regular)
 }
 
-// MARK: - Brand Display Font
-// Orbitron (bundled in Resources/, registered via UIAppFonts in Info.plist).
-// Names are PostScript names — Font.custom silently falls back to SF Pro if
-// they don't match the bundled files.
-
-enum BrandFont {
-    static func black(_ size: CGFloat) -> Font { .custom("Orbitron-Black", size: size) }
-    static func bold(_ size: CGFloat) -> Font { .custom("Orbitron-Bold", size: size) }
-}
-
 // MARK: - Animation
 
 enum ECAnimation {
@@ -103,30 +93,42 @@ struct SplitMix64: RandomNumberGenerator {
 
 // MARK: - Brand Wordmark
 
-/// Two-line brand wordmark in Orbitron: "PICKLEBALL" in starlight with a soft
-/// glow, "GENIE" letter-spaced in lamp gold underneath. Used on the splash and
-/// login screens. Each line cancels its trailing kern space with negative
-/// padding — `.kerning` adds a phantom space after the last glyph that would
-/// otherwise push the line off-center.
+/// Two-line brand wordmark: heavy rounded type filled with the magenta→cyan
+/// brand gradient and a soft magenta glow — the same treatment as the landing
+/// page's `.wordmark`. "GENIE" sits underneath, smaller and widely
+/// letter-spaced. Used on the splash and login screens. Each line cancels its
+/// trailing kern space with negative padding — `.kerning` adds a phantom space
+/// after the last glyph that would otherwise push the line off-center.
 struct GenieWordmark: View {
-    private let topKerning: CGFloat = 2
-    private let bottomKerning: CGFloat = 14
+    /// Multiplies every metric so the lockup shrinks as one unit
+    /// (splash uses the default 1; login passes a smaller value).
+    var scale: CGFloat = 1
+
+    private var topKerning: CGFloat { 2 * scale }
+    private var bottomKerning: CGFloat { 14 * scale }
+
+    private var brandGradient: LinearGradient {
+        LinearGradient(
+            colors: [.neonMagenta, .neonCyan],
+            startPoint: .leading,
+            endPoint: .trailing
+        )
+    }
 
     var body: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 6 * scale) {
             Text("PICKLEBALL")
-                .font(BrandFont.black(40))
+                .font(.system(size: 40 * scale, weight: .black, design: .rounded))
                 .kerning(topKerning)
                 .padding(.trailing, -topKerning)
-                .foregroundStyle(Color.starlight)
-                .neonGlow(.starlight, radius: 8)
+                .foregroundStyle(brandGradient)
             Text("GENIE")
-                .font(BrandFont.bold(26))
+                .font(.system(size: 26 * scale, weight: .black, design: .rounded))
                 .kerning(bottomKerning)
                 .padding(.trailing, -bottomKerning)
-                .foregroundStyle(Color.solarGold)
-                .neonGlow(.solarGold, radius: 10)
+                .foregroundStyle(brandGradient)
         }
+        .neonGlow(.neonMagenta, radius: 10 * scale)
         .lineLimit(1)
         .minimumScaleFactor(0.5)
         .multilineTextAlignment(.center)

@@ -16,6 +16,8 @@ struct RegisterView: View {
     var body: some View {
         ZStack {
             SynthwaveGradient()
+            StarFieldView()
+                .ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 28) {
@@ -124,7 +126,7 @@ struct RegisterView: View {
                     Button { dismiss() } label: {
                         Text("Already have an account? **Sign In**")
                             .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.9))
+                            .foregroundColor(.neonMagenta)
                     }
                     .padding(.bottom, 20)
                 }
