@@ -16,20 +16,15 @@ struct LoginView: View {
                 ScrollView {
                     VStack(spacing: 32) {
                         // Header
-                        VStack(spacing: 16) {
-                            GenieWordmark()
+                        VStack(spacing: 10) {
+                            GenieWordmark(scale: 0.55)
 
                             Image("Genie")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(height: 150)
-
-                            Text("Your AI-powered training coach")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white.opacity(0.9))
+                                .frame(height: 56)
                         }
-                        .padding(.top, 32)
+                        .padding(.top, 16)
 
                         // Form Card
                         VStack(spacing: 20) {
@@ -113,19 +108,9 @@ struct LoginView: View {
                         )
                         .shadow(color: .neonMagenta.opacity(0.2), radius: 12, x: 0, y: 6)
                         .padding(.horizontal, 20)
-
-                        // Pickleball fun fact
-                        VStack(spacing: 6) {
-                            Image(systemName: "info.circle.fill")
-                                .foregroundColor(.white.opacity(0.6))
-                            Text("Pickleball is the fastest growing sport in America!")
-                                .font(.caption)
-                                .foregroundColor(.white.opacity(0.7))
-                                .multilineTextAlignment(.center)
-                        }
-                        .padding(.bottom, 20)
                     }
                     .padding(.horizontal)
+                    .padding(.bottom, 24)
                 }
             }
             .navigationDestination(isPresented: $showRegister) {

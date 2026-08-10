@@ -143,14 +143,16 @@ body::before {
   color: transparent;
 }
 
+/* Proportions mirror the app's GenieWordmark lockup: PICKLEBALL dominant,
+   GENIE smaller underneath at ~0.65× with wide tracking. */
 .wordmark .line1 {
-  font-size: clamp(2rem, 8vw, 3.4rem);
+  font-size: clamp(2.4rem, 10vw, 4.2rem);
   letter-spacing: 0.09em;
   margin-right: -0.09em; /* balance trailing tracking so the line centers optically */
 }
 
 .wordmark .line2 {
-  font-size: clamp(2.4rem, 10vw, 4.2rem);
+  font-size: clamp(1.55rem, 6.5vw, 2.7rem);
   letter-spacing: 0.35em;
   margin-right: -0.35em;
 }
