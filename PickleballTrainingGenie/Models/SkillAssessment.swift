@@ -53,6 +53,13 @@ struct AssessmentResult: Codable, Equatable {
         .nearest(to: Decimal(estimatedLevel))
     }
 
+    /// Ratings to adopt from the estimate: both current ratings at the
+    /// estimated level, target one tier up.
+    var suggestedRatings: (singles: Decimal, doubles: Decimal, target: Decimal) {
+        let level = Decimal(estimatedLevel)
+        return (level, level, SkillLevel.nearest(to: level).nextUp.value)
+    }
+
     /// Weakest categories with signal — what the player should drill first.
     var focusCategories: [String] {
         categoryStrengths
@@ -138,6 +145,20 @@ enum SkillAssessment {
             detail: "Choosing the right ball to attack, not just swinging hard.",
             categories: ["Attacking"],
             weight: 2.0
+        ),
+        AssessmentQuestion(
+            id: 11,
+            prompt: "Can you hit a lob on purpose — and chase one down when it goes over you?",
+            detail: "A high, deep shot over your opponents' heads; chasing means turning and running it down, not backpedaling.",
+            categories: ["Lobs"],
+            weight: 1.5
+        ),
+        AssessmentQuestion(
+            id: 12,
+            prompt: "In doubles, do you and your partner move together and cover the middle?",
+            detail: "Shifting side to side as a unit so there's no gap between you.",
+            categories: ["Movement"],
+            weight: 1.5
         )
     ]
 
