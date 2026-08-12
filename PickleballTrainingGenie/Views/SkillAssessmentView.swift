@@ -158,6 +158,34 @@ private struct ResultView: View {
                     .pickleballCard()
                 }
 
+                if result.estimatedLevel < 3.0 {
+                    NavigationLink {
+                        LearnView()
+                    } label: {
+                        HStack(spacing: 12) {
+                            Image(systemName: "book.fill")
+                                .foregroundColor(.neonCyan)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Start with the basics")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                Text("Rules, scoring, and the soft game — 5 minutes of reading goes a long way.")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .pickleballCard()
+                    }
+                }
+
                 Button {
                     onUseLevel()
                 } label: {

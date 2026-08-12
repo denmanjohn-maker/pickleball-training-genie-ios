@@ -33,6 +33,7 @@
 		AAAA0000000000000045CAFE /* DateFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000046CAFE /* DateFormatting.swift */; };
 		AAAA000000000000004ECAFE /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004DCAFE /* OnboardingViewModel.swift */; };
 		AAAA0000000000000050CAFE /* WorkoutHistoryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */; };
+		AAAA0000000000000087CAFE /* TrainingStreakStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000086CAFE /* TrainingStreakStore.swift */; };
 		AAAA0000000000000052CAFE /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000051CAFE /* OnboardingFlowView.swift */; };
 		AAAA0000000000000054CAFE /* WorkoutHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000053CAFE /* WorkoutHistoryView.swift */; };
 		AAAA0000000000000056CAFE /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000055CAFE /* EditProfileView.swift */; };
@@ -88,6 +89,7 @@
 		AAAA0000000000000047CAFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AAAA000000000000004DCAFE /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryViewModel.swift; sourceTree = "<group>"; };
+		AAAA0000000000000086CAFE /* TrainingStreakStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingStreakStore.swift; sourceTree = "<group>"; };
 		AAAA0000000000000051CAFE /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000053CAFE /* WorkoutHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000055CAFE /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
@@ -207,6 +209,7 @@
 				AAAA000000000000003ECAFE /* TournamentsViewModel.swift */,
 				AAAA000000000000004DCAFE /* OnboardingViewModel.swift */,
 				AAAA000000000000004FCAFE /* WorkoutHistoryViewModel.swift */,
+				AAAA0000000000000086CAFE /* TrainingStreakStore.swift */,
 				AAAA0000000000000074CAFE /* GuidedSessionViewModel.swift */,
 			);
 			path = ViewModels;
@@ -378,6 +381,7 @@
 				AAAA0000000000000045CAFE /* DateFormatting.swift in Sources */,
 				AAAA000000000000004ECAFE /* OnboardingViewModel.swift in Sources */,
 				AAAA0000000000000050CAFE /* WorkoutHistoryViewModel.swift in Sources */,
+				AAAA0000000000000087CAFE /* TrainingStreakStore.swift in Sources */,
 				AAAA0000000000000052CAFE /* OnboardingFlowView.swift in Sources */,
 				AAAA0000000000000054CAFE /* WorkoutHistoryView.swift in Sources */,
 				AAAA0000000000000056CAFE /* EditProfileView.swift in Sources */,

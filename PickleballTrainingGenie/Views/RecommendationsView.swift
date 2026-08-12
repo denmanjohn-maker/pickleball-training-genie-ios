@@ -5,6 +5,15 @@ struct RecommendationsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var selectedDrill: Drill?
 
+    /// Below-3.0 players (rated, or estimated by the skill check; unrated
+    /// counts as beginner) get a pointer to the Learn section.
+    private var isBeginner: Bool {
+        let user = authViewModel.currentUser
+        let current = max(user?.singlesDUPR ?? 0, user?.doublesDUPR ?? 0)
+        if current > 0 { return current < 3.0 }
+        return SkillAssessment.load().map { $0.estimatedLevel < 3.0 } ?? true
+    }
+
     var body: some View {
         NavigationStack {
             Group {
@@ -35,6 +44,12 @@ struct RecommendationsView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.neonMagenta)
+
+                        NavigationLink("Learn the Basics") {
+                            LearnView()
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(.neonCyan)
                     }
                 } else {
                     VStack(spacing: 0) {
@@ -50,6 +65,9 @@ struct RecommendationsView: View {
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
                             .background(Color.solarGold.opacity(0.08))
+                        }
+                        if isBeginner {
+                            LearnPromoCard()
                         }
                         List(drillsViewModel.recommendations) { drill in
                             DrillRowView(
@@ -94,6 +112,39 @@ struct RecommendationsView: View {
                 RecommendationsHeaderView()
             }
         }
+    }
+}
+
+private struct LearnPromoCard: View {
+    var body: some View {
+        NavigationLink {
+            LearnView()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "book.fill")
+                    .font(.title3)
+                    .foregroundColor(.solarGold)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("New to pickleball?")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    Text("Rules, scoring, and the terms everyone keeps saying — all offline.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .pickleballCard()
+        }
+        .padding(.horizontal)
+        .padding(.top, 12)
     }
 }
 

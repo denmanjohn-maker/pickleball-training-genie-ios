@@ -171,6 +171,26 @@ struct ProfileView: View {
 
                         Divider().padding(.horizontal)
 
+                        NavigationLink {
+                            LearnView()
+                        } label: {
+                            HStack {
+                                Image(systemName: "book.fill")
+                                    .foregroundColor(.neonCyan)
+                                    .frame(width: 28)
+                                Text("Learn the Basics")
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding()
+                        }
+                        .foregroundColor(.primary)
+
+                        Divider().padding(.horizontal)
+
                         Button {
                             showEditProfile = true
                         } label: {
@@ -213,8 +233,11 @@ struct ProfileView: View {
                     .padding(.horizontal)
 
                     // Training habits — weekly goal + reminders
-                    TrainingHabitsCard()
-                        .padding(.horizontal)
+                    TrainingHabitsCard(
+                        client: authViewModel.client,
+                        userId: authViewModel.currentUser?.id
+                    )
+                    .padding(.horizontal)
 
                     // Player details
                     if let user = authViewModel.currentUser, hasPlayerDetails(user) {
@@ -437,13 +460,21 @@ struct ProfileView: View {
 }
 
 /// Weekly training goal and local reminder notifications. All state is
-/// on-device: goal in UserDefaults, reminders via UNUserNotificationCenter.
+/// on-device: goal in UserDefaults, reminders via UNUserNotificationCenter —
+/// except the streak numbers, which come from workout-session history.
 private struct TrainingHabitsCard: View {
+    @StateObject private var streakStore: TrainingStreakStore
     @State private var weeklyGoal = TrainingStats.weeklyGoal
     @State private var remindersEnabled = TrainingReminders.isEnabled
     @State private var selectedWeekdays = TrainingReminders.savedWeekdays
     @State private var reminderTime = TrainingHabitsCard.initialTime
     @State private var showPermissionDenied = false
+
+    init(client: PickleballTrainingGenieClient, userId: String?) {
+        _streakStore = StateObject(
+            wrappedValue: TrainingStreakStore(client: client, userId: userId)
+        )
+    }
 
     // 1 = Sunday … 7 = Saturday, matching DateComponents.weekday.
     private static let weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"]
@@ -460,6 +491,33 @@ private struct TrainingHabitsCard: View {
             Label("Training Habits", systemImage: "flame.fill")
                 .font(.headline)
                 .foregroundColor(.starlight)
+
+            if streakStore.isLoading && streakStore.sessionDates.isEmpty {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            } else {
+                HStack(spacing: 12) {
+                    HabitStatChip(
+                        icon: "flame.fill",
+                        color: .orange,
+                        value: "\(streakStore.streakDays)",
+                        label: "Day Streak"
+                    )
+                    HabitStatChip(
+                        icon: "calendar",
+                        color: .green,
+                        value: "\(streakStore.sessionsThisWeek)/\(weeklyGoal)",
+                        label: "This Week"
+                    )
+                }
+                if let cachedDate = streakStore.cachedDate {
+                    Text("Offline — as of \(cachedDate.formatted(date: .abbreviated, time: .shortened)).")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Divider()
 
             Stepper(value: $weeklyGoal, in: 1...14) {
                 HStack {
@@ -546,6 +604,7 @@ private struct TrainingHabitsCard: View {
         }
         .padding()
         .pickleballCard()
+        .task { await streakStore.load() }
         .alert("Notifications Are Off", isPresented: $showPermissionDenied) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -555,6 +614,34 @@ private struct TrainingHabitsCard: View {
 
     private func accessibilityName(for weekday: Int) -> String {
         Calendar.current.weekdaySymbols[weekday - 1]
+    }
+}
+
+/// Compact stat inside the habits card — same vocabulary as the Training
+/// History header, without the nested card background.
+private struct HabitStatChip: View {
+    let icon: String
+    let color: Color
+    let value: String
+    let label: String
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.subheadline)
+                .foregroundColor(color)
+            Text(value)
+                .font(.title3)
+                .fontWeight(.bold)
+            Text(label)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
     }
 }
 
@@ -744,10 +831,10 @@ struct EditRatingsView: View {
         }
         .sheet(isPresented: $showSkillCheck) {
             SkillAssessmentView { result in
-                let level = Decimal(result.estimatedLevel)
-                singlesDUPR = level
-                doublesDUPR = level
-                targetDUPR = SkillLevel.nearest(to: level).nextUp.value
+                let suggested = result.suggestedRatings
+                singlesDUPR = suggested.singles
+                doublesDUPR = suggested.doubles
+                targetDUPR = suggested.target
                 showSkillCheck = false
             }
         }

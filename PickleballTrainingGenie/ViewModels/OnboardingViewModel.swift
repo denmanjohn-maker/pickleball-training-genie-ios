@@ -74,10 +74,10 @@ class OnboardingViewModel: ObservableObject {
     /// Adopts the skill-check estimate: both ratings start at the estimated
     /// level, with the target one tier up.
     func apply(assessment result: AssessmentResult) {
-        let level = Decimal(result.estimatedLevel)
-        singlesDUPR = level
-        doublesDUPR = level
-        targetDUPR = SkillLevel.nearest(to: level).nextUp.value
+        let suggested = result.suggestedRatings
+        singlesDUPR = suggested.singles
+        doublesDUPR = suggested.doubles
+        targetDUPR = suggested.target
     }
 
     func prefill(from user: User?) {

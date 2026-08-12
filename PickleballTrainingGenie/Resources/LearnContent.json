@@ -159,6 +159,126 @@
           "body": "Running shoes are built for straight lines and will roll an ankle on lateral movement. Court shoes (tennis, volleyball, or pickleball-specific) are the single best equipment upgrade a new player can make."
         }
       ]
+    },
+    {
+      "id": "dinking",
+      "title": "Dinking & the Soft Game",
+      "icon": "water.waves",
+      "summary": "Why soft shots win rallies — and how to stop losing them with hard ones.",
+      "sections": [
+        {
+          "heading": "Why soft wins",
+          "body": "At the kitchen line, a hard shot at a ready opponent comes back harder. A dink they have to hit from below net height can't be attacked — it can only be dinked back. The soft game isn't passive; it's how you force the mistake or the pop-up you get to put away."
+        },
+        {
+          "heading": "How to dink",
+          "body": "Bend your knees, keep the paddle out in front, and push gently from the shoulder — no wrist flick. Aim to land the ball in the kitchen, low enough that it would clip the net if your opponent tried to attack it. Height control matters more than placement at first."
+        },
+        {
+          "heading": "Patience is a skill",
+          "body": "Most beginner points end with someone speeding up a ball they shouldn't have. If the dink coming at you is low, dink it back — even ten times in a row. Attack only when the ball sits up above net height. Counting rallies in practice (\"can we get to 20?\") builds the habit."
+        },
+        {
+          "heading": "From banging to placing",
+          "body": "Players from tennis or racquetball start by hitting hard at everything — and it works, until opponents learn to block. The upgrade path is the same for everyone: learn the dink, then the third-shot drop, then the reset. Power still matters, but as a surprise, not a default."
+        }
+      ]
+    },
+    {
+      "id": "doubles-teamwork",
+      "title": "Doubles Positioning & Communication",
+      "icon": "person.2.fill",
+      "summary": "Move as a unit, cover the middle, and say what you're doing out loud.",
+      "sections": [
+        {
+          "heading": "The invisible rope",
+          "body": "Imagine a 10-foot rope tying you to your partner. When they slide wide, you slide with them; when they move up, you move up. Two players moving independently leave a hole in the middle — and the middle is where good opponents aim."
+        },
+        {
+          "heading": "Who takes the middle?",
+          "body": "Default: the player with their forehand in the middle takes middle balls. Decide before the game starts and say it out loud. When in doubt, the player who hit the last shot crossing the middle usually keeps it — but any agreement beats silence."
+        },
+        {
+          "heading": "Talk constantly",
+          "body": "\"Mine.\" \"Yours.\" \"Bounce it.\" \"Out!\" \"Switch.\" One-word calls prevent both the collision and the ball nobody touched. Calling \"out\" on a flying ball is helping your partner duck — it isn't a line call until it lands."
+        },
+        {
+          "heading": "When your partner gets lobbed",
+          "body": "Don't watch — cross behind them. The player who can see the lob best (the one NOT under it) calls \"switch\", covers the lobbed side, and their partner fills the vacated side. Practice it once and it becomes automatic."
+        }
+      ]
+    },
+    {
+      "id": "ratings",
+      "title": "Understanding Ratings & DUPR",
+      "icon": "chart.bar.fill",
+      "summary": "What the numbers mean, how they move, and why this app asks for a target.",
+      "sections": [
+        {
+          "heading": "What DUPR is",
+          "body": "DUPR (Dynamic Universal Pickleball Rating) scores every player on one scale from about 2.0 to 5.0+, based on match results — who you played and how close the game was. You don't need an official rating to use this app: a self-estimate (or the 60-second skill check) is enough to start."
+        },
+        {
+          "heading": "How the tiers feel",
+          "body": "2.0 New to the Game: learning to serve, return, and keep score. 2.5 Advanced Beginner: short rallies, knows the basic rules. 3.0 Beginner: consistent strokes, learning court positioning. 3.5 Intermediate: third-shot drops, kitchen game, transitions. 4.0 Advanced: pattern recognition, speed-up and reset battles. 5.0 Pro: tournament-level tactics."
+        },
+        {
+          "heading": "How ratings move",
+          "body": "Official DUPR updates after recorded matches — rec games count if players log them, and tournaments count automatically. Beating a higher-rated player moves you up faster than beating a lower-rated one. Expect slow movement: a half-point jump usually represents months of play."
+        },
+        {
+          "heading": "Why the app asks for a target",
+          "body": "Your target rating tells the AI which skills to train next. A 3.0 player targeting 3.5 gets drills for the exact skills that separate those tiers — drops, kitchen play, transitions — instead of generic practice. Set the target one tier above your current level and re-take the skill check as you improve."
+        }
+      ]
+    },
+    {
+      "id": "etiquette",
+      "title": "Pickleball Etiquette",
+      "icon": "hand.wave.fill",
+      "summary": "The unwritten rules: open play, line calls, and not being that player.",
+      "sections": [
+        {
+          "heading": "Open-play rotation",
+          "body": "Most public courts run paddle-stack rotation: finished players stack their paddles by the gate and the next four in line take the court. Games are usually to 11, win by 1 at busy sessions. Winners staying on varies by venue — watch what the locals do or just ask."
+        },
+        {
+          "heading": "Score first, then serve",
+          "body": "Call all three numbers loudly BEFORE you start your serving motion. It keeps everyone honest, prevents most arguments, and is required by the rules anyway. If you've lost track, ask — nobody minds."
+        },
+        {
+          "heading": "Line calls and benefit of the doubt",
+          "body": "You call the lines on your side, and \"if you're not sure, it's in.\" Never call a ball on your opponent's side unless they ask. Overruling your own partner's call in your favor is bad form; overruling it in the opponent's favor is good form."
+        },
+        {
+          "heading": "Ball on court!",
+          "body": "If a ball rolls onto your court, stop the rally immediately by calling \"ball on\" — replay the point. If your ball rolls toward another court, shout it just as fast; a ball underfoot mid-rally is how ankles get broken. And after every game, win or lose: paddle taps at the net."
+        }
+      ]
+    },
+    {
+      "id": "warmup",
+      "title": "Warming Up & Staying Injury-Free",
+      "icon": "figure.cooldown",
+      "summary": "Five minutes of prep that keeps you on the court all season.",
+      "sections": [
+        {
+          "heading": "The five-minute warm-up",
+          "body": "Before the first game: a minute of light jogging or jumping jacks, leg swings front-to-back and side-to-side, arm circles, and a few gentle lunges. Then dink cross-court for a couple of minutes before hitting anything hard. Cold-starting with drives is how elbows and shoulders get cranky."
+        },
+        {
+          "heading": "Never backpedal for a lob",
+          "body": "Backpedaling with your eyes up is the single most common cause of serious pickleball falls. When a lob goes over you, turn sideways, run back like you're chasing a fly ball, then set up to hit. If you can't get there — let it bounce or let your partner cross. No point is worth the back of your head."
+        },
+        {
+          "heading": "Gear that prevents injuries",
+          "body": "Court shoes over running shoes, always — lateral support is everything. Eye protection is cheap insurance at the kitchen line, where speed-ups arrive fast from ten feet away. If your elbow complains, check your grip size and paddle weight before blaming your swing."
+        },
+        {
+          "heading": "Listen to the niggles",
+          "body": "Pickleball is addictive and most injuries are overuse: play three days in a row and your knees will file a complaint. Hydrate, cool down with easy stretching for calves, shoulders, and forearms, and take the rest day. Missing one session beats missing a month."
+        }
+      ]
     }
   ],
   "glossary": [
@@ -177,6 +297,16 @@
     { "term": "Transition zone", "definition": "The mid-court area between the baseline and the kitchen line — a place to pass through carefully, not to camp in." },
     { "term": "Split step", "definition": "A small hop onto both feet as your opponent strikes the ball, keeping you balanced and ready to move either way." },
     { "term": "Let", "definition": "A serve that clips the net but still lands in the correct service box — it's live, play it." },
-    { "term": "DUPR", "definition": "Dynamic Universal Pickleball Rating — the rating system this app uses. Roughly 2.0 for brand-new players up to 5.0+ for pros." }
+    { "term": "DUPR", "definition": "Dynamic Universal Pickleball Rating — the rating system this app uses. Roughly 2.0 for brand-new players up to 5.0+ for pros." },
+    { "term": "Poach", "definition": "Crossing into your partner's side to take a ball out of the air — aggressive, and best announced or pre-planned so nobody collides." },
+    { "term": "Lob", "definition": "A high, deep shot over the opponents' heads, pushing them off the kitchen line. Chase it by turning and running — never backpedaling." },
+    { "term": "Overhead smash", "definition": "A hard downward shot on a ball above your head — the usual answer to a short lob." },
+    { "term": "Bert", "definition": "An Erne hit in front of your PARTNER's side of the court — leaping across to volley beside the kitchen. Advanced and flashy." },
+    { "term": "Shake and bake", "definition": "A doubles play: one partner drives the third shot while the other crashes the net to put away the pop-up." },
+    { "term": "Punch volley", "definition": "A short, firm volley pushed from the shoulder with almost no backswing — the bread-and-butter volley at the kitchen line." },
+    { "term": "Paddle face (open/closed)", "definition": "The tilt of your paddle at contact. Open (tilted up) lifts the ball — good for dinks; closed (tilted down) drives it low." },
+    { "term": "Rally scoring", "definition": "An alternate format where a point is scored on every rally, whoever served. Used in some rec play and pro doubles — traditional side-out scoring is still the default." },
+    { "term": "Foot fault", "definition": "Stepping on or inside the baseline while serving, or touching the kitchen (or its line) on a volley — both lose the rally." },
+    { "term": "Body shot", "definition": "A speed-up aimed at an opponent's torso or paddle-side hip, where it's hardest to defend. If the ball hits any part of you, the point is theirs." }
   ]
 }
