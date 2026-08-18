@@ -291,6 +291,9 @@ class AuthViewModel: ObservableObject {
         errorMessage = nil
         do {
             try await client.deleteAccount()
+            // Only on success — a failed server delete must not wipe the data of
+            // an account that still exists.
+            await LocalDataPurge.purgeAll()
             isLoading = false
             logout()
             return true

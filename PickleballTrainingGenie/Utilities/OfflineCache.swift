@@ -42,4 +42,13 @@ enum OfflineCache {
         guard let url = fileURL(for: key) else { return }
         try? FileManager.default.removeItem(at: url)
     }
+
+    /// Wipes every cached entry. The personalized keys are scoped per user, so
+    /// a caller can't reliably name them — dropping the whole directory is the
+    /// only way to be sure nothing survives an account deletion. `directory`
+    /// recreates the folder on next access, so this is safe to call any time.
+    static func clearAll() {
+        guard let directory else { return }
+        try? FileManager.default.removeItem(at: directory)
+    }
 }
