@@ -28,4 +28,12 @@ final class FavoriteDrills: ObservableObject {
         }
         UserDefaults.standard.set(Array(ids).sorted(), forKey: Self.key)
     }
+
+    /// Forgets every favorite. Clearing the stored key alone isn't enough — this
+    /// is a long-lived singleton, so the in-memory set has to go too or hearts
+    /// stay filled for the rest of the process.
+    func clearAll() {
+        ids = []
+        UserDefaults.standard.removeObject(forKey: Self.key)
+    }
 }

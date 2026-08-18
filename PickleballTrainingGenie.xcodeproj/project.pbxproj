@@ -55,6 +55,7 @@
 		AAAA000000000000007BCAFE /* TrainingReminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007ACAFE /* TrainingReminders.swift */; };
 		AAAA000000000000007DCAFE /* TrainingStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007CCAFE /* TrainingStats.swift */; };
 		AAAA000000000000007FCAFE /* FavoriteDrills.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000007ECAFE /* FavoriteDrills.swift */; };
+		AAAA0000000000000089CAFE /* LocalDataPurge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000088CAFE /* LocalDataPurge.swift */; };
 		AAAA0000000000000081CAFE /* VideoReviewStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000080CAFE /* VideoReviewStore.swift */; };
 		AAAA0000000000000083CAFE /* VideoReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000082CAFE /* VideoReviewView.swift */; };
 		AAAA0000000000000085CAFE /* AppTutorialView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000084CAFE /* AppTutorialView.swift */; };
@@ -111,6 +112,7 @@
 		AAAA000000000000007ACAFE /* TrainingReminders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingReminders.swift; sourceTree = "<group>"; };
 		AAAA000000000000007CCAFE /* TrainingStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingStats.swift; sourceTree = "<group>"; };
 		AAAA000000000000007ECAFE /* FavoriteDrills.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteDrills.swift; sourceTree = "<group>"; };
+		AAAA0000000000000088CAFE /* LocalDataPurge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDataPurge.swift; sourceTree = "<group>"; };
 		AAAA0000000000000080CAFE /* VideoReviewStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoReviewStore.swift; sourceTree = "<group>"; };
 		AAAA0000000000000082CAFE /* VideoReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoReviewView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000084CAFE /* AppTutorialView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTutorialView.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				AAAA000000000000007ACAFE /* TrainingReminders.swift */,
 				AAAA000000000000007ECAFE /* FavoriteDrills.swift */,
 				AAAA0000000000000080CAFE /* VideoReviewStore.swift */,
+				AAAA0000000000000088CAFE /* LocalDataPurge.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -400,6 +403,7 @@
 				AAAA000000000000007DCAFE /* TrainingStats.swift in Sources */,
 				AAAA000000000000007FCAFE /* FavoriteDrills.swift in Sources */,
 				AAAA0000000000000081CAFE /* VideoReviewStore.swift in Sources */,
+				AAAA0000000000000089CAFE /* LocalDataPurge.swift in Sources */,
 				AAAA0000000000000083CAFE /* VideoReviewView.swift in Sources */,
 				AAAA0000000000000085CAFE /* AppTutorialView.swift in Sources */,
 			);

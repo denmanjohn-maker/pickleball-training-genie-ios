@@ -376,7 +376,7 @@ struct ProfileView: View {
                         }
                         Button("Cancel", role: .cancel) {}
                     } message: {
-                        Text("This permanently deletes your account and all your data — profile, ratings, and workout history. This can't be undone.")
+                        Text("This permanently deletes your account and all your data — profile, ratings, workout history, saved favorites, and any practice videos on this device. This can't be undone.")
                     }
                 }
                 .readableWidth()

@@ -70,6 +70,19 @@ final class VideoReviewStore: ObservableObject {
         persist()
     }
 
+    /// Removes every clip and its file. Recordings are the one thing here that
+    /// exists *only* on this device — deleting an account server-side can't
+    /// reach them, so account deletion has to call this explicitly.
+    func deleteAll() {
+        for clip in clips {
+            if let url = url(for: clip) {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
+        clips = []
+        persist()
+    }
+
     private func load() {
         guard let metadataURL,
               let data = try? Data(contentsOf: metadataURL),
