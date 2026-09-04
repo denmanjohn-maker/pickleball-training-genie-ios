@@ -104,10 +104,12 @@ private enum AppSection: String, CaseIterable, Identifiable {
         }
     }
 
-    @ViewBuilder var destination: some View {
+    /// For You's empty state offers a jump to Drills; the callback must come
+    /// from the layout that owns the selection.
+    @ViewBuilder func destination(onBrowseAllDrills: @escaping () -> Void) -> some View {
         switch self {
         case .drills: DrillsListView()
-        case .forYou: RecommendationsView()
+        case .forYou: RecommendationsView(onBrowseAllDrills: onBrowseAllDrills)
         case .workout: WorkoutView()
         case .tournaments: TournamentsListView()
         case .profile: ProfileView()
@@ -154,7 +156,7 @@ struct MainTabView: View {
             set: { selectionRaw = $0.rawValue }
         )) {
             ForEach(AppSection.allCases) { section in
-                section.destination
+                destinationView(for: section)
                     .tabItem { Label(section.title, systemImage: section.icon) }
                     .tag(section)
             }
@@ -187,9 +189,13 @@ struct MainTabView: View {
         } detail: {
             // Each section owns its own NavigationStack; switching the
             // @ViewBuilder branch recreates it, mirroring tab-switch semantics.
-            selection.destination
+            destinationView(for: selection)
         }
         .navigationSplitViewStyle(.balanced)
+    }
+
+    private func destinationView(for section: AppSection) -> some View {
+        section.destination(onBrowseAllDrills: { selectionRaw = AppSection.drills.rawValue })
     }
 
     /// On a fresh install the Tournaments tab has no saved city; default it to
