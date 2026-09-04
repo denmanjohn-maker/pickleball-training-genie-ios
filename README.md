@@ -72,3 +72,7 @@ PickleballTrainingGenie/
 2. By default, the client connects to the hosted API at `https://thepickleballgenie.com/`.
 3. To use a different backend for development, define `API_BASE_URL` in your Xcode scheme's Environment Variables (under **Run** -> **Arguments**). For local API work, use `http://localhost:5123/` for `dotnet run` or `http://localhost:8080/` for Docker Compose. The URL must include the protocol and trailing slash (for example `API_BASE_URL=http://localhost:5123/` or `API_BASE_URL=https://api.example.com/`). On a physical iPhone or iPad, do not use `localhost`; use your Mac's LAN IP instead.
 4. Select your target simulator or device, and click **Run** (Cmd + R).
+
+### App Store submission
+
+App Review asks for a screen recording of the app's core flows on a physical device. The recording recipe, shot list, and paste-ready review notes live in [`app-store/REVIEW_SCREEN_RECORDING.md`](app-store/REVIEW_SCREEN_RECORDING.md) and [`app-store/APP_REVIEW_NOTES.md`](app-store/APP_REVIEW_NOTES.md).
