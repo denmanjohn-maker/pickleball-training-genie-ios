@@ -502,8 +502,11 @@ class PickleballTrainingGenieClient {
     /// `onUnauthorized` so the app can return to sign-in.
     private func perform(_ requestObj: URLRequest, requireAuth: Bool) async throws -> (Data, HTTPURLResponse) {
         var requestObj = requestObj
-        if requireAuth, let token = jwtToken {
-            requestObj.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        // Captured so a slow response to a request sent with an *old* token
+        // can't sign out a session the user has since re-established.
+        let requestToken = requireAuth ? jwtToken : nil
+        if let requestToken {
+            requestObj.setValue("Bearer \(requestToken)", forHTTPHeaderField: "Authorization")
         }
         let method = requestObj.httpMethod ?? "GET"
         let path = requestObj.url?.path ?? ""
@@ -514,10 +517,12 @@ class PickleballTrainingGenieClient {
         }
         guard 200..<300 ~= httpResponse.statusCode else {
             let message = ServerErrorBody.message(from: data)
+            // The body can echo what the user submitted (an email, a name), so
+            // it stays private; method, path and status are enough to debug.
             AppLog.network.error(
-                "\(method, privacy: .public) \(path, privacy: .public) → \(httpResponse.statusCode, privacy: .public) \(message ?? "", privacy: .public)"
+                "\(method, privacy: .public) \(path, privacy: .public) → \(httpResponse.statusCode, privacy: .public) \(message ?? "")"
             )
-            if httpResponse.statusCode == 401, requireAuth, jwtToken != nil {
+            if httpResponse.statusCode == 401, let requestToken, requestToken == jwtToken {
                 onUnauthorized?()
             }
             throw PickleballTrainingGenieError.invalidResponse(statusCode: httpResponse.statusCode, serverMessage: message)

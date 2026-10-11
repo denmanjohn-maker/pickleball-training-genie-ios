@@ -66,10 +66,10 @@ class AuthViewModel: ObservableObject {
                 handleSessionExpired()
                 return
             }
-            AppLog.auth.error("Failed to fetch profile: \(error.localizedDescription, privacy: .public)")
+            AppLog.auth.error("Failed to fetch profile: \(error.localizedDescription)")
             profileLoadFailed = true
         } catch {
-            AppLog.auth.error("Failed to fetch profile: \(error.localizedDescription, privacy: .public)")
+            AppLog.auth.error("Failed to fetch profile: \(error.localizedDescription)")
             profileLoadFailed = true
         }
     }

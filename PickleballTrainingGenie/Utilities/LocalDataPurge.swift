@@ -28,6 +28,7 @@ enum LocalDataPurge {
         TrainingReminders.weekdaysKey,
         TrainingReminders.hourKey,
         TrainingReminders.minuteKey,
+        GuidedSessionViewModel.voiceCuesKey,
     ]
 
     static func purgeAll() async {

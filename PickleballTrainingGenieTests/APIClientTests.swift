@@ -76,6 +76,21 @@ final class APIClientTests: XCTestCase {
         await fulfillment(of: [fired], timeout: 2)
     }
 
+    func testStale401DoesNotSignOutAFreshSession() async {
+        client.jwtToken = "old"
+        client.onUnauthorized = { XCTFail("A 401 for a superseded token must not sign out the new session") }
+        let client: PickleballTrainingGenieClient = self.client
+        StubURLProtocol.handler = { request in
+            // The user signed in again while this request was still in flight.
+            if request.value(forHTTPHeaderField: "Authorization") == "Bearer old" {
+                client.jwtToken = "new"
+            }
+            return (StubURLProtocol.response(for: request, status: 401), Data())
+        }
+        _ = try? await client.getProfile()
+        XCTAssertEqual(client.jwtToken, "new")
+    }
+
     func testUnauthorizedCallbackDoesNotFireForLogin() async {
         client.onUnauthorized = { XCTFail("Wrong credentials are not an expired session") }
         StubURLProtocol.handler = { request in

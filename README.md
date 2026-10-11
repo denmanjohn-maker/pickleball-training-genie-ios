@@ -51,7 +51,7 @@ PickleballTrainingGenieTests/           # XCTest unit tests (hosted by the app)
   They cover the API client (through a stub `URLProtocol`, no network), server error parsing, JWT expiry, date parsing, streak math, skill-assessment scoring and ranking, drill level fallback, guided-session timing, the offline cache, and the solo-drill heuristic.
 - **Lint**: `brew install swiftlint && swiftlint` from the repo root. Configuration is in `.swiftlint.yml`.
 - **CI**: GitHub Actions (`.github/workflows/ios.yml`) lints, builds, and runs the tests on every pull request and on pushes to `main`.
-- **Dependency pinning**: `Package.resolved` is committed (not ignored). If it's missing, open the project once in Xcode and commit the file Xcode generates.
+- **Dependency pinning**: `Package.resolved` is no longer gitignored and is meant to be committed. It isn't in the repository yet — Xcode writes it under `PickleballTrainingGenie.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/` on first package resolution; commit it when it appears so every build resolves the same dependency versions.
 
 ---
 

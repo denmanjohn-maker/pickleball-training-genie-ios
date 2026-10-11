@@ -49,7 +49,7 @@ final class GuidedSessionViewModel: ObservableObject {
         didSet { UserDefaults.standard.set(voiceCuesEnabled, forKey: Self.voiceCuesKey) }
     }
 
-    static let voiceCuesKey = "guidedSession.voiceCues"
+    nonisolated static let voiceCuesKey = "guidedSession.voiceCues"
 
     let steps: [Step]
     let workout: WorkoutPlanResponse
@@ -65,7 +65,7 @@ final class GuidedSessionViewModel: ObservableObject {
     /// Seconds left at the moment the player paused.
     private var pausedRemaining: Int?
     private var warnedTenSeconds = false
-    private let speaker = SessionCueSpeaker()
+    private let speaker: SessionCueSpeaker
     private static let stepEndNotificationID = "guided-session-step-end"
 
     init(
@@ -76,6 +76,7 @@ final class GuidedSessionViewModel: ObservableObject {
         self.workout = workout
         self.now = now
         self.integratesWithSystem = integratesWithSystem
+        self.speaker = SessionCueSpeaker(managesAudioSession: integratesWithSystem)
         var built: [Step] = []
         if let warmup = workout.warmup, !warmup.isEmpty {
             built.append(.warmup(warmup))
@@ -123,7 +124,7 @@ final class GuidedSessionViewModel: ObservableObject {
         if integratesWithSystem {
             // A session dies the moment the screen locks mid-drill; keep it awake.
             UIApplication.shared.isIdleTimerDisabled = true
-            activateAudioSession()
+            configureAudioSession()
             // So the step-end alert can reach a pocketed phone. Only prompts
             // the first time; a refusal just means no alert.
             Task { _ = await TrainingReminders.requestAuthorization() }
@@ -138,7 +139,6 @@ final class GuidedSessionViewModel: ObservableObject {
             UIApplication.shared.isIdleTimerDisabled = false
             cancelStepEndNotification()
             speaker.stop()
-            deactivateAudioSession()
         }
     }
 
@@ -319,20 +319,16 @@ final class GuidedSessionViewModel: ObservableObject {
     // MARK: - Audio
 
     /// `.playback` so cues are heard with the ring switch on silent — a court
-    /// is loud and the phone is usually in a pocket. Ducks the player's music
-    /// while a cue speaks instead of stopping it.
-    private func activateAudioSession() {
+    /// is loud and the phone is usually in a pocket. `.duckOthers` lowers the
+    /// player's music only while the session is *active*, and
+    /// `SessionCueSpeaker` activates it just for the duration of each cue, so
+    /// music plays at full volume between cues.
+    private func configureAudioSession() {
         do {
-            let audio = AVAudioSession.sharedInstance()
-            try audio.setCategory(.playback, mode: .default, options: [.duckOthers])
-            try audio.setActive(true)
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [.duckOthers])
         } catch {
-            AppLog.session.error("Audio session unavailable: \(error.localizedDescription, privacy: .public)")
+            AppLog.session.error("Audio session unavailable: \(error.localizedDescription)")
         }
-    }
-
-    private func deactivateAudioSession() {
-        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
     // MARK: - Cues
@@ -390,12 +386,27 @@ final class GuidedSessionViewModel: ObservableObject {
 }
 
 /// Owns the speech synthesizer for the life of a session (it must be retained
-/// while speaking) and keeps cues from piling up.
+/// while speaking). The newest cue always replaces whatever is still playing —
+/// after a quick skip, a stale "Next: …" is worse than silence — and the
+/// audio session is active only while an utterance plays, so other apps'
+/// audio is ducked for a few seconds per cue rather than the whole workout.
 @MainActor
-final class SessionCueSpeaker {
+final class SessionCueSpeaker: NSObject, AVSpeechSynthesizerDelegate {
     private let synthesizer = AVSpeechSynthesizer()
+    /// False in unit tests, where there is no audio hardware to activate.
+    private let managesAudioSession: Bool
+
+    init(managesAudioSession: Bool) {
+        self.managesAudioSession = managesAudioSession
+        super.init()
+        synthesizer.delegate = self
+    }
 
     func speak(_ text: String) {
+        synthesizer.stopSpeaking(at: .immediate)
+        if managesAudioSession {
+            try? AVAudioSession.sharedInstance().setActive(true)
+        }
         let utterance = AVSpeechUtterance(string: text)
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate
         utterance.preUtteranceDelay = 0.1
@@ -404,5 +415,22 @@ final class SessionCueSpeaker {
 
     func stop() {
         synthesizer.stopSpeaking(at: .immediate)
+        releaseAudioSession()
+    }
+
+    /// Hands audio focus back as soon as the queue is empty. Checked on the
+    /// main actor after the current cue (if any) has been enqueued, so a
+    /// stop-then-speak pair doesn't release the session mid-utterance.
+    private func releaseAudioSession() {
+        guard managesAudioSession, !synthesizer.isSpeaking else { return }
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        Task { @MainActor in self.releaseAudioSession() }
+    }
+
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        Task { @MainActor in self.releaseAudioSession() }
     }
 }
