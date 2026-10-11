@@ -36,8 +36,19 @@ final class TrainingStatsTests: XCTestCase {
     }
 
     func testSessionsThisWeek() {
-        // Week of Sun Aug 2 – Sat Aug 8 2026 (gregorian default firstWeekday = Sunday).
-        let dates = [day(0), day(-2), day(-3), day(-10), day(4)]
-        XCTAssertEqual(TrainingStats.sessionsThisWeek(sessionDates: dates, calendar: calendar, now: now), 4)
+        // `now` is Wed Aug 5 2026. Mon–Wed of that week are in the week whether
+        // it starts on Sunday or Monday; Jul 26 and Mon Aug 10 are outside it
+        // under both conventions, so this doesn't hinge on the runner's locale.
+        let dates = [day(0), day(-1), day(-2), day(-10), day(5)]
+        XCTAssertEqual(TrainingStats.sessionsThisWeek(sessionDates: dates, calendar: calendar, now: now), 3)
+    }
+
+    func testSessionsThisWeekUsesTheCalendarsOwnWeekBoundaries() {
+        guard let week = calendar.dateInterval(of: .weekOfYear, for: now) else {
+            return XCTFail("Calendar has no week interval")
+        }
+        let justInside = week.start.addingTimeInterval(60)
+        let justOutside = week.start.addingTimeInterval(-60)
+        XCTAssertEqual(TrainingStats.sessionsThisWeek(sessionDates: [justInside, justOutside], calendar: calendar, now: now), 1)
     }
 }

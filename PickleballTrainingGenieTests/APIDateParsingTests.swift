@@ -14,8 +14,13 @@ final class APIDateParsingTests: XCTestCase {
     }
 
     func testMicrosecondFractionFromDotNet() {
-        // ISO8601DateFormatter rejects 6-digit fractions; the parser strips them.
-        XCTAssertEqual(APIDateParsing.parse("2026-08-01T12:34:56.440282Z"), expected)
+        // Newer Foundation parses a 6-digit fraction directly; older versions
+        // reject it and the parser falls back to stripping it. Either way the
+        // result must land inside the right second.
+        let parsed = APIDateParsing.parse("2026-08-01T12:34:56.440282Z")
+        let offset = (parsed?.timeIntervalSince1970 ?? -1) - expected.timeIntervalSince1970
+        XCTAssertGreaterThanOrEqual(offset, 0)
+        XCTAssertLessThan(offset, 1)
     }
 
     func testMissingTimeZoneIsAssumedUTC() {
