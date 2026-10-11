@@ -4,6 +4,9 @@ import SwiftUI
 /// Shown right after `OnboardingFlowView` finishes and before the tab bar
 /// first appears; also replayable on demand from `ProfileView`.
 struct AppTutorialView: View {
+    @ScaledMetric(relativeTo: .title2) private var headerFontSize: CGFloat = 22
+    @ScaledMetric(relativeTo: .largeTitle) private var pageIconSize: CGFloat = 56
+    @ScaledMetric(relativeTo: .title) private var pageTitleFontSize: CGFloat = 24
     let onComplete: () -> Void
 
     @State private var pageIndex = 0
@@ -69,7 +72,7 @@ struct AppTutorialView: View {
         VStack(spacing: 12) {
             HStack {
                 Text("Quick Tour")
-                    .font(.system(size: 22, weight: .heavy, design: .rounded))
+                    .font(.system(size: headerFontSize, weight: .heavy, design: .rounded))
                     .foregroundStyle(
                         LinearGradient(colors: [.neonMagenta, .neonCyan], startPoint: .leading, endPoint: .trailing)
                     )
@@ -98,12 +101,12 @@ struct AppTutorialView: View {
             Spacer()
 
             Image(systemName: page.icon)
-                .font(.system(size: 56))
+                .font(.system(size: pageIconSize))
                 .foregroundColor(.neonMagenta)
                 .neonGlow(.neonMagenta, radius: 12)
 
             Text(page.title)
-                .font(.system(size: 24, weight: .bold, design: .rounded))
+                .font(.system(size: pageTitleFontSize, weight: .bold, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(colors: [.neonMagenta, .neonCyan], startPoint: .leading, endPoint: .trailing)
                 )

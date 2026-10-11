@@ -123,7 +123,7 @@ class DrillsViewModel: ObservableObject {
             recommendations = fetched
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 401:
+            case .invalidResponse(let code, _) where code == 401:
                 recommendationsError = "Please log in to see your recommendations."
             default:
                 recommendationsError = "Could not load recommendations."
@@ -200,7 +200,7 @@ class DrillsViewModel: ObservableObject {
             OfflineCache.remove(key: workoutCacheKey)
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 404:
+            case .invalidResponse(let code, _) where code == 404:
                 workoutError = "The server doesn't support workout history yet."
             default:
                 workoutError = "Could not save your workout. Please try again."
@@ -225,7 +225,7 @@ class DrillsViewModel: ObservableObject {
             }
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 401:
+            case .invalidResponse(let code, _) where code == 401:
                 workoutError = "Please log in to generate a personalized workout."
             default:
                 workoutError = "Could not generate workout. Please try again."

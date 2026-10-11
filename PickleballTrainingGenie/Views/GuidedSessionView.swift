@@ -6,8 +6,11 @@ import SwiftUI
 struct GuidedSessionView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var session: GuidedSessionViewModel
     @State private var showExitConfirmation = false
+    // Scales with Dynamic Type instead of a fixed 72pt.
+    @ScaledMetric(relativeTo: .largeTitle) private var timerFontSize: CGFloat = 72
 
     init(workout: WorkoutPlanResponse) {
         _session = StateObject(wrappedValue: GuidedSessionViewModel(workout: workout))
@@ -42,6 +45,9 @@ struct GuidedSessionView: View {
         }
         .onAppear { session.start() }
         .onDisappear { session.stop() }
+        .onChange(of: scenePhase) { _, phase in
+            session.handleScenePhase(phase)
+        }
     }
 
     private var activeSession: some View {
@@ -72,8 +78,16 @@ struct GuidedSessionView: View {
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.7))
                 Spacer()
-                // Balances the close button so the step label stays centered.
-                Color.clear.frame(width: 44, height: 44)
+                // Same footprint as the close button so the step label stays centered.
+                Button {
+                    session.voiceCuesEnabled.toggle()
+                } label: {
+                    Image(systemName: session.voiceCuesEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
+                        .font(.headline)
+                        .foregroundColor(.white.opacity(0.7))
+                        .frame(width: 44, height: 44)
+                }
+                .accessibilityLabel(session.voiceCuesEnabled ? "Turn off spoken cues" : "Turn on spoken cues")
             }
             .padding(.horizontal)
 
@@ -142,7 +156,7 @@ struct GuidedSessionView: View {
 
             if let remaining = session.remainingSeconds {
                 Text(GuidedSessionViewModel.formatSeconds(remaining))
-                    .font(.system(size: 72, weight: .bold, design: .rounded))
+                    .font(.system(size: timerFontSize, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .foregroundColor(remaining <= 10 ? .neonMagenta : .white)
                     .neonGlow(remaining <= 10 ? .neonMagenta : .neonCyan, radius: 12)
@@ -192,6 +206,7 @@ private struct UntimedStepCard: View {
     let text: String
     let buttonLabel: String
     let onContinue: () -> Void
+    @ScaledMetric(relativeTo: .largeTitle) private var iconSize: CGFloat = 36
 
     var body: some View {
         VStack(spacing: 18) {
@@ -200,7 +215,7 @@ private struct UntimedStepCard: View {
                     .fill(color.opacity(0.15))
                     .frame(width: 80, height: 80)
                 Image(systemName: icon)
-                    .font(.system(size: 36))
+                    .font(.system(size: iconSize))
                     .foregroundColor(color)
             }
             Text(title)
@@ -256,6 +271,7 @@ private struct SessionSummaryView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
     @State private var ratings: [Int: Int] = [:]
     @State private var journalNote = ""
+    @ScaledMetric(relativeTo: .largeTitle) private var sealSize: CGFloat = 48
 
     var body: some View {
         ScrollView {
@@ -265,7 +281,7 @@ private struct SessionSummaryView: View {
                         .fill(Color.green.opacity(0.15))
                         .frame(width: 96, height: 96)
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 48))
+                        .font(.system(size: sealSize))
                         .foregroundColor(.green)
                 }
                 .padding(.top, 24)

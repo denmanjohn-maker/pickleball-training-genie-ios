@@ -168,9 +168,9 @@ class WorkoutHistoryViewModel: ObservableObject {
             drillCompletions = progress
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 404:
+            case .invalidResponse(let code, _) where code == 404:
                 errorMessage = "The server doesn't support training history yet."
-            case .invalidResponse(let code) where code == 401:
+            case .invalidResponse(let code, _) where code == 401:
                 errorMessage = "Please sign in again to see your history."
             default:
                 errorMessage = "Could not load your training history."

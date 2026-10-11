@@ -4,6 +4,18 @@ import SwiftUI
 // Color.deepSpace, nebulaSurface, neonMagenta, neonCyan, cosmicPurple,
 // cometRed, solarGold, starlight are auto-generated from Assets.xcassets
 
+// MARK: - Surface tokens
+// The dark-mode system grays used for inactive chips and text fields. Named
+// here so views don't reach for UIColor directly and the values can move with
+// the palette.
+
+extension Color {
+    /// Inactive filter chips and toggles.
+    static let surfaceMuted = Color(.systemGray5)
+    /// Text-field and form-section backgrounds.
+    static let fieldBackground = Color(.systemGray6)
+}
+
 // MARK: - Typography Scale (SF Pro Display kicks in automatically at ≥ 20pt)
 
 extension Font {

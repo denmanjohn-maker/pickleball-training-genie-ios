@@ -203,7 +203,7 @@ struct AvatarPickerSheet: View {
                                         )
                                     )
                                 Text(avatar.displayName)
-                                    .font(.system(size: 9))
+                                    .font(.caption2)
                                     .foregroundColor(currentAvatarId == avatar.avatarId ? .neonCyan : .secondary)
                                     .lineLimit(1)
                                     .minimumScaleFactor(0.7)
