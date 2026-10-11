@@ -5,6 +5,10 @@ struct RecommendationsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @State private var selectedDrill: Drill?
 
+    /// Jumps to the Drills tab from the empty state; supplied by MainTabView,
+    /// which owns the section selection.
+    let onBrowseAllDrills: () -> Void
+
     /// Below-3.0 players (rated, or estimated by the skill check; unrated
     /// counts as beginner) get a pointer to the Learn section.
     private var isBeginner: Bool {
@@ -40,7 +44,7 @@ struct RecommendationsView: View {
                         Text("Complete a few drills to get personalized recommendations based on your DUPR level.")
                     } actions: {
                         Button("Browse All Drills") {
-                            // Switch to drills tab handled by parent
+                            onBrowseAllDrills()
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.neonMagenta)
@@ -173,7 +177,7 @@ private struct RecommendationsHeaderView: View {
 }
 
 #Preview {
-    RecommendationsView()
+    RecommendationsView(onBrowseAllDrills: {})
         .environmentObject(DrillsViewModel(client: PickleballTrainingGenieClient(
             baseURL: URL(string: "http://localhost:5123/")!
         )))
