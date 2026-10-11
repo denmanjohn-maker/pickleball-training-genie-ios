@@ -6,11 +6,15 @@ struct DrillsListView: View {
     @State private var searchText = ""
     @State private var selectedDrill: Drill?
     @State private var showFavoritesOnly = false
+    @State private var showSoloOnly = false
 
     var displayedDrills: [Drill] {
         var filtered = drillsViewModel.filteredDrills
         if showFavoritesOnly {
             filtered = filtered.filter { favorites.contains($0.id) }
+        }
+        if showSoloOnly {
+            filtered = filtered.filter(\.isSoloFriendly)
         }
         if searchText.isEmpty { return filtered }
         return filtered.filter {
@@ -32,6 +36,13 @@ struct DrillsListView: View {
                             isSelected: showFavoritesOnly
                         ) {
                             showFavoritesOnly.toggle()
+                        }
+                        // No partner, no problem — drills you can run alone.
+                        FilterChip(
+                            label: "Solo-friendly",
+                            isSelected: showSoloOnly
+                        ) {
+                            showSoloOnly.toggle()
                         }
                         // Category filters
                         FilterChip(
@@ -240,11 +251,17 @@ struct DrillRowView: View {
                 .foregroundColor(.secondary)
                 .lineLimit(2)
 
-            if drill.videoUrl != nil {
-                Label("Video Available", systemImage: "play.circle.fill")
-                    .font(.caption)
-                    .foregroundColor(.neonCyan)
+            HStack(spacing: 12) {
+                if drill.videoUrl != nil {
+                    Label("Video Available", systemImage: "play.circle.fill")
+                        .foregroundColor(.neonCyan)
+                }
+                if drill.isSoloFriendly {
+                    Label("Solo-friendly", systemImage: "person.fill")
+                        .foregroundColor(.solarGold)
+                }
             }
+            .font(.caption)
         }
         .padding()
         .pickleballCard()
@@ -264,9 +281,10 @@ struct FilterChip: View {
                 .foregroundColor(isSelected ? .black : .primary)
                 .padding(.horizontal, 12)
                 .frame(minHeight: 48)
-                .background(isSelected ? Color.neonMagenta : Color(.systemGray5))
+                .background(isSelected ? Color.neonMagenta : Color.surfaceMuted)
                 .cornerRadius(20)
         }
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

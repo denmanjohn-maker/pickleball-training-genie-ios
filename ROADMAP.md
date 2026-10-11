@@ -1,6 +1,32 @@
 # Pickleball Genie — Product Roadmap
 
-**Status:** proposal for discussion · **Scope:** iOS client (`pickleball-training-genie-ios`) · **Last updated:** 2026-08-01
+**Status:** Releases 1–3 shipped; see status table · **Scope:** iOS client (`pickleball-training-genie-ios`) · **Last updated:** 2026-10-11
+
+---
+
+## 0. Status (October 2026)
+
+The sections below are kept as written for the reasoning behind each item. Where things stand:
+
+| Item | State |
+|---|---|
+| §4a 2.0/2.5 levels + `SkillLevel` consolidation | ✅ Shipped (`Models/SkillLevel.swift`, nearest-level fallback in `DrillsViewModel`) |
+| §4b Skill self-assessment | ✅ Shipped (`Models/SkillAssessment.swift`, re-ranks recommendations) |
+| §4c Learn section | ✅ Shipped (bundled `LearnContent.json`, `LearnView` off the Drills tab) |
+| Guided Session Mode | ✅ Shipped; now wall-clock timed with spoken cues and a background step-end alert |
+| Feedback loop (per-drill ratings, skill trends) | ✅ Shipped (ratings sent with sessions; `WorkoutHistoryViewModel.categoryTrends`) |
+| Habit loop (streaks, weekly goal, reminders) | ✅ Shipped |
+| Offline cache | ✅ Shipped (`OfflineCache`, per-user keys) |
+| Video self-review | ✅ Shipped (on-device only, excluded from backup) |
+| Inline video playback, favorites, session journal | ✅ Shipped |
+| Solo-vs-partner (Gap 2) | ⚠️ Client-side keyword heuristic (`DrillSoloHeuristic`) and "Solo-friendly" filter; real fix is backend ask §6.3 |
+| Test target / CI / lint | ✅ `PickleballTrainingGenieTests`, `.github/workflows/ios.yml`, `.swiftlint.yml` |
+| Accessibility & Dynamic Type pass | ⚠️ Partial: fixed point sizes replaced with text styles / `@ScaledMetric`, selection traits on chips; full VoiceOver audit still open |
+| Multi-week programs, community, partner finding | ⏳ Not started (backend-dependent) |
+| Cross-device sync of local state (assessment, favorites) | ⏳ Open — needs iCloud entitlement or backend endpoints |
+| HealthKit / widget / Watch | ⏳ Open — product decision + new targets/entitlements |
+
+Open **backend asks** (§6) remain the gating items: accept sub-3.0 ratings, tag 2.0/2.5 drills, extend `Drill` with `requiresPartner`/equipment/duration, and accept focus categories on workout generation.
 
 ---
 

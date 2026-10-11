@@ -576,7 +576,7 @@ private struct TrainingHabitsCard: View {
                                 .fontWeight(.semibold)
                                 .foregroundColor(isOn ? .black : .secondary)
                                 .frame(width: 32, height: 32)
-                                .background(isOn ? Color.neonMagenta : Color(.systemGray5))
+                                .background(isOn ? Color.neonMagenta : Color.surfaceMuted)
                                 .clipShape(Circle())
                         }
                         .accessibilityLabel(accessibilityName(for: weekday))

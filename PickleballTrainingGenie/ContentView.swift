@@ -50,7 +50,7 @@ private struct ProfileLoadFailedView: View {
             SynthwaveGradient()
             VStack(spacing: 16) {
                 Image(systemName: "wifi.slash")
-                    .font(.system(size: 40))
+                    .font(.largeTitle)
                     .foregroundColor(.neonMagenta)
                 Text("Couldn't load your profile")
                     .font(.headline)

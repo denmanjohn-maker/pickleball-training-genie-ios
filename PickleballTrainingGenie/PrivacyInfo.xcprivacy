@@ -9,7 +9,10 @@
 	<key>NSPrivacyAccessedAPITypes</key>
 	<array>
 		<dict>
-			<!-- UserDefaults holds only the app's own last-selected tournaments city. -->
+			<!-- UserDefaults holds only the app's own settings: last-selected tournaments city,
+			     skill-check result, favorite drill IDs, weekly goal, reminder schedule,
+			     spoken-cue preference, and the first-launch tutorial flag. Nothing is read
+			     for tracking or fingerprinting. -->
 			<key>NSPrivacyAccessedAPIType</key>
 			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
 			<key>NSPrivacyAccessedAPITypeReasons</key>

@@ -16,7 +16,7 @@ struct WorkoutView: View {
                                 .fill(Color.neonMagenta.opacity(0.15))
                                 .frame(width: 80, height: 80)
                             Image(systemName: "bolt.fill")
-                                .font(.system(size: 36))
+                                .font(.largeTitle)
                                 .foregroundColor(.neonMagenta)
                         }
 
@@ -197,9 +197,10 @@ private struct DurationButton: View {
                 .fontWeight(isSelected ? .bold : .regular)
                 .foregroundColor(isSelected ? .black : .primary)
                 .frame(maxWidth: .infinity, minHeight: 48)
-                .background(isSelected ? Color.neonMagenta : Color(.systemGray5))
+                .background(isSelected ? Color.neonMagenta : Color.surfaceMuted)
                 .cornerRadius(10)
         }
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

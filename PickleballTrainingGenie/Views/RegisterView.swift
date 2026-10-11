@@ -24,7 +24,8 @@ struct RegisterView: View {
                     // Header
                     VStack(spacing: 8) {
                         Image(systemName: "person.badge.plus.fill")
-                            .font(.system(size: 48))
+                            .font(.largeTitle)
+                            .imageScale(.large)
                             .foregroundColor(.neonMagenta)
                         Text("Create Account")
                             .font(.title)
@@ -164,7 +165,7 @@ private struct FieldLabel<Content: View>: View {
                 .foregroundColor(.secondary)
             content
                 .padding()
-                .background(Color(.systemGray6))
+                .background(Color.fieldBackground)
                 .cornerRadius(10)
         }
     }

@@ -13,15 +13,17 @@
   - For local API development, use `http://localhost:5123/` for `dotnet run`
   - If the backend is running under Docker Compose, use `http://localhost:8080/` instead
   - On a physical iOS device, set `API_BASE_URL` to your Mac's LAN IP instead of `localhost`
-- There is currently no test target in the Xcode project, so there is no repository-defined full-suite or single-test command yet.
-- There is currently no lint configuration in the repo (no SwiftLint or similar config checked in).
+- Unit tests live in the `PickleballTrainingGenieTests` target (XCTest, hosted by the app):
+  - Full suite: `xcodebuild test -project PickleballTrainingGenie.xcodeproj -scheme PickleballTrainingGenie -destination 'platform=iOS Simulator,name=iPhone 16' CODE_SIGNING_ALLOWED=NO`
+  - Single test: append `-only-testing:PickleballTrainingGenieTests/<TestClass>/<testMethod>`
+- Lint with SwiftLint (`swiftlint` from the repo root; config in `.swiftlint.yml`). CI (`.github/workflows/ios.yml`) runs lint, build and tests on every PR.
 
 ## High-level architecture
 
 - This is a native SwiftUI iOS app with a lightweight MVVM split:
   - `PickleballTrainingGenieApp.swift` creates the single shared `AuthViewModel`
   - `ContentView.swift` (`RootView`) switches between auth flow and the main tab UI
-  - `API/PickleballTrainingGenieClient.swift` contains both the HTTP client and the app's `Codable` API models
+  - `API/PickleballTrainingGenieClient.swift` contains the HTTP client, the app's `Codable` API models, `PickleballTrainingGenieError` (carries the server's error message), `ServerErrorBody` and `JWTClaims`
   - `ViewModels/` owns async loading state, user-facing error strings, and screen data
   - `Views/` stays mostly declarative and triggers work through `Task { ... }` and `.task`
 - Authentication state is the root of the app:
@@ -40,9 +42,13 @@
 - Reuse the shared `PickleballTrainingGenieClient` from `AuthViewModel` for app flows that depend on auth. Do not introduce parallel client instances for normal runtime state unless there is a clear isolation reason such as previews.
 - API base URL comes from `ProcessInfo.processInfo.environment["API_BASE_URL"]` and defaults to `https://thepickleballgenie.com/`. Keep the protocol and trailing slash when setting it.
 - View models are `@MainActor` and own loading/error state. Views are expected to call async methods and render published state, rather than performing URLSession work directly.
-- The API client centralizes endpoint behavior behind `request(..., requireAuth:)`; authenticated endpoints rely on the `requireAuth` flag and `client.jwtToken` rather than setting headers ad hoc in views or view models.
+- The API client centralizes endpoint behavior behind `perform`/`send(..., requireAuth:)`; authenticated endpoints rely on the `requireAuth` flag and `client.jwtToken` rather than setting headers ad hoc. A 401 on an authenticated call fires `client.onUnauthorized`, which `AuthViewModel` turns into a sign-out — don't add per-screen "please log in" handling.
+- Match errors as `.invalidResponse(let code, _)` and prefer `error.serverMessage ?? "fallback"` for user-facing text.
+- Log with `AppLog.<category>` (`os.Logger`), never `print`.
+- New on-device storage must be registered in `Utilities/LocalDataPurge.swift`.
 - Prefer the shared theme primitives in `Theme/AppTheme.swift` over one-off styling:
-  - brand colors via `Color.pickleballGreen` / `Color.pickleballYellow`
+  - palette colors via `Color.neonMagenta`, `.neonCyan`, `.deepSpace`, `.solarGold`, etc., plus `.surfaceMuted` / `.fieldBackground` instead of `Color(.systemGray…)`
+  - text styles or `@ScaledMetric` instead of fixed `.font(.system(size:))`
   - cards via `.pickleballCard()`
   - buttons via `PrimaryButtonStyle` and `SecondaryButtonStyle`
   - drill metadata via `DUPRBadge` and `CategoryBadge`

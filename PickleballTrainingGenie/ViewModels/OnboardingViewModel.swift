@@ -185,14 +185,14 @@ class OnboardingViewModel: ObservableObject {
             authViewModel.currentUser = updatedUser
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 400:
-                errorMessage = "The server rejected the profile. Check your ratings and try again."
-            case .invalidResponse(let code) where code == 401:
+            case .invalidResponse(let code, _) where code == 400:
+                errorMessage = error.serverMessage ?? "The server rejected the profile. Check your ratings and try again."
+            case .invalidResponse(let code, _) where code == 401:
                 errorMessage = "Your session expired. Please sign in again."
-            case .invalidResponse(let code) where code == 404:
+            case .invalidResponse(let code, _) where code == 404:
                 errorMessage = "The server doesn't support profiles yet. Please update the backend."
-            case .invalidResponse(let code):
-                errorMessage = "Could not save your profile (error \(code))."
+            case .invalidResponse(let code, _):
+                errorMessage = error.serverMessage ?? "Could not save your profile (error \(code))."
             case .invalidURL:
                 errorMessage = "Invalid server configuration."
             }

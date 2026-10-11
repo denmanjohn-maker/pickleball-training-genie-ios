@@ -4,40 +4,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Native iOS client (SwiftUI, Swift 5.10, async/await) for **Pickleball Genie**, an AI-powered training coach. It talks to a separate backend REST API (not in this repo) for auth, drills/recommendations, AI-generated workouts, and tournaments.
+Native iOS client (SwiftUI, Swift 5.10, async/await, iOS 17+) for **Pickleball Genie**, an AI-powered training coach aimed at players who can't get to a human coach. It talks to a separate backend REST API (not in this repo) for auth, drills/recommendations, AI-generated workouts, workout history, and tournaments. A large part of the app now works offline: bundled Learn content, cached drills/workouts, guided sessions, streaks, and on-device video self-review.
 
-## Build & run
+## Build, test, lint
 
-- Open `PickleballTrainingGenie.xcodeproj` in Xcode 15+, targeting iOS 17+.
-- There are no test targets, and no CLI lint/build scripts — build and run via Xcode (Cmd+R) or `xcodebuild` against the `PickleballTrainingGenie` scheme.
+- Open `PickleballTrainingGenie.xcodeproj` in Xcode 15+ (CI uses Xcode 16 on `macos-15`).
+- **Unit tests** live in the `PickleballTrainingGenieTests` target (XCTest, hosted by the app). Run with Cmd+U or:
+  ```sh
+  xcodebuild test -project PickleballTrainingGenie.xcodeproj -scheme PickleballTrainingGenie \
+    -destination 'platform=iOS Simulator,name=iPhone 16' CODE_SIGNING_ALLOWED=NO
+  ```
+  Tests cover pure logic only (API client via a stub `URLProtocol`, parsers, stats, assessment scoring, view-model filtering, guided-session timing). Keep new logic in testable, UI-free types and add a test alongside it.
+- **Lint**: `swiftlint` from the repo root (`.swiftlint.yml`). CI runs it; warnings don't fail the build, errors do.
+- **CI**: `.github/workflows/ios.yml` lints, builds, and runs the tests on every PR and on pushes to `main`.
+- `Package.resolved` (under `PickleballTrainingGenie.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/`) is meant to be committed; Xcode writes it on first package resolution. Commit it when it appears so dependency versions are pinned.
 - The app defaults to the hosted API at `https://thepickleballgenie.com/`. To point at a local backend, set environment variables on the Run scheme (Product > Scheme > Edit Scheme > Run > Arguments > Environment Variables):
-  - `API_BASE_URL` — main backend (auth, drills, workouts, profile). E.g. `http://localhost:5123/` (dotnet run) or `http://localhost:8080/` (Docker Compose).
+  - `API_BASE_URL` — main backend. E.g. `http://localhost:5123/` (dotnet run) or `http://localhost:8080/` (Docker Compose).
   - `TOURNAMENTS_API_BASE_URL` — tournaments backend, read separately by `TournamentsAPIClient`.
   - Both must include protocol and trailing slash. On a physical device, use the Mac's LAN IP instead of `localhost`.
-- `scripts/generate_zip_centroids.py` regenerates `PickleballTrainingGenie/Resources/ZipPrefixCentroids.json`, used by `ZipCityMatcher` to map ZIP codes to home cities during onboarding.
+- `scripts/generate_zip_centroids.py` regenerates `Resources/ZipPrefixCentroids.json`, used by `ZipCityMatcher`.
 
 ## Architecture
 
-MVVM with a thin API-client layer. Two independent backend clients exist side by side (main app API and tournaments API) — do not conflate them when adding features.
+MVVM with a thin API-client layer. Two independent backend clients exist side by side (main app API and tournaments API) — do not conflate them.
 
-- **Entry point**: `PickleballTrainingGenieApp.swift` shows a splash (`SynthwaveSplashView`), then renders `RootView` (`ContentView.swift`) which owns the single top-level `AuthViewModel` via `@StateObject`/`@EnvironmentObject`.
-- **Root routing** (`ContentView.swift`): `RootView` is the sole gate deciding what's on screen based on `AuthViewModel` state:
-  - not authenticated → `LoginView`
-  - authenticated, profile incomplete (`User.needsOnboarding`) → `OnboardingFlowView`
-  - authenticated, profile loaded → `MainTabView`, which is handed fresh `DrillsViewModel` and `TournamentsViewModel` instances as environment objects (constructed here, not injected higher up)
-  - profile fetch failed → a retry screen
-- **Auth** (`ViewModels/AuthViewModel.swift`): owns the single `PickleballTrainingGenieClient` instance for the whole app, restores session from the Keychain on launch, drives login/register/logout and profile fetch/update. Other view models receive `client` from `AuthViewModel` rather than constructing their own.
+- **Entry point**: `PickleballTrainingGenieApp.swift` shows `SynthwaveSplashView`, then `RootView` (`ContentView.swift`), which owns the single `AuthViewModel`.
+- **Root routing** (`ContentView.swift`): `RootView` decides what's on screen from `AuthViewModel` state: not authenticated → `LoginView`; profile incomplete (`User.needsOnboarding`) → `OnboardingFlowView`; first run → `AppTutorialView`; otherwise `MainTabView` (tab bar on iPhone, sidebar on iPad) with fresh `DrillsViewModel` and `TournamentsViewModel` as environment objects; profile fetch failed → retry screen.
+- **Auth** (`ViewModels/AuthViewModel.swift`): owns the one `PickleballTrainingGenieClient`, restores the JWT from Keychain (skipping tokens whose `exp` has passed), drives email/Google/Apple sign-in, profile fetch/update, and account deletion (`LocalDataPurge` wipes on-device data). It sets `client.onUnauthorized` so any 401 on an authenticated call signs the user out once, centrally.
 - **API clients** (`API/`):
-  - `PickleballTrainingGenieClient.swift` — main REST client (auth, profile, drills, recommendations, AI workout generation, workout history) plus all `Codable` request/response models for that domain, all in one file.
-  - `TournamentsAPIClient.swift` / `TournamentsModels.swift` — separate client/models for the tournaments feature, with its own base URL config (`TournamentsAPIConfig`, from `TOURNAMENTS_API_BASE_URL`).
-  - Both clients inject bearer auth headers and read their base URL from `ProcessInfo.processInfo.environment`, falling back to the hosted production URL.
-- **ViewModels** (`ViewModels/`): one `@MainActor` `ObservableObject` per feature area (`DrillsViewModel`, `OnboardingViewModel`, `TournamentsViewModel`, `WorkoutHistoryViewModel`), each wrapping its client and exposing published UI state/errors. `OnboardingViewModel` also holds a `TournamentsAPIClient` to look up home city during signup.
-- **Views** (`Views/`) are grouped by feature (auth, onboarding, drills, tournaments, workout history, profile) and consume the environment-injected view models — they don't talk to API clients directly.
-- **Theme** (`Theme/AppTheme.swift`, `AvatarView.swift`): shared "synthwave" visual system — brand colors as `Color` extensions, custom button styles, badges. Reuse these instead of ad hoc styling in new views.
-- **Utilities**: `KeychainHelper` (JWT token storage), `ZipCityMatcher` + `ZipPrefixCentroids.json` (ZIP → nearest city lookup for onboarding), `DateFormatting`, `ImageResizing` (avatar uploads).
+  - `PickleballTrainingGenieClient.swift` — main REST client plus all `Codable` models for that domain. One `perform`/`send` path adds the bearer header, applies timeouts (30s request, 90s for AI workout generation), decodes server error bodies (`ServerErrorBody`: ASP.NET ProblemDetails, `{message}`, plain text) into `PickleballTrainingGenieError.invalidResponse(statusCode:serverMessage:)`, and fires `onUnauthorized`. The error conforms to `LocalizedError`, so `error.localizedDescription` shows the server's message. `JWTClaims` reads `exp` without verifying.
+  - `TournamentsAPIClient.swift` / `TournamentsModels.swift` — separate client/models with its own base URL (`TournamentsAPIConfig`).
+- **ViewModels** (`ViewModels/`): one `@MainActor` `ObservableObject` per feature (`DrillsViewModel`, `OnboardingViewModel`, `TournamentsViewModel`, `WorkoutHistoryViewModel`, `TrainingStreakStore`, `GuidedSessionViewModel`). `DrillsViewModel` and `TrainingStreakStore` fall back to `OfflineCache` when the network fails and expose the cache date for banners. `GuidedSessionViewModel` runs a workout as a timed session: wall-clock based countdown, pause/skip/+1 min, haptic + spoken cues through an `AVAudioSession` playback category, and a local notification at drill end when the app is backgrounded. Its `now` closure and `integratesWithSystem` flag exist for tests.
+- **Models** (`Models/`): `SkillLevel` (single source of truth for the 2.0–5.0 scale), `SkillAssessment` (60-second skill check, stored locally, used to re-rank recommendations), `TrainingStats` (streak/weekly-goal math), `DrillSoloHeuristic` (keyword guess at partner-free drills until the backend tags them).
+- **Views** (`Views/`) by feature: auth, onboarding, drills + Learn, recommendations, workout + guided session, tournaments, history, profile (habits card, reminders, video review). Views consume environment view models and never call API clients directly.
+- **Theme** (`Theme/AppTheme.swift`, `AvatarView.swift`): synthwave visual system — brand colors, `surfaceMuted`/`fieldBackground` tokens, button styles, badges, `readableWidth()`. Reuse these; don't reach for `Color(.systemGray…)` or fixed point sizes (use text styles or `@ScaledMetric`).
+- **Utilities**: `KeychainHelper` (JWT), `OfflineCache` (Codable JSON in Application Support), `TrainingReminders` (local notifications), `FavoriteDrills`, `VideoReviewStore` (clips in Documents, excluded from backup), `LocalDataPurge`, `ZipCityMatcher`, `AppLog` (`os.Logger` categories — use instead of `print`).
 
 ## Conventions
 
-- `User` models are decoded with several optional fields explicitly kept optional to stay compatible with backends that predate newer profile fields (see comments in `PickleballTrainingGenieClient.swift`) — don't force-unwrap these or make them non-optional without checking backend compatibility.
-- Request payloads that send DUPR ratings use `Double`, not `Decimal`, so `JSONEncoder` emits clean values (e.g. `3.5` instead of a `Decimal` representation).
-- Network-reachability errors surface a user-facing hint that mentions the relevant `*_API_BASE_URL` env var and localhost caveat for physical devices (see `AuthViewModel.swift`/`TournamentsViewModel.swift`) — follow this pattern for new clients.
+- `User` keeps several fields optional for compatibility with older backends (see comments in the client) — don't force-unwrap or make them non-optional without checking the backend.
+- Request payloads that send DUPR ratings use `Double`, not `Decimal`, so `JSONEncoder` emits clean values.
+- Match `PickleballTrainingGenieError` as `.invalidResponse(let code, _)`; when showing a generic failure, prefer `error.serverMessage ?? "fallback"` so backend validation text reaches the user.
+- Network-reachability errors surface a hint naming the relevant `*_API_BASE_URL` env var and the localhost caveat for physical devices (see `AuthViewModel`/`TournamentsViewModel`) — follow this for new clients.
+- Any new on-device storage must be added to `LocalDataPurge` so account deletion erases it.
+- Personalized caches are keyed per user id; the public drill library is cached globally.

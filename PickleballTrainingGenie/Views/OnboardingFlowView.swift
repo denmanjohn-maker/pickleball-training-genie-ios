@@ -4,6 +4,7 @@ import PhotosUI
 /// Stepped profile-completion flow shown right after account creation (email,
 /// Google, or Apple) until the required profile fields are filled in.
 struct OnboardingFlowView: View {
+    @ScaledMetric(relativeTo: .title) private var headerFontSize: CGFloat = 26
     @EnvironmentObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = OnboardingViewModel()
 
@@ -64,7 +65,7 @@ struct OnboardingFlowView: View {
     private var header: some View {
         VStack(spacing: 12) {
             Text("Set Up Your Profile")
-                .font(.system(size: 26, weight: .heavy, design: .rounded))
+                .font(.system(size: headerFontSize, weight: .heavy, design: .rounded))
                 .foregroundStyle(
                     LinearGradient(colors: [.neonMagenta, .neonCyan], startPoint: .leading, endPoint: .trailing)
                 )
@@ -454,7 +455,7 @@ struct AvatarStepView: View {
                                     )
                                 )
                             Text(avatar.displayName)
-                                .font(.system(size: 9))
+                                .font(.caption2)
                                 .foregroundColor(isSelected(avatar) ? .neonCyan : .secondary)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.7)
@@ -508,7 +509,7 @@ private struct OnboardingField<Content: View>: View {
                 .foregroundColor(.secondary)
             content
                 .padding()
-                .background(Color(.systemGray6))
+                .background(Color.fieldBackground)
                 .cornerRadius(10)
         }
     }

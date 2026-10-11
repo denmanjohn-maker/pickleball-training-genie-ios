@@ -1,0 +1,49 @@
+# SwiftLint configuration. Run locally with `swiftlint` from the repo root;
+# CI runs the same command. Rules below are tuned so the existing codebase
+# passes without churn; tighten them as the code is cleaned up.
+
+included:
+  - PickleballTrainingGenie
+  - PickleballTrainingGenieTests
+
+excluded:
+  - .build
+  - DerivedData
+
+disabled_rules:
+  - identifier_name        # one-letter math variables (lat/lon, a/b) are fine
+  - large_tuple            # (singles, doubles, target) is clearer than a struct
+  - todo
+  - trailing_comma
+  - multiple_closures_with_trailing_closure
+
+opt_in_rules:
+  - empty_count
+  - closure_spacing
+  - redundant_nil_coalescing
+  - unneeded_parentheses_in_closure_argument
+
+line_length:
+  warning: 160
+  error: 260
+  ignores_comments: true
+  ignores_urls: true
+
+type_body_length:
+  warning: 400
+  error: 900
+
+file_length:
+  warning: 600
+  error: 1200
+
+function_body_length:
+  warning: 80
+  error: 200
+
+cyclomatic_complexity:
+  warning: 15
+  error: 30
+
+nesting:
+  type_level: 2

@@ -20,15 +20,39 @@ class AuthViewModel: ObservableObject {
     init() {
         let baseURL = URL(string: APIConfig.baseURL)!
         client = PickleballTrainingGenieClient(baseURL: baseURL)
+        // Any authenticated call that comes back 401 means the token is dead;
+        // handle it once here instead of in every view model.
+        client.onUnauthorized = { [weak self] in
+            Task { @MainActor [weak self] in
+                self?.handleSessionExpired()
+            }
+        }
         // Restore saved token on launch from Keychain
         if let savedToken = KeychainHelper.read(forKey: "jwtToken"),
            !savedToken.isEmpty {
-            client.jwtToken = savedToken
-            isAuthenticated = true
-            Task {
-                await fetchProfile()
+            if JWTClaims.isExpired(savedToken) {
+                // Don't bootstrap a session we know will 401 on its first call.
+                AppLog.auth.info("Saved token has expired; returning to sign-in.")
+                KeychainHelper.delete(forKey: "jwtToken")
+                errorMessage = "Your session has expired. Please sign in again."
+            } else {
+                client.jwtToken = savedToken
+                isAuthenticated = true
+                Task {
+                    await fetchProfile()
+                }
             }
         }
+    }
+
+    /// The server rejected the bearer token on an authenticated request.
+    /// Tears the session down (idempotent) and tells the player why they're
+    /// back at the login screen.
+    func handleSessionExpired() {
+        guard isAuthenticated else { return }
+        AppLog.auth.notice("Authenticated request returned 401; signing out.")
+        logout()
+        errorMessage = "Your session has expired. Please sign in again."
     }
 
     func fetchProfile() async {
@@ -37,15 +61,15 @@ class AuthViewModel: ObservableObject {
             currentUser = try await client.getProfile()
             await loadAvatarIfNeeded()
         } catch let error as PickleballTrainingGenieError {
-            if case .invalidResponse(let code) = error, code == 401 {
+            if case .invalidResponse(let code, _) = error, code == 401 {
                 // Token expired — force a fresh sign-in instead of spinning.
-                logout()
+                handleSessionExpired()
                 return
             }
-            print("Failed to fetch profile: \(error)")
+            AppLog.auth.error("Failed to fetch profile: \(error.localizedDescription)")
             profileLoadFailed = true
         } catch {
-            print("Failed to fetch profile: \(error)")
+            AppLog.auth.error("Failed to fetch profile: \(error.localizedDescription)")
             profileLoadFailed = true
         }
     }
@@ -70,12 +94,12 @@ class AuthViewModel: ObservableObject {
             await fetchProfile()
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 401:
+            case .invalidResponse(let code, _) where code == 401:
                 errorMessage = "Invalid email or password."
-            case .invalidResponse(let code) where code == 0:
+            case .invalidResponse(let code, _) where code == 0:
                 errorMessage = connectionErrorMessage()
-            case .invalidResponse(let code):
-                errorMessage = "Login failed (error \(code))."
+            case .invalidResponse(let code, _):
+                errorMessage = error.serverMessage ?? "Login failed (error \(code))."
             case .invalidURL:
                 errorMessage = "Invalid server configuration."
             }
@@ -121,14 +145,14 @@ class AuthViewModel: ObservableObject {
             // User dismissed the sheet — not an error.
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 401:
+            case .invalidResponse(let code, _) where code == 401:
                 errorMessage = "Google sign-in was rejected by the server."
-            case .invalidResponse(let code) where code == 404:
+            case .invalidResponse(let code, _) where code == 404:
                 errorMessage = "The server doesn't support Google sign-in yet."
-            case .invalidResponse(let code) where code == 0:
+            case .invalidResponse(let code, _) where code == 0:
                 errorMessage = connectionErrorMessage()
-            case .invalidResponse(let code):
-                errorMessage = "Google sign-in failed (error \(code))."
+            case .invalidResponse(let code, _):
+                errorMessage = error.serverMessage ?? "Google sign-in failed (error \(code))."
             case .invalidURL:
                 errorMessage = "Invalid server configuration."
             }
@@ -165,14 +189,14 @@ class AuthViewModel: ObservableObject {
                 await fetchProfile()
             } catch let error as PickleballTrainingGenieError {
                 switch error {
-                case .invalidResponse(let code) where code == 401:
+                case .invalidResponse(let code, _) where code == 401:
                     errorMessage = "Apple sign-in was rejected by the server."
-                case .invalidResponse(let code) where code == 404:
+                case .invalidResponse(let code, _) where code == 404:
                     errorMessage = "The server doesn't support Apple sign-in yet."
-                case .invalidResponse(let code) where code == 0:
+                case .invalidResponse(let code, _) where code == 0:
                     errorMessage = connectionErrorMessage()
-                case .invalidResponse(let code):
-                    errorMessage = "Apple sign-in failed (error \(code))."
+                case .invalidResponse(let code, _):
+                    errorMessage = error.serverMessage ?? "Apple sign-in failed (error \(code))."
                 case .invalidURL:
                     errorMessage = "Invalid server configuration."
                 }
@@ -265,12 +289,12 @@ class AuthViewModel: ObservableObject {
             return true
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 400:
-                errorMessage = "Registration failed. This email may already be in use."
-            case .invalidResponse(let code) where code == 0:
+            case .invalidResponse(let code, _) where code == 400:
+                errorMessage = error.serverMessage ?? "Registration failed. This email may already be in use."
+            case .invalidResponse(let code, _) where code == 0:
                 errorMessage = connectionErrorMessage()
-            case .invalidResponse(let code):
-                errorMessage = "Registration failed (error \(code))."
+            case .invalidResponse(let code, _):
+                errorMessage = error.serverMessage ?? "Registration failed (error \(code))."
             case .invalidURL:
                 errorMessage = "Invalid server configuration."
             }
@@ -299,15 +323,15 @@ class AuthViewModel: ObservableObject {
             return true
         } catch let error as PickleballTrainingGenieError {
             switch error {
-            case .invalidResponse(let code) where code == 401:
+            case .invalidResponse(let code, _) where code == 401:
                 errorMessage = "Your session has expired. Please sign in again before deleting your account."
-            case .invalidResponse(let code) where code == 404 || code == 405:
+            case .invalidResponse(let code, _) where code == 404 || code == 405:
                 // 405 = the api/Users/profile route exists but has no DELETE handler yet.
                 errorMessage = "Account deletion isn't available yet. Please try again later."
-            case .invalidResponse(let code) where code == 0:
+            case .invalidResponse(let code, _) where code == 0:
                 errorMessage = connectionErrorMessage()
-            case .invalidResponse(let code):
-                errorMessage = "Couldn't delete your account (error \(code))."
+            case .invalidResponse(let code, _):
+                errorMessage = error.serverMessage ?? "Couldn't delete your account (error \(code))."
             case .invalidURL:
                 errorMessage = "Invalid server configuration."
             }

@@ -38,7 +38,7 @@ struct LoginView: View {
                                     .keyboardType(.emailAddress)
                                     .textContentType(.emailAddress)
                                     .padding()
-                                    .background(Color(.systemGray6))
+                                    .background(Color.fieldBackground)
                                     .cornerRadius(10)
                             }
 
@@ -50,7 +50,7 @@ struct LoginView: View {
                                 SecureField("Password", text: $password)
                                     .textContentType(.password)
                                     .padding()
-                                    .background(Color(.systemGray6))
+                                    .background(Color.fieldBackground)
                                     .cornerRadius(10)
                             }
 

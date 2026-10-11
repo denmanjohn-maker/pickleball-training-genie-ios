@@ -20,7 +20,8 @@ xcuserdata/
 .swiftpm/
 .build/
 Packages/
-Package.resolved
+# Package.resolved is deliberately NOT ignored: committing it pins every
+# dependency so each developer and CI resolve identical versions.
 
 # Playgrounds
 timeline.xctimeline
@@ -29,7 +30,7 @@ playground.xcworkspace
 # CocoaPods
 Pods/
 *.xcworkspace
-!*.xcodeproj/project.xcworkspace/contents.xcworkspacedata
+!*.xcodeproj/project.xcworkspace/
 
 # Carthage
 Carthage/Build/

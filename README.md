@@ -8,7 +8,8 @@ An elegant, modern iOS client application for **Pickleball Genie**, your AI-powe
 
 - **SwiftUI**: Modern, declarative UI framework with responsive layouts and state-driven animations.
 - **Swift 5.10 & Concurrency (Async/Await)**: Leverages modern Swift concurrency for non-blocking network calls, clean asynchronous routines, and `@MainActor` thread-safety annotations on view models.
-- **Keychain Services (Security API)**: Secure storage of JWT authentication tokens on the device's keychain using custom `KeychainHelper` APIs.
+- **Keychain Services (Security API)**: Secure storage of JWT authentication tokens on the device's keychain using custom `KeychainHelper` APIs. Expired tokens are detected on launch, and any 401 on an authenticated call signs the user out centrally.
+- **Offline-first training**: drills, recommendations and the current workout are cached on disk; Learn content is bundled; guided sessions run from a wall clock with spoken cues and a local notification when the phone is pocketed.
 - **MVVM Architecture**: Clear separation of concerns with Models (Core structs), Views (SwiftUI structures), ViewModels (ObservableObjects driving UI state), and Services (API client layer).
 - **ProcessInfo Environments**: Supports dynamic backend server targets through customizable environment variables.
 
@@ -16,48 +17,41 @@ An elegant, modern iOS client application for **Pickleball Genie**, your AI-powe
 
 ## 📂 Project Organization & Codebase Structure
 
-The project code resides in the `PickleballTrainingGenie` folder and is organized cleanly into functional layers:
-
 ```text
 PickleballTrainingGenie/
-├── PickleballTrainingGenieApp.swift    # App entry point initializing AuthViewModel
-├── ContentView.swift                   # Root view router switching Login & Tab views
+├── PickleballTrainingGenieApp.swift    # App entry point (splash → RootView)
+├── ContentView.swift                   # RootView routing + MainTabView (tab bar / iPad sidebar)
 ├── API/
-│   └── PickleballTrainingGenieClient.swift # Core HTTP REST API Client & JSON Models
-├── ViewModels/
-│   ├── AuthViewModel.swift             # Manages auth status, login, registration, & logout
-│   └── DrillsViewModel.swift           # Handles drills fetching, filtering, & AI workouts
-├── Views/
-│   ├── LoginView.swift                 # Sign-in UI with validation & animations
-│   ├── RegisterView.swift              # Account creation with current/target DUPR settings
-│   ├── DrillsListView.swift            # Browsable skill drills repository with filters
-│   ├── RecommendationsView.swift       # Personalized drills tailored to DUPR levels
-│   ├── WorkoutView.swift               # AI generator producing custom drills sequences
-│   ├── ProfileView.swift               # Player settings, DUPR level details, & sign-out
-│   └── DrillDetailView.swift           # Deep-dive instructions, source, & video links
-├── Theme/
-│   └── AppTheme.swift                  # Reusable branding, button styles, & custom badges
-└── Utilities/
-    └── KeychainHelper.swift            # Low-level Swift wrappers for iOS Keychain API
+│   ├── PickleballTrainingGenieClient.swift  # Main REST client, Codable models, error + JWT helpers
+│   ├── TournamentsAPIClient.swift           # Separate tournaments client
+│   └── TournamentsModels.swift
+├── Models/                             # SkillLevel scale, skill assessment, training stats, solo heuristic
+├── ViewModels/                         # Auth, Drills, Onboarding, Tournaments, History, Streaks, Guided Session
+├── Views/                              # Auth, onboarding, drills + Learn, workout + guided session,
+│                                       # tournaments, history, profile, video self-review, tutorial
+├── Theme/                              # Synthwave palette, button styles, badges, avatar
+├── Utilities/                          # Keychain, OfflineCache, reminders, favorites, video store,
+│                                       # LocalDataPurge, ZipCityMatcher, AppLog
+└── Resources/                          # LearnContent.json, ZipPrefixCentroids.json
+PickleballTrainingGenieTests/           # XCTest unit tests (hosted by the app)
+.github/workflows/ios.yml               # CI: SwiftLint + build + tests on iOS Simulator
 ```
 
 ---
 
-## 🏛️ Core Component Breakdown
+## 🧪 Tests, lint, and CI
 
-### 1. API Services (`API/`)
-- **`PickleballTrainingGenieClient`**: Executes asynchronous requests (`GET`, `POST`) to the backend API, automatically injecting the required Authorization headers where necessary. Contains strongly typed `Codable` models representing users, drills, and AI workouts.
+- **Unit tests** (`PickleballTrainingGenieTests`) run with Cmd+U in Xcode, or from the terminal:
 
-### 2. ViewModels (`ViewModels/`)
-- **`AuthViewModel`**: Controls the authentication lifecycle. Automatically reads the keychain on launch to restore a previous session, and coordinates login and registration flows.
-- **`DrillsViewModel`**: Governs data fetching for training drills, interactive filter state (Category, DUPR level), drill completions, and AI workout plan configurations.
+  ```sh
+  xcodebuild test -project PickleballTrainingGenie.xcodeproj -scheme PickleballTrainingGenie \
+    -destination 'platform=iOS Simulator,name=iPhone 16' CODE_SIGNING_ALLOWED=NO
+  ```
 
-### 3. Theme & Styling (`Theme/`)
-- **`Color` Extensions**: Defines brand colors (`pickleballGreen`, `pickleballYellow`, `pickleballDarkGreen`, `pickleballLightGreen`).
-- **Styles & Badges**: Implements custom button styles (`PrimaryButtonStyle`, `SecondaryButtonStyle`) and metadata badges (`DUPRBadge`, `CategoryBadge`) to establish a premium and consistent visual identity.
-
-### 4. Utilities & Security (`Utilities/`)
-- **`KeychainHelper`**: Bypasses insecure standard storage (like `UserDefaults`) by wrapping the `Security` framework's `SecItem` operations, ensuring authentication state remains private and secure.
+  They cover the API client (through a stub `URLProtocol`, no network), server error parsing, JWT expiry, date parsing, streak math, skill-assessment scoring and ranking, drill level fallback, guided-session timing, the offline cache, and the solo-drill heuristic.
+- **Lint**: `brew install swiftlint && swiftlint` from the repo root. Configuration is in `.swiftlint.yml`.
+- **CI**: GitHub Actions (`.github/workflows/ios.yml`) lints, builds, and runs the tests on every pull request and on pushes to `main`.
+- **Dependency pinning**: `Package.resolved` is no longer gitignored and is meant to be committed. It isn't in the repository yet — Xcode writes it under `PickleballTrainingGenie.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/` on first package resolution; commit it when it appears so every build resolves the same dependency versions.
 
 ---
 
