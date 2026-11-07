@@ -142,6 +142,7 @@ struct MainTabView: View {
     @EnvironmentObject var trainingStreakStore: TrainingStreakStore
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     // SceneStorage (not State) so the chosen section survives the view-tree
     // re-init that happens when the size class flips (e.g. iPad Split View).
@@ -217,7 +218,11 @@ struct MainTabView: View {
             .background(SynthwaveGradient())
             .navigationTitle("Genie")
             .genieBrandIconToolbar()
-            .navigationSplitViewColumnWidth(min: 220, ideal: 260, max: 300)
+            .navigationSplitViewColumnWidth(
+                min: dynamicTypeSize.isAccessibilitySize ? 320 : 220,
+                ideal: dynamicTypeSize.isAccessibilitySize ? 360 : 260,
+                max: dynamicTypeSize.isAccessibilitySize ? 440 : 300
+            )
         } detail: {
             // Each section owns its own NavigationStack; switching the
             // @ViewBuilder branch recreates it, mirroring tab-switch semantics.
