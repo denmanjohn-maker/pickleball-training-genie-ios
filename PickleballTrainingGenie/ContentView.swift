@@ -125,10 +125,13 @@ enum AppSection: String, CaseIterable, Identifiable {
     }
 
     /// The recommendation empty state jumps to the layout's Drills selection.
-    @ViewBuilder func destination(onBrowseAllDrills: @escaping () -> Void) -> some View {
+    @ViewBuilder func destination(
+        onBrowseAllDrills: @escaping () -> Void,
+        onOpenWorkout: @escaping () -> Void = {}
+    ) -> some View {
         switch self {
         case .drills: DrillsListView()
-        case .today: TodayView(onBrowseAllDrills: onBrowseAllDrills)
+        case .today: TodayView(onBrowseAllDrills: onBrowseAllDrills, onOpenWorkout: onOpenWorkout)
         case .workout: WorkoutView()
         case .progress: TrainingProgressView()
         case .profile: ProfileView()
@@ -206,6 +209,9 @@ struct MainTabView: View {
             )) {
                 ForEach(AppSection.allCases) { section in
                     Label(section.title, systemImage: section.icon)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(section.title)
+                        .accessibilityIdentifier("mainSection.\(section.rawValue)")
                         .foregroundStyle(section == selection ? Color.neonMagenta : Color.white)
                         .tag(section)
                         .listRowBackground(
@@ -232,7 +238,13 @@ struct MainTabView: View {
     }
 
     private func destinationView(for section: AppSection) -> some View {
-        section.destination(onBrowseAllDrills: { selectionRaw = AppSection.drills.rawValue })
+        section.destination(
+            onBrowseAllDrills: { selectionRaw = AppSection.drills.rawValue },
+            onOpenWorkout: {
+                drillsViewModel.reviewSavedWorkout = drillsViewModel.workout != nil
+                selectionRaw = AppSection.workout.rawValue
+            }
+        )
     }
 
     /// On a fresh install Tournaments has no saved city; default it to

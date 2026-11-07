@@ -6,6 +6,8 @@ class DrillsViewModel: ObservableObject {
     @Published var drills: [Drill] = []
     @Published var recommendations: [Drill] = []
     @Published var workout: WorkoutPlanResponse?
+    @Published var completedWorkoutDrillIndices: Set<Int> = []
+    @Published var reviewSavedWorkout = false
     @Published var isLoadingDrills = false
     @Published var isLoadingRecommendations = false
     @Published var isGeneratingWorkout = false
@@ -208,9 +210,10 @@ class DrillsViewModel: ObservableObject {
             _ = try await client.completeWorkoutSession(request)
             workoutCompletedSuccessfully = true
             self.workout = nil
+            completedWorkoutDrillIndices = []
             cachedWorkoutDate = nil
             OfflineCache.remove(key: workoutCacheKey)
-            await trainingStreakStore?.load(afterSave: true)
+            trainingStreakStore?.refreshAfterSave()
         } catch let error as PickleballTrainingGenieError {
             switch error {
             case .invalidResponse(let code, _) where code == 404:
@@ -232,6 +235,7 @@ class DrillsViewModel: ObservableObject {
         // the workout they already had.
         do {
             workout = try await client.generateWorkout(durationMinutes: workoutDuration)
+            completedWorkoutDrillIndices = []
             cachedWorkoutDate = nil
             if let workout {
                 OfflineCache.save(workout, key: workoutCacheKey)

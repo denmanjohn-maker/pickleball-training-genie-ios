@@ -54,8 +54,10 @@ final class TodayLayoutTests: XCTestCase {
                 rawResponse: "Practice soft dinks for 15 minutes. Keep your paddle in front and reset between rallies."
             )
         }
-        let auth = AuthViewModel()
-        let tournaments = TournamentsViewModel(client: TournamentsAPIClient(baseURL: Fixtures.baseURL))
+        let auth = AuthViewModel(restoreSession: false)
+        let tournaments = TournamentsViewModel(
+            client: TournamentsAPIClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
+        )
         let root = view.environmentObject(auth).environmentObject(drills)
             .environmentObject(store).environmentObject(tournaments)
         let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)

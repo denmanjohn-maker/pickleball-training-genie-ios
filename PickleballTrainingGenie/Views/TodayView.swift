@@ -4,6 +4,7 @@ struct TodayView: View {
     @EnvironmentObject private var drillsViewModel: DrillsViewModel
     @State private var selectedDrill: Drill?
     let onBrowseAllDrills: () -> Void
+    var onOpenWorkout: () -> Void = {}
 
     var body: some View {
         NavigationStack {
@@ -15,10 +16,8 @@ struct TodayView: View {
                         Text(drillsViewModel.workout == nil
                              ? "Choose your session length and build a plan when you're ready."
                              : "Your saved plan is ready to review. Start or complete it only when you choose.")
-                            .foregroundStyle(.secondary)
-                        NavigationLink {
-                            WorkoutView(ownsNavigationStack: false, reviewSavedWorkout: true)
-                        } label: {
+                            .foregroundStyle(Color.starlight)
+                        Button(action: onOpenWorkout) {
                             Label(drillsViewModel.workoutActionTitle, systemImage: "bolt.fill")
                                 .frame(maxWidth: .infinity)
                         }
@@ -26,7 +25,7 @@ struct TodayView: View {
                         if let date = drillsViewModel.cachedWorkoutDate {
                             Text("Saved on \(date.formatted(date: .abbreviated, time: .shortened)). This is a plan, not an in-progress session.")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.starlight)
                         }
                     }
                     .padding()
@@ -83,21 +82,21 @@ struct TodayView: View {
             if let date = drillsViewModel.cachedRecommendationsDate {
                 Text("Saved recommendations as of \(date.formatted(date: .abbreviated, time: .shortened)). They may be out of date.")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.starlight)
             }
             if let error = drillsViewModel.recommendationsError {
-                Text(error).foregroundStyle(.secondary)
+                Text(error).foregroundStyle(Color.starlight)
                 Button("Retry Recommendations") {
                     Task { await drillsViewModel.loadRecommendations() }
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(SecondaryButtonStyle())
                 .controlSize(.large)
                 .disabled(drillsViewModel.isLoadingRecommendations)
             } else if !drillsViewModel.isLoadingRecommendations && drillsViewModel.recommendations.isEmpty {
                 Text("No recommendations yet. Browse drills or learn the basics to find a starting point.")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.starlight)
                 Button("Browse All Drills", action: onBrowseAllDrills)
-                    .buttonStyle(.bordered)
+                    .buttonStyle(SecondaryButtonStyle())
                     .controlSize(.large)
             }
             ForEach(Array(drillsViewModel.recommendations.prefix(3))) { drill in
@@ -111,7 +110,7 @@ struct TodayView: View {
             NavigationLink("All Recommendations") {
                 RecommendationsView(onBrowseAllDrills: onBrowseAllDrills)
             }
-            .buttonStyle(.bordered)
+            .buttonStyle(SecondaryButtonStyle())
             .controlSize(.large)
         }
         .padding()
@@ -123,7 +122,7 @@ struct TodayView: View {
             Image(systemName: icon).foregroundStyle(Color.neonCyan)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.headline)
-                Text(detail).font(.subheadline).foregroundStyle(.secondary)
+                Text(detail).font(.subheadline).foregroundStyle(Color.starlight)
             }
             Spacer(minLength: 0)
             Image(systemName: "chevron.right").accessibilityHidden(true)
@@ -151,23 +150,23 @@ struct TrainingActivitySummary: View {
                 Label("\(store.sessionsThisWeek) of \(max(1, weeklyGoal)) sessions this week", systemImage: "calendar")
                     .font(.headline)
                 if store.sessionDates.isEmpty {
-                    Text("No saved workouts yet. Your first session starts your training history.")
-                        .font(.subheadline).foregroundStyle(.secondary)
+                    Text("No completed sessions yet. Save a completed workout to start your training history.")
+                        .font(.subheadline).foregroundStyle(Color.starlight)
                 }
                 if let date = store.cachedDate {
                     Text("Saved activity as of \(date.formatted(date: .abbreviated, time: .shortened)). Counts may be out of date.")
-                        .font(.caption).foregroundStyle(.secondary)
+                        .font(.caption).foregroundStyle(Color.starlight)
                 }
             } else if !store.isLoading {
                 Text("Training activity is unavailable.")
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.starlight)
             }
             if let error = store.errorMessage {
-                Text(error).font(.subheadline).foregroundStyle(.secondary)
+                Text(error).font(.subheadline).foregroundStyle(Color.starlight)
                 Button("Retry Training Activity") {
                     Task { await store.load() }
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(SecondaryButtonStyle())
                 .controlSize(.large)
                 .disabled(store.isLoading)
             }

@@ -2,25 +2,17 @@ import SwiftUI
 
 struct WorkoutView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
-    @State private var completedDrillIndices: Set<Int> = []
     @State private var showGuidedSession = false
     @State private var isVisible = false
-    let ownsNavigationStack: Bool
-    @State private var reviewSavedWorkout: Bool
+    private let initiallyReviewSavedWorkout: Bool
+    private var reviewSavedWorkout: Bool { drillsViewModel.reviewSavedWorkout }
 
-    init(ownsNavigationStack: Bool = true, reviewSavedWorkout: Bool = false) {
-        self.ownsNavigationStack = ownsNavigationStack
-        _reviewSavedWorkout = State(initialValue: reviewSavedWorkout)
+    init(reviewSavedWorkout: Bool = false) {
+        initiallyReviewSavedWorkout = reviewSavedWorkout
     }
 
     var body: some View {
-        Group {
-            if ownsNavigationStack {
-                NavigationStack { content }
-            } else {
-                content
-            }
-        }
+        NavigationStack { content }
     }
 
     private var content: some View {
@@ -121,7 +113,7 @@ struct WorkoutView: View {
                 // Workout Results
                 if let workout = drillsViewModel.workout {
                     if reviewSavedWorkout {
-                        WorkoutResultView(workout: workout, completedDrillIndices: $completedDrillIndices)
+                        WorkoutResultView(workout: workout, completedDrillIndices: $drillsViewModel.completedWorkoutDrillIndices)
                             .padding(.horizontal)
                     }
                     if let savedAt = drillsViewModel.cachedWorkoutDate {
@@ -160,7 +152,7 @@ struct WorkoutView: View {
                     }
 
                     if !reviewSavedWorkout {
-                        WorkoutResultView(workout: workout, completedDrillIndices: $completedDrillIndices)
+                        WorkoutResultView(workout: workout, completedDrillIndices: $drillsViewModel.completedWorkoutDrillIndices)
                             .padding(.horizontal)
                     }
 
@@ -168,7 +160,7 @@ struct WorkoutView: View {
                     VStack(spacing: 8) {
                         Button {
                             Task {
-                                await drillsViewModel.completeWorkout(completedIndices: completedDrillIndices)
+                                await drillsViewModel.completeWorkout(completedIndices: drillsViewModel.completedWorkoutDrillIndices)
                             }
                         } label: {
                             HStack {
@@ -193,7 +185,7 @@ struct WorkoutView: View {
                     }
                     .padding(.horizontal)
                     if reviewSavedWorkout {
-                        Button("Workout Setup") { reviewSavedWorkout = false }
+                        Button("Workout Setup") { drillsViewModel.reviewSavedWorkout = false }
                             .buttonStyle(SecondaryButtonStyle())
                             .padding(.horizontal)
                     }
@@ -206,11 +198,11 @@ struct WorkoutView: View {
         .navigationBarTitleDisplayMode(.large)
         .genieBrandIconToolbar()
         .background(Color.deepSpace)
-        .onAppear { isVisible = true }
-        .onDisappear { isVisible = false }
-        .onChange(of: drillsViewModel.workout?.drills.count) { _, _ in
-            completedDrillIndices = []
+        .onAppear {
+            isVisible = true
+            if initiallyReviewSavedWorkout { drillsViewModel.reviewSavedWorkout = true }
         }
+        .onDisappear { isVisible = false }
         .alert(
             "Workout Saved! 💪",
             isPresented: Binding(
@@ -356,58 +348,60 @@ private struct WorkoutDrillCard: View {
     let onToggle: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(isCompleted ? Color.green : Color.neonCyan)
-                    .frame(width: 28, height: 28)
-                if isCompleted {
-                    Image(systemName: "checkmark")
-                        .font(.caption.bold())
-                        .foregroundColor(.black)
-                } else {
-                    Text("\(index)")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
+        Button(action: onToggle) {
+            HStack(alignment: .top, spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(isCompleted ? Color.green : Color.neonCyan)
+                        .frame(width: 28, height: 28)
+                    if isCompleted {
+                        Image(systemName: "checkmark")
+                            .font(.caption.bold())
+                            .foregroundColor(.black)
+                    } else {
+                        Text("\(index)")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                    }
                 }
-            }
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(item.title)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .strikethrough(isCompleted, color: .secondary)
-                    Spacer()
-                    Text("\(item.durationMinutes)m")
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(item.title)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .strikethrough(isCompleted, color: .secondary)
+                        Spacer()
+                        Text("\(item.durationMinutes)m")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.neonCyan)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.neonCyan.opacity(0.1))
+                            .cornerRadius(6)
+                    }
+                    CategoryBadge(category: item.category)
+                    Text(item.coachingNotes)
                         .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.neonCyan)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.neonCyan.opacity(0.1))
-                        .cornerRadius(6)
+                        .foregroundColor(.secondary)
+                        .lineSpacing(2)
                 }
-                CategoryBadge(category: item.category)
-                Text(item.coachingNotes)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineSpacing(2)
-            }
 
-            Button(action: onToggle) {
                 Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
                     .foregroundColor(isCompleted ? .green : .secondary)
             }
-            .buttonStyle(.plain)
+            .padding()
+            .background(Color.nebulaSurface)
+            .cornerRadius(12)
+            .contentShape(Rectangle())
         }
-        .padding()
-        .background(Color.nebulaSurface)
-        .cornerRadius(12)
-        .contentShape(Rectangle())
-        .onTapGesture(perform: onToggle)
+        .buttonStyle(.plain)
+        .accessibilityLabel(item.title)
+        .accessibilityValue(isCompleted ? "Completed" : "Not completed")
+        .accessibilityHint("Toggle whether you completed this drill")
     }
 }
 

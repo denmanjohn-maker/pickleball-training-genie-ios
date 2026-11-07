@@ -69,6 +69,14 @@ final class TrainingStreakStore: ObservableObject {
         isLoading = false
     }
 
+    func refreshAfterSave() {
+        if isLoading {
+            refreshPending = true
+        } else {
+            Task { await load(afterSave: true) }
+        }
+    }
+
     private func fetchHistory() async {
         errorMessage = nil
         statsDate = now()

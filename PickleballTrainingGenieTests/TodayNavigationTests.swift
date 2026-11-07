@@ -302,6 +302,9 @@ final class TodayNavigationTests: XCTestCase {
             (StubURLProtocol.response(for: request, status: 200), request.httpMethod == "POST" ? saved : data)
         }
         await model.completeWorkout(completedIndices: [0], ratings: [0: 4], notes: "Good practice")
+        for _ in 0..<100 where !store.hasHistory {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
         XCTAssertNil(model.workoutError)
         XCTAssertTrue(model.workoutCompletedSuccessfully)
         XCTAssertEqual(store.sessionsThisWeek, 1)
@@ -319,11 +322,43 @@ final class TodayNavigationTests: XCTestCase {
             return (StubURLProtocol.response(for: request, status: 200), saved)
         }
         await model.completeWorkout(completedIndices: [0])
+        for _ in 0..<100 where store.errorMessage == nil {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
         XCTAssertTrue(model.workoutCompletedSuccessfully)
         XCTAssertNil(model.workout)
         XCTAssertNil(model.workoutError)
         XCTAssertNotNil(store.errorMessage)
         XCTAssertNotNil(store.cachedDate)
+    }
+
+    func testSaveReturnsBeforeNewHistoryRefreshFinishes() async throws {
+        let client = client(session: ControlledURLProtocol.makeSession())
+        let store = TrainingStreakStore(client: client, userId: scope)
+        let model = DrillsViewModel(client: client, userId: scope, trainingStreakStore: store)
+        model.workout = Fixtures.workout(drills: [Fixtures.workoutItem(title: "Dinks")])
+        let saved = try JSONEncoder().encode(Fixtures.session(completedAt: "2026-11-07T12:00:00Z", drills: []))
+        let requested = expectation(description: "Post-save GET held")
+        var held: ControlledURLProtocol?
+        ControlledURLProtocol.onRequest = { request, connection in
+            if request.httpMethod == "POST" {
+                connection.respond(data: saved)
+            } else {
+                held = connection
+                requested.fulfill()
+            }
+        }
+        await model.completeWorkout(completedIndices: [0])
+        XCTAssertFalse(model.isCompletingWorkout)
+        XCTAssertTrue(model.workoutCompletedSuccessfully)
+        await fulfillment(of: [requested], timeout: 3)
+        XCTAssertTrue(store.isLoading)
+        XCTAssertFalse(model.isCompletingWorkout)
+        held?.respond(data: try history([]))
+        for _ in 0..<100 where store.isLoading {
+            try await Task.sleep(nanoseconds: 10_000_000)
+        }
+        XCTAssertFalse(store.isLoading)
     }
 }
 
