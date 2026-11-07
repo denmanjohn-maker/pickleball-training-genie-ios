@@ -13,16 +13,9 @@ struct RootView: View {
                 } else if !hasSeenAppIntro {
                     AppTutorialView(onComplete: { hasSeenAppIntro = true })
                 } else {
-                    MainTabView()
+                    AuthenticatedMainView(client: authViewModel.client, userId: user.id)
+                        .id(user.id)
                         .environmentObject(authViewModel)
-                        .environmentObject(
-                            DrillsViewModel(client: authViewModel.client, userId: user.id)
-                        )
-                        .environmentObject(
-                            TournamentsViewModel(
-                                client: TournamentsAPIClient(baseURL: URL(string: TournamentsAPIConfig.baseURL)!)
-                            )
-                        )
                 }
             } else if authViewModel.profileLoadFailed {
                 ProfileLoadFailedView()
@@ -39,6 +32,29 @@ struct RootView: View {
             LoginView()
                 .environmentObject(authViewModel)
         }
+    }
+}
+
+private struct AuthenticatedMainView: View {
+    @StateObject private var drills: DrillsViewModel
+    @StateObject private var activity: TrainingStreakStore
+    @StateObject private var tournaments = TournamentsViewModel(
+        client: TournamentsAPIClient(baseURL: URL(string: TournamentsAPIConfig.baseURL)!)
+    )
+
+    init(client: PickleballTrainingGenieClient, userId: String) {
+        let activity = TrainingStreakStore(client: client, userId: userId)
+        _activity = StateObject(wrappedValue: activity)
+        _drills = StateObject(wrappedValue: DrillsViewModel(
+            client: client, userId: userId, trainingStreakStore: activity
+        ))
+    }
+
+    var body: some View {
+        MainTabView()
+            .environmentObject(drills)
+            .environmentObject(activity)
+            .environmentObject(tournaments)
     }
 }
 
@@ -79,17 +95,21 @@ private struct ProfileLoadFailedView: View {
 
 /// The app's five top-level destinations, shared by the iPhone tab bar and the
 /// iPad sidebar so both layouts stay in sync.
-private enum AppSection: String, CaseIterable, Identifiable {
-    case drills, forYou, workout, tournaments, profile
+enum AppSection: String, CaseIterable, Identifiable {
+    case today, workout, drills, progress, profile
+
+    static func restored(from rawValue: String) -> AppSection {
+        AppSection(rawValue: rawValue) ?? .today
+    }
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .drills: return "Drills"
-        case .forYou: return "For You"
-        case .workout: return "Workout"
-        case .tournaments: return "Tournaments"
+        case .today: return "Today"
+        case .workout: return "Train"
+        case .progress: return "Progress"
         case .profile: return "Profile"
         }
     }
@@ -97,21 +117,20 @@ private enum AppSection: String, CaseIterable, Identifiable {
     var icon: String {
         switch self {
         case .drills: return "figure.racquetball"
-        case .forYou: return "star.fill"
+        case .today: return "sun.max.fill"
         case .workout: return "bolt.fill"
-        case .tournaments: return "trophy.fill"
+        case .progress: return "chart.bar.fill"
         case .profile: return "person.fill"
         }
     }
 
-    /// For You's empty state offers a jump to Drills; the callback must come
-    /// from the layout that owns the selection.
+    /// The recommendation empty state jumps to the layout's Drills selection.
     @ViewBuilder func destination(onBrowseAllDrills: @escaping () -> Void) -> some View {
         switch self {
         case .drills: DrillsListView()
-        case .forYou: RecommendationsView(onBrowseAllDrills: onBrowseAllDrills)
+        case .today: TodayView(onBrowseAllDrills: onBrowseAllDrills)
         case .workout: WorkoutView()
-        case .tournaments: TournamentsListView()
+        case .progress: TrainingProgressView()
         case .profile: ProfileView()
         }
     }
@@ -120,14 +139,16 @@ private enum AppSection: String, CaseIterable, Identifiable {
 struct MainTabView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var drillsViewModel: DrillsViewModel
+    @EnvironmentObject var trainingStreakStore: TrainingStreakStore
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     // SceneStorage (not State) so the chosen section survives the view-tree
     // re-init that happens when the size class flips (e.g. iPad Split View).
-    @SceneStorage("mainTab.selection") private var selectionRaw = AppSection.drills.rawValue
+    @SceneStorage("mainTab.selection") private var selectionRaw = AppSection.today.rawValue
 
     private var selection: AppSection {
-        AppSection(rawValue: selectionRaw) ?? .drills
+        AppSection.restored(from: selectionRaw)
     }
 
     var body: some View {
@@ -140,11 +161,22 @@ struct MainTabView: View {
         }
         .tint(.neonMagenta)
         .onAppear {
+            selectionRaw = selection.rawValue
             seedTournamentCityFromProfile()
         }
         .task {
             // Restore server-side drill completions so history survives restarts.
             await drillsViewModel.loadDrillProgress()
+        }
+        .task { await trainingStreakStore.load() }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task { await trainingStreakStore.load() }
+            }
+        }
+        .onReceive(Timer.publish(every: 60, on: .main, in: .common).autoconnect()) { _ in
+            guard scenePhase == .active else { return }
+            Task { await trainingStreakStore.refreshForCalendarChange() }
         }
     }
 
@@ -198,7 +230,7 @@ struct MainTabView: View {
         section.destination(onBrowseAllDrills: { selectionRaw = AppSection.drills.rawValue })
     }
 
-    /// On a fresh install the Tournaments tab has no saved city; default it to
+    /// On a fresh install Tournaments has no saved city; default it to
     /// the home city chosen during onboarding.
     private func seedTournamentCityFromProfile() {
         let defaults = UserDefaults.standard

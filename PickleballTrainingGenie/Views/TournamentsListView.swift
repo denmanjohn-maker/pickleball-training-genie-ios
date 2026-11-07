@@ -6,7 +6,7 @@ struct TournamentsListView: View {
     @State private var selectedTournament: Tournament?
 
     var body: some View {
-        NavigationStack {
+        Group {
             VStack(spacing: 0) {
                 Button {
                     showCityPicker = true
@@ -218,7 +218,7 @@ struct TournamentRowView: View {
 }
 
 #Preview {
-    TournamentsListView()
+    NavigationStack { TournamentsListView() }
         .environmentObject(TournamentsViewModel(
             client: TournamentsAPIClient(baseURL: URL(string: "http://localhost:5000/")!)
         ))

@@ -38,7 +38,7 @@ private struct HistoryListView: View {
                 ContentUnavailableView {
                     Label("No Workouts Yet", systemImage: "figure.racquetball")
                 } description: {
-                    Text("Generate a workout on the Workout tab and tap \"Complete Workout\" to start building your history.")
+                    Text("Set up a workout in Train, then complete and save your session to start building your history.")
                 }
             } else {
                 ScrollView {
@@ -113,20 +113,7 @@ private struct HistoryListView: View {
                     color: .solarGold
                 )
             }
-            HStack(spacing: 12) {
-                HistoryStatCard(
-                    value: "\(viewModel.currentStreakDays)",
-                    label: "Day Streak",
-                    icon: "flame.fill",
-                    color: .orange
-                )
-                HistoryStatCard(
-                    value: "\(viewModel.sessionsThisWeek)/\(TrainingStats.weeklyGoal)",
-                    label: "This Week",
-                    icon: "calendar",
-                    color: .green
-                )
-            }
+            TrainingActivitySummary()
         }
     }
 }

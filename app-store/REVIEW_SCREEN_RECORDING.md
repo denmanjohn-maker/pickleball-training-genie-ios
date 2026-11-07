@@ -85,7 +85,7 @@ Do every item before pressing record. Most re-takes come from skipping one.
       from the login form's autofill if you do not want them visible.
 - [ ] **Control Center.** Settings → Control Center → add **Screen Recording**.
 - [ ] **Sanity-check network.** Open the app once, log in with the demo
-      account, confirm Drills, For You and Tournaments load. Then sign out
+      account, confirm Drills, Today recommendations and Find Tournaments load. Then sign out
       before the take.
 
 ## How to record
@@ -134,14 +134,14 @@ Button labels are the exact strings in the app.
 | 4 | **Onboarding 2 – Your DUPR** | Pick Singles, Doubles and Target DUPR (target must be ≥ current). Optionally tap **Not sure? Take the 60-second skill check**, answer a couple of questions, return. Tap **Continue**. |
 | 5 | **Onboarding 3 – Preferences** | Set session length, handedness, play style. Tap **Continue**. |
 | 6 | **Onboarding 4 – Pick an Avatar** | Pick a built-in avatar, then tap **Use a Photo Instead** to show the system photo picker opens with **no permission prompt** (it is an out-of-process picker). Cancel it, tap **Finish**. |
-| 7 | **App tutorial** | Swipe through the five tutorial pages, tap **Get Started 🎾**. |
+| 7 | **App tutorial** | Swipe through the tutorial pages, tap **Get Started 🎾**. |
 | 8 | **Drills tab** | Type in **Search drills…**, change a category / level filter, open a drill to show the detail screen, tap the heart to favorite it, go back. |
-| 9 | **For You tab** | Show "Your Training Plan" recommendations. Tap the "New to pickleball?" card to open **Learn the Basics**, scroll one topic, go back. |
-| 10 | **Workout tab** | Pick a **Session Duration**, tap **Generate My Workout**, wait for the plan, tap **Start Guided Session**. Run one drill (skip the timer forward if available), tap **Finish Session**, rate the drills, tap **Save to History**, dismiss the "Workout Saved! 💪" alert. |
-| 11 | **Tournaments tab** | If prompted, tap **Choose City** and pick the onboarding city. Scroll the list, open one tournament, go back. |
-| 12 | **Profile – history** | Open Profile. Tap **Training History**; the session from scene 10 is listed. Go back. |
+| 9 | **Today tab** | Show training activity and recommendations. Open **All Recommendations**, go back, open **Learn the Basics**, scroll one topic, go back. |
+| 10 | **Train tab** | Pick a **Session Duration**, tap **Generate My Workout**, wait for the plan. Switch to Today and tap **Review Saved Workout** to show the plan without starting it. Tap **Start Guided Session**, run one drill (skip the timer forward if available), tap **Finish Session**, rate the drills, tap **Save to History**, dismiss the "Workout Saved! 💪" alert. |
+| 11 | **Today – Find Tournaments** | Open **Find Tournaments**. If prompted, tap **Choose City** and pick the onboarding city. Scroll the list, open one tournament, close its detail and go back to Today. |
+| 12 | **Progress – history** | Open Progress. Tap **Training History**; the session from scene 10 is listed. Go back. |
 | 13 | **Camera + microphone prompts** | Tap **Video Self-Review** → **Record a Clip** → choose a skill → **Open Camera**. iOS shows the **Camera** prompt, then the **Microphone** prompt; tap **Allow** on both. Record a 2–3 second clip, tap *Use Video*, show it in the list. Go back. |
-| 14 | **Notifications prompt** | Scroll to **Training Habits**, toggle **Training reminders** on. iOS shows the notifications prompt; tap **Allow**. |
+| 14 | **Notifications prompt** | Open Profile, scroll to **Training Habits**, toggle **Training reminders** on. iOS shows the notifications prompt; tap **Allow**. |
 | 15 | **Edit Profile** | Tap **Edit Profile**, change one field, save, show the header updated. |
 | 16 | **Sign out and log in** | Scroll to the bottom, tap **Sign Out**, confirm. On the login screen sign back in with the same email/password. (Optional: instead tap **Continue with Apple**, then sign out and sign in with the password so the reviewer sees both.) |
 | 17 | **Account deletion** | Profile → bottom → tap the red **Delete Account** → read the confirmation → tap **Delete Account**. The app returns to the login screen. Try logging in with the deleted credentials to show it fails. |

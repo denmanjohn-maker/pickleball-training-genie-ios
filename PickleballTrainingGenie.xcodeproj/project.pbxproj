@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CCCC0000000000000006CAFE /* TodayLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCC0000000000000005CAFE /* TodayLayoutTests.swift */; };
+		CCCC0000000000000004CAFE /* TodayNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCC0000000000000003CAFE /* TodayNavigationTests.swift */; };
+		CCCC0000000000000002CAFE /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCC0000000000000001CAFE /* TodayView.swift */; };
 		AAAA000000000000001FCAFE /* PickleballTrainingGenieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000013CAFE /* PickleballTrainingGenieApp.swift */; };
 		AAAA0000000000000020CAFE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000014CAFE /* ContentView.swift */; };
 		AAAA0000000000000021CAFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000015CAFE /* Assets.xcassets */; };
@@ -88,6 +91,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CCCC0000000000000005CAFE /* TodayLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayLayoutTests.swift; sourceTree = "<group>"; };
+		CCCC0000000000000003CAFE /* TodayNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNavigationTests.swift; sourceTree = "<group>"; };
+		CCCC0000000000000001CAFE /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000012CAFE /* PickleballTrainingGenie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PickleballTrainingGenie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAAA0000000000000013CAFE /* PickleballTrainingGenieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickleballTrainingGenieApp.swift; sourceTree = "<group>"; };
 		AAAA0000000000000014CAFE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -241,6 +247,7 @@
 				AAAA0000000000000076CAFE /* GuidedSessionView.swift */,
 				AAAA0000000000000082CAFE /* VideoReviewView.swift */,
 				AAAA0000000000000084CAFE /* AppTutorialView.swift */,
+				CCCC0000000000000001CAFE /* TodayView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -333,6 +340,8 @@
 				BBBB000000000000000CCAFE /* DrillSoloHeuristicTests.swift */,
 				BBBB000000000000000DCAFE /* WorkoutHistoryViewModelTests.swift */,
 				BBBB000000000000000ECAFE /* ZipCityMatcherTests.swift */,
+				CCCC0000000000000003CAFE /* TodayNavigationTests.swift */,
+				CCCC0000000000000005CAFE /* TodayLayoutTests.swift */,
 			);
 			path = PickleballTrainingGenieTests;
 			sourceTree = "<group>";
@@ -511,6 +520,7 @@
 				AAAA0000000000000089CAFE /* LocalDataPurge.swift in Sources */,
 				AAAA0000000000000083CAFE /* VideoReviewView.swift in Sources */,
 				AAAA0000000000000085CAFE /* AppTutorialView.swift in Sources */,
+				CCCC0000000000000002CAFE /* TodayView.swift in Sources */,
 				AAAA000000000000008BCAFE /* AppLog.swift in Sources */,
 				AAAA000000000000008DCAFE /* DrillSoloHeuristic.swift in Sources */,
 			);
@@ -534,6 +544,8 @@
 				BBBB000000000000001CCAFE /* DrillSoloHeuristicTests.swift in Sources */,
 				BBBB000000000000001DCAFE /* WorkoutHistoryViewModelTests.swift in Sources */,
 				BBBB000000000000001ECAFE /* ZipCityMatcherTests.swift in Sources */,
+				CCCC0000000000000004CAFE /* TodayNavigationTests.swift in Sources */,
+				CCCC0000000000000006CAFE /* TodayLayoutTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

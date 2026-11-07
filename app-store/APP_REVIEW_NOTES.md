@@ -23,10 +23,10 @@ Timestamps:
 <m:ss>  Account registration (Create Account) and profile onboarding
         (name/ZIP, DUPR ratings, preferences, avatar) and first-launch tutorial
 <m:ss>  Drills library: search, filters, drill detail, favorite
-<m:ss>  For You recommendations and Learn the Basics
-<m:ss>  AI Workout: generate, guided session, rate drills, save to history
-<m:ss>  Tournaments near the user's chosen city
-<m:ss>  Profile: Training History
+<m:ss>  Today: recommendations and Learn the Basics
+<m:ss>  Train: generate, guided session, rate drills, save to history
+<m:ss>  Today > Find Tournaments near the user's chosen city
+<m:ss>  Progress: Training History
 <m:ss>  Camera and Microphone permission prompts (Video Self-Review >
         Record a Clip). Clips are stored only on the device and never uploaded.
 <m:ss>  Notifications permission prompt (Training reminders toggle)
@@ -78,10 +78,13 @@ Where to find the flows App Review asks about:
 - Account deletion (Guideline 5.1.1(v)): Profile tab > scroll to the bottom >
   Delete Account > confirm. Deletes the account on the server and erases all
   on-device data, then returns to the sign-in screen.
-- Camera + Microphone prompts: Profile > Video Self-Review > Record a Clip >
+- Camera + Microphone prompts: Progress > Video Self-Review > Record a Clip >
   choose a skill > Open Camera. Clips are saved only on the device and are
   never uploaded.
 - Notifications prompt: Profile > Training Habits > Training reminders toggle.
+- Training: Today > Review Saved Workout (or Set Up a Workout); Train for
+  generation; Progress for Training History. Today also opens recommendations,
+  Learn the Basics, and Find Tournaments.
 - Photo library: the avatar picker uses the system photo picker, so no
   permission prompt is shown.
 

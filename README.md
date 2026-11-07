@@ -4,6 +4,22 @@ An elegant, modern iOS client application for **Pickleball Genie**, your AI-powe
 
 ---
 
+## Training navigation
+
+The iPhone tab bar and iPad sidebar share five destinations: **Today, Train,
+Drills, Progress, Profile**. Each scene restores its last selection; new installs
+and retired destinations open Today. Today opens an existing saved workout for
+review (including cached and text-only plans), or workout setup if none exists.
+Opening it never generates, starts, replaces, or completes a workout.
+
+Today also shows shared streak/weekly-goal activity, personalized recommendations,
+Learn the Basics, and Find Tournaments. Progress opens Training History and Video
+Self-Review; Profile retains these shortcuts and manages goals and reminders.
+Cached personalized plans and activity are account-scoped and labeled with their
+saved date. Missing training history is shown as unavailable, not zero.
+Previously cached content and bundled Learn work offline; sign-in, generation,
+uncached content, and saving sessions require a connection.
+
 ## 🚀 Key Technologies Used
 
 - **SwiftUI**: Modern, declarative UI framework with responsive layouts and state-driven animations.
