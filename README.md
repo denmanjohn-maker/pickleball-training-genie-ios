@@ -4,6 +4,23 @@ An elegant, modern iOS client application for **Pickleball Genie**, your AI-powe
 
 ---
 
+## Training navigation
+
+The iPhone tab bar and iPad sidebar share five destinations: **Today, Train,
+Drills, Progress, Profile**. Each scene restores its last selection; new installs
+and retired destinations open Today. Today opens an existing saved workout for
+review (including cached and text-only plans), or workout setup if none exists.
+The action selects the shared Train flow and brings the plan into view.
+Opening it never generates, starts, replaces, or completes a workout.
+
+Today also shows shared streak/weekly-goal activity, personalized recommendations,
+Learn the Basics, and Find Tournaments. Progress opens Training History and Video
+Self-Review; Profile retains these shortcuts and manages goals and reminders.
+Cached personalized plans and activity are account-scoped and labeled with their
+saved date. Missing training history is shown as unavailable, not zero.
+Previously cached content and bundled Learn work offline; sign-in, generation,
+uncached content, and saving sessions require a connection.
+
 ## 🚀 Key Technologies Used
 
 - **SwiftUI**: Modern, declarative UI framework with responsive layouts and state-driven animations.
@@ -50,8 +67,16 @@ PickleballTrainingGenieTests/           # XCTest unit tests (hosted by the app)
 
   They cover the API client (through a stub `URLProtocol`, no network), server error parsing, JWT expiry, date parsing, streak math, skill-assessment scoring and ranking, drill level fallback, guided-session timing, the offline cache, and the solo-drill heuristic.
 - **Lint**: `brew install swiftlint && swiftlint` from the repo root. Configuration is in `.swiftlint.yml`.
+- **UI navigation tests** (`PickleballTrainingGenieUITests`) use a Debug-only
+  fixture transport, without signing in or contacting a backend. Run
+  `xcodebuild test -project PickleballTrainingGenie.xcodeproj -scheme PickleballTrainingGenie -destination 'platform=iOS Simulator,name=iPhone 16' CODE_SIGNING_ALLOWED=NO -only-testing:PickleballTrainingGenieUITests`.
+  They exercise shared Train/checklist routing, nested recommendations/Learn and
+  tournament city selection, Progress routes, background/relaunch restoration,
+  rotation, and large text. Contrast detector findings are preserved separately
+  for pixel verification; the simulator can report false positives. Accessibility
+  audits do not substitute for listening to VoiceOver and checking focus order.
 - **CI**: GitHub Actions (`.github/workflows/ios.yml`) lints, builds, and runs the tests on every pull request and on pushes to `main`.
-- **Dependency pinning**: `Package.resolved` is no longer gitignored and is meant to be committed. It isn't in the repository yet — Xcode writes it under `PickleballTrainingGenie.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/` on first package resolution; commit it when it appears so every build resolves the same dependency versions.
+- **Dependency pinning**: `Package.resolved` is committed under `PickleballTrainingGenie.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/`. Commit updates from Xcode package resolution so every build uses the same dependency versions.
 
 ---
 

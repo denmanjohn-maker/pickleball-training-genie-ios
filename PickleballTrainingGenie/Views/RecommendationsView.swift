@@ -19,13 +19,14 @@ struct RecommendationsView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        Group {
             Group {
                 if drillsViewModel.isLoadingRecommendations {
                     ProgressView("Loading your recommendations…")
                         .tint(.neonMagenta)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else if let error = drillsViewModel.recommendationsError {
+                } else if let error = drillsViewModel.recommendationsError,
+                          drillsViewModel.recommendations.isEmpty {
                     ContentUnavailableView {
                         Label("No Recommendations", systemImage: "star.slash")
                     } description: {
@@ -57,28 +58,18 @@ struct RecommendationsView: View {
                     }
                 } else {
                     VStack(spacing: 0) {
-                        if let savedAt = drillsViewModel.cachedRecommendationsDate {
-                            HStack(spacing: 8) {
-                                Image(systemName: "wifi.slash")
-                                    .foregroundColor(.solarGold)
-                                Text("Offline — showing recommendations saved \(savedAt.formatted(date: .abbreviated, time: .shortened)).")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.solarGold.opacity(0.08))
-                        }
                         if isBeginner {
                             LearnPromoCard()
                         }
                         List(drillsViewModel.recommendations) { drill in
-                            DrillRowView(
-                                drill: drill,
-                                isCompleted: drillsViewModel.completedDrillIds.contains(drill.id)
-                            )
-                            .onTapGesture { selectedDrill = drill }
+                            Button { selectedDrill = drill } label: {
+                                DrillRowView(
+                                    drill: drill,
+                                    isCompleted: drillsViewModel.completedDrillIds.contains(drill.id)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("View \(drill.title)")
                             .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
@@ -90,7 +81,7 @@ struct RecommendationsView: View {
                     }
                 }
             }
-            .navigationTitle("For You")
+            .navigationTitle("Recommendations")
             .navigationBarTitleDisplayMode(.large)
             .genieBrandIconToolbar()
             .toolbar {
@@ -101,6 +92,8 @@ struct RecommendationsView: View {
                         Image(systemName: "arrow.clockwise")
                             .foregroundColor(.neonCyan)
                     }
+                    .accessibilityLabel("Refresh Recommendations")
+                    .disabled(drillsViewModel.isLoadingRecommendations)
                 }
             }
             .sheet(item: $selectedDrill) { drill in
@@ -113,7 +106,19 @@ struct RecommendationsView: View {
                 }
             }
             .safeAreaInset(edge: .top) {
-                RecommendationsHeaderView()
+                VStack(alignment: .leading, spacing: 8) {
+                    RecommendationsHeaderView()
+                    if let date = drillsViewModel.cachedRecommendationsDate {
+                        Text("Saved recommendations as of \(date.formatted(date: .abbreviated, time: .shortened)). They may be out of date.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.horizontal)
+                    }
+                    if let error = drillsViewModel.recommendationsError,
+                       !drillsViewModel.recommendations.isEmpty {
+                        Text(error).font(.caption).foregroundStyle(.secondary).padding(.horizontal)
+                    }
+                }
             }
         }
     }
@@ -177,7 +182,7 @@ private struct RecommendationsHeaderView: View {
 }
 
 #Preview {
-    RecommendationsView(onBrowseAllDrills: {})
+    NavigationStack { RecommendationsView(onBrowseAllDrills: {}) }
         .environmentObject(DrillsViewModel(client: PickleballTrainingGenieClient(
             baseURL: URL(string: "http://localhost:5123/")!
         )))

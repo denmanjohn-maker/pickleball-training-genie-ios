@@ -6,6 +6,8 @@ class DrillsViewModel: ObservableObject {
     @Published var drills: [Drill] = []
     @Published var recommendations: [Drill] = []
     @Published var workout: WorkoutPlanResponse?
+    @Published var completedWorkoutDrillIndices: Set<Int> = []
+    @Published var reviewSavedWorkout = false
     @Published var isLoadingDrills = false
     @Published var isLoadingRecommendations = false
     @Published var isGeneratingWorkout = false
@@ -76,9 +78,20 @@ class DrillsViewModel: ObservableObject {
     }
 
     private let client: PickleballTrainingGenieClient
+    private let trainingStreakStore: TrainingStreakStore?
+    private var recommendationsSavedAt: Date?
 
-    init(client: PickleballTrainingGenieClient, userId: String? = nil) {
+    var workoutActionTitle: String {
+        workout == nil ? "Set Up a Workout" : "Review Saved Workout"
+    }
+
+    init(
+        client: PickleballTrainingGenieClient,
+        userId: String? = nil,
+        trainingStreakStore: TrainingStreakStore? = nil
+    ) {
         self.client = client
+        self.trainingStreakStore = trainingStreakStore
         let scope = userId.map { "-\($0)" } ?? ""
         recommendationsCacheKey = "recommendations\(scope)"
         workoutCacheKey = "currentWorkout\(scope)"
@@ -109,12 +122,14 @@ class DrillsViewModel: ObservableObject {
     }
 
     func loadRecommendations() async {
+        guard !isLoadingRecommendations else { return }
         isLoadingRecommendations = true
         recommendationsError = nil
         do {
             var fetched = try await client.recommendations()
             cachedRecommendationsDate = nil
             OfflineCache.save(fetched, key: recommendationsCacheKey)
+            recommendationsSavedAt = Date()
             // The server only knows the player's DUPR; if they took the skill
             // check, lead with drills for their weakest categories.
             if let assessment = SkillAssessment.load() {
@@ -122,12 +137,8 @@ class DrillsViewModel: ObservableObject {
             }
             recommendations = fetched
         } catch let error as PickleballTrainingGenieError {
-            switch error {
-            case .invalidResponse(let code, _) where code == 401:
-                recommendationsError = "Please log in to see your recommendations."
-            default:
-                recommendationsError = "Could not load recommendations."
-            }
+            recommendationsError = error.serverMessage ?? "Could not load recommendations."
+            cachedRecommendationsDate = recommendationsSavedAt
         } catch {
             // Plain network failure — fall back to the last good fetch.
             if let cached = OfflineCache.load([Drill].self, key: recommendationsCacheKey) {
@@ -137,9 +148,11 @@ class DrillsViewModel: ObservableObject {
                 }
                 recommendations = fetched
                 cachedRecommendationsDate = cached.savedAt
+                recommendationsSavedAt = cached.savedAt
             } else {
                 recommendationsError = "Could not load recommendations: \(error.localizedDescription)"
             }
+            AppLog.network.error("Recommendation refresh failed: \(error.localizedDescription)")
         }
         isLoadingRecommendations = false
     }
@@ -171,8 +184,9 @@ class DrillsViewModel: ObservableObject {
         ratings: [Int: Int] = [:],
         notes: String? = nil
     ) async {
-        guard let workout else { return }
+        guard let workout, !isCompletingWorkout else { return }
         isCompletingWorkout = true
+        workoutCompletedSuccessfully = false
         workoutError = nil
         let drills = workout.drills.enumerated().map { index, item in
             WorkoutSessionDrillPayload(
@@ -196,8 +210,10 @@ class DrillsViewModel: ObservableObject {
             _ = try await client.completeWorkoutSession(request)
             workoutCompletedSuccessfully = true
             self.workout = nil
+            completedWorkoutDrillIndices = []
             cachedWorkoutDate = nil
             OfflineCache.remove(key: workoutCacheKey)
+            trainingStreakStore?.refreshAfterSave()
         } catch let error as PickleballTrainingGenieError {
             switch error {
             case .invalidResponse(let code, _) where code == 404:
@@ -219,6 +235,7 @@ class DrillsViewModel: ObservableObject {
         // the workout they already had.
         do {
             workout = try await client.generateWorkout(durationMinutes: workoutDuration)
+            completedWorkoutDrillIndices = []
             cachedWorkoutDate = nil
             if let workout {
                 OfflineCache.save(workout, key: workoutCacheKey)

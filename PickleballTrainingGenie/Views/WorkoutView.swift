@@ -2,13 +2,23 @@ import SwiftUI
 
 struct WorkoutView: View {
     @EnvironmentObject var drillsViewModel: DrillsViewModel
-    @State private var completedDrillIndices: Set<Int> = []
     @State private var showGuidedSession = false
+    @State private var isVisible = false
+    private let initiallyReviewSavedWorkout: Bool
+    private var reviewSavedWorkout: Bool { drillsViewModel.reviewSavedWorkout }
+
+    init(reviewSavedWorkout: Bool = false) {
+        initiallyReviewSavedWorkout = reviewSavedWorkout
+    }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack { content }
+    }
+
+    private var content: some View {
             ScrollView {
                 VStack(spacing: 20) {
+                    if !reviewSavedWorkout || drillsViewModel.workout == nil {
                     // Header Card
                     VStack(spacing: 16) {
                         ZStack {
@@ -74,113 +84,135 @@ struct WorkoutView: View {
                             } else {
                                 Image(systemName: "wand.and.stars")
                             }
-                            Text(drillsViewModel.isGeneratingWorkout
-                                 ? "Generating Workout…"
-                                 : "Generate My Workout")
+                            Text(
+                                drillsViewModel.isGeneratingWorkout
+                                    ? "Generating Workout…"
+                                    : "Generate My Workout")
                         }
                     }
                     .buttonStyle(PrimaryButtonStyle())
                     .disabled(drillsViewModel.isGeneratingWorkout)
                     .padding(.horizontal)
+                }
 
-                    if let error = drillsViewModel.workoutError {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.orange)
-                            Text(error)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding()
-                        .background(Color.orange.opacity(0.08))
-                        .cornerRadius(12)
-                        .padding(.horizontal)
+                if let error = drillsViewModel.workoutError {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                        Text(error)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
                     }
+                    .padding()
+                    .background(Color.orange.opacity(0.08))
+                    .cornerRadius(12)
+                    .padding(.horizontal)
 
-                    // Workout Results
-                    if let workout = drillsViewModel.workout {
-                        if let savedAt = drillsViewModel.cachedWorkoutDate {
-                            HStack(spacing: 8) {
-                                Image(systemName: "internaldrive.fill")
-                                    .foregroundColor(.solarGold)
-                                Text("Saved workout from \(savedAt.formatted(date: .abbreviated, time: .shortened)) — ready to run, no signal needed.")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                Spacer()
-                            }
-                            .padding(10)
-                            .background(Color.solarGold.opacity(0.08))
-                            .cornerRadius(10)
+                }
+
+                // Workout Results
+                if let workout = drillsViewModel.workout {
+                    if reviewSavedWorkout {
+                        WorkoutResultView(workout: workout, completedDrillIndices: $drillsViewModel.completedWorkoutDrillIndices)
                             .padding(.horizontal)
-                        }
-
-                        // Guided session is the primary way to run the plan —
-                        // the checklist below stays for players who self-pace.
-                        // (Hidden for raw-text fallback plans with no drills.)
-                        if !workout.drills.isEmpty {
-                            Button {
-                                showGuidedSession = true
-                            } label: {
-                                HStack {
-                                    Image(systemName: "play.circle.fill")
-                                    Text("Start Guided Session")
-                                }
-                            }
-                            .buttonStyle(PrimaryButtonStyle(color: .neonCyan))
-                            .padding(.horizontal)
-                            .fullScreenCover(isPresented: $showGuidedSession) {
-                                GuidedSessionView(workout: workout)
-                                    .environmentObject(drillsViewModel)
-                            }
-                        }
-
-                        WorkoutResultView(workout: workout, completedDrillIndices: $completedDrillIndices)
-                            .padding(.horizontal)
-
-                        // Complete Workout
-                        VStack(spacing: 8) {
-                            Button {
-                                Task {
-                                    await drillsViewModel.completeWorkout(completedIndices: completedDrillIndices)
-                                }
-                            } label: {
-                                HStack {
-                                    if drillsViewModel.isCompletingWorkout {
-                                        ProgressView().tint(.black)
-                                    } else {
-                                        Image(systemName: "checkmark.seal.fill")
-                                    }
-                                    Text(drillsViewModel.isCompletingWorkout
-                                         ? "Saving Workout…"
-                                         : "Complete Workout")
-                                }
-                            }
-                            .buttonStyle(PrimaryButtonStyle())
-                            .disabled(drillsViewModel.isCompletingWorkout)
-
-                            Text("Check off the drills you finished, then save it to your history.")
+                    }
+                    if let savedAt = drillsViewModel.cachedWorkoutDate {
+                        HStack(spacing: 8) {
+                            Image(systemName: "internaldrive.fill")
+                                .foregroundColor(.solarGold)
+                            Text("Saved workout from \(savedAt.formatted(date: .abbreviated, time: .shortened)) — ready to run, no signal needed.")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
+                            Spacer()
                         }
+                        .padding(10)
+                        .background(Color.solarGold.opacity(0.08))
+                        .cornerRadius(10)
                         .padding(.horizontal)
                     }
+
+                    // Guided session is the primary way to run the plan —
+                    // the checklist below stays for players who self-pace.
+                    // (Hidden for raw-text fallback plans with no drills.)
+                    if !workout.drills.isEmpty {
+                        Button {
+                            showGuidedSession = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "play.circle.fill")
+                                Text("Start Guided Session")
+                            }
+                        }
+                        .buttonStyle(PrimaryButtonStyle(color: .neonCyan))
+                        .padding(.horizontal)
+                        .fullScreenCover(isPresented: $showGuidedSession) {
+                            GuidedSessionView(workout: workout)
+                                .environmentObject(drillsViewModel)
+                        }
+                    }
+
+                    if !reviewSavedWorkout {
+                        WorkoutResultView(workout: workout, completedDrillIndices: $drillsViewModel.completedWorkoutDrillIndices)
+                            .padding(.horizontal)
+                    }
+
+                    // Complete Workout
+                    VStack(spacing: 8) {
+                        Button {
+                            Task {
+                                await drillsViewModel.completeWorkout(completedIndices: drillsViewModel.completedWorkoutDrillIndices)
+                            }
+                        } label: {
+                            HStack {
+                                if drillsViewModel.isCompletingWorkout {
+                                    ProgressView().tint(.black)
+                                } else {
+                                    Image(systemName: "checkmark.seal.fill")
+                                }
+                                Text(
+                                    drillsViewModel.isCompletingWorkout
+                                        ? "Saving Workout…"
+                                        : "Complete Workout")
+                            }
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                        .disabled(drillsViewModel.isCompletingWorkout)
+
+                        Text("Check off the drills you finished, then save it to your history.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal)
+                    if reviewSavedWorkout {
+                        Button("Workout Setup") { drillsViewModel.reviewSavedWorkout = false }
+                            .buttonStyle(SecondaryButtonStyle())
+                            .padding(.horizontal)
+                    }
                 }
-                .padding(.vertical)
-                .readableWidth()
             }
-            .navigationTitle("Workout")
-            .navigationBarTitleDisplayMode(.large)
-            .genieBrandIconToolbar()
-            .background(Color.deepSpace)
-            .onChange(of: drillsViewModel.workout?.drills.count) { _, _ in
-                completedDrillIndices = []
-            }
-            .alert("Workout Saved! 💪", isPresented: $drillsViewModel.workoutCompletedSuccessfully) {
-                Button("Nice!") {}
-            } message: {
-                Text("Your session was added to your training history. Check it out on the Profile tab.")
-            }
+            .padding(.vertical)
+            .readableWidth()
+        }
+        .navigationTitle("Train")
+        .navigationBarTitleDisplayMode(.large)
+        .genieBrandIconToolbar()
+        .background(Color.deepSpace)
+        .onAppear {
+            isVisible = true
+            if initiallyReviewSavedWorkout { drillsViewModel.reviewSavedWorkout = true }
+        }
+        .onDisappear { isVisible = false }
+        .alert(
+            "Workout Saved! 💪",
+            isPresented: Binding(
+                get: { isVisible && drillsViewModel.workoutCompletedSuccessfully },
+                set: { drillsViewModel.workoutCompletedSuccessfully = $0 }
+            )
+        ) {
+            Button("Nice!") {}
+        } message: {
+            Text("Your session was added to your training history. Find it in Progress.")
         }
     }
 }
@@ -316,58 +348,60 @@ private struct WorkoutDrillCard: View {
     let onToggle: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(isCompleted ? Color.green : Color.neonCyan)
-                    .frame(width: 28, height: 28)
-                if isCompleted {
-                    Image(systemName: "checkmark")
-                        .font(.caption.bold())
-                        .foregroundColor(.black)
-                } else {
-                    Text("\(index)")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundColor(.black)
+        Button(action: onToggle) {
+            HStack(alignment: .top, spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(isCompleted ? Color.green : Color.neonCyan)
+                        .frame(width: 28, height: 28)
+                    if isCompleted {
+                        Image(systemName: "checkmark")
+                            .font(.caption.bold())
+                            .foregroundColor(.black)
+                    } else {
+                        Text("\(index)")
+                            .font(.caption)
+                            .fontWeight(.bold)
+                            .foregroundColor(.black)
+                    }
                 }
-            }
 
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(item.title)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .strikethrough(isCompleted, color: .secondary)
-                    Spacer()
-                    Text("\(item.durationMinutes)m")
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack {
+                        Text(item.title)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .strikethrough(isCompleted, color: .secondary)
+                        Spacer()
+                        Text("\(item.durationMinutes)m")
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .foregroundColor(.neonCyan)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.neonCyan.opacity(0.1))
+                            .cornerRadius(6)
+                    }
+                    CategoryBadge(category: item.category)
+                    Text(item.coachingNotes)
                         .font(.caption)
-                        .fontWeight(.medium)
-                        .foregroundColor(.neonCyan)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color.neonCyan.opacity(0.1))
-                        .cornerRadius(6)
+                        .foregroundColor(.secondary)
+                        .lineSpacing(2)
                 }
-                CategoryBadge(category: item.category)
-                Text(item.coachingNotes)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineSpacing(2)
-            }
 
-            Button(action: onToggle) {
                 Image(systemName: isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title3)
                     .foregroundColor(isCompleted ? .green : .secondary)
             }
-            .buttonStyle(.plain)
+            .padding()
+            .background(Color.nebulaSurface)
+            .cornerRadius(12)
+            .contentShape(Rectangle())
         }
-        .padding()
-        .background(Color.nebulaSurface)
-        .cornerRadius(12)
-        .contentShape(Rectangle())
-        .onTapGesture(perform: onToggle)
+        .buttonStyle(.plain)
+        .accessibilityLabel(item.title)
+        .accessibilityValue(isCompleted ? "Completed" : "Not completed")
+        .accessibilityHint("Toggle whether you completed this drill")
     }
 }
 

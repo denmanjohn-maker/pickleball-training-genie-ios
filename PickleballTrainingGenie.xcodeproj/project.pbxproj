@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DDDD0000000000000002CAFE = {isa = PBXBuildFile; fileRef = DDDD0000000000000001CAFE; };
+		DDDD0000000000000004CAFE = {isa = PBXBuildFile; fileRef = DDDD0000000000000003CAFE; };
+		CCCC0000000000000006CAFE /* TodayLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCC0000000000000005CAFE /* TodayLayoutTests.swift */; };
+		CCCC0000000000000004CAFE /* TodayNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCC0000000000000003CAFE /* TodayNavigationTests.swift */; };
+		CCCC0000000000000002CAFE /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCCC0000000000000001CAFE /* TodayView.swift */; };
 		AAAA000000000000001FCAFE /* PickleballTrainingGenieApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000013CAFE /* PickleballTrainingGenieApp.swift */; };
 		AAAA0000000000000020CAFE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000014CAFE /* ContentView.swift */; };
 		AAAA0000000000000021CAFE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000015CAFE /* Assets.xcassets */; };
@@ -78,6 +83,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		DDDD0000000000000012CAFE = {isa = PBXContainerItemProxy; containerPortal = AAAA0000000000000001CAFE; proxyType = 1; remoteGlobalIDString = AAAA0000000000000002CAFE; remoteInfo = PickleballTrainingGenie; };
 		BBBB000000000000002ACAFE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AAAA0000000000000001CAFE /* Project object */;
@@ -88,6 +94,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DDDD0000000000000001CAFE = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestMainView.swift; sourceTree = "<group>"; };
+		DDDD0000000000000003CAFE = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingNavigationUITests.swift; sourceTree = "<group>"; };
+		DDDD0000000000000005CAFE = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = PickleballTrainingGenieUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCCC0000000000000005CAFE /* TodayLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayLayoutTests.swift; sourceTree = "<group>"; };
+		CCCC0000000000000003CAFE /* TodayNavigationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayNavigationTests.swift; sourceTree = "<group>"; };
+		CCCC0000000000000001CAFE /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000012CAFE /* PickleballTrainingGenie.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PickleballTrainingGenie.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAAA0000000000000013CAFE /* PickleballTrainingGenieApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickleballTrainingGenieApp.swift; sourceTree = "<group>"; };
 		AAAA0000000000000014CAFE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -162,6 +174,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		DDDD0000000000000009CAFE = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		AAAA000000000000000BCAFE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -180,11 +193,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DDDD0000000000000006CAFE = {isa = PBXGroup; children = (DDDD0000000000000003CAFE,); path = PickleballTrainingGenieUITests; sourceTree = "<group>"; };
 		AAAA000000000000000CCAFE = {
 			isa = PBXGroup;
 			children = (
 				AAAA000000000000000ECAFE /* PickleballTrainingGenie */,
 				BBBB0000000000000021CAFE /* PickleballTrainingGenieTests */,
+				DDDD0000000000000006CAFE,
 				AAAA000000000000000DCAFE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -194,6 +209,7 @@
 			children = (
 				AAAA0000000000000012CAFE /* PickleballTrainingGenie.app */,
 				BBBB0000000000000020CAFE /* PickleballTrainingGenieTests.xctest */,
+				DDDD0000000000000005CAFE,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -241,6 +257,7 @@
 				AAAA0000000000000076CAFE /* GuidedSessionView.swift */,
 				AAAA0000000000000082CAFE /* VideoReviewView.swift */,
 				AAAA0000000000000084CAFE /* AppTutorialView.swift */,
+				CCCC0000000000000001CAFE /* TodayView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -303,6 +320,7 @@
 				AAAA0000000000000080CAFE /* VideoReviewStore.swift */,
 				AAAA0000000000000088CAFE /* LocalDataPurge.swift */,
 				AAAA000000000000008ACAFE /* AppLog.swift */,
+				DDDD0000000000000001CAFE,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -333,6 +351,8 @@
 				BBBB000000000000000CCAFE /* DrillSoloHeuristicTests.swift */,
 				BBBB000000000000000DCAFE /* WorkoutHistoryViewModelTests.swift */,
 				BBBB000000000000000ECAFE /* ZipCityMatcherTests.swift */,
+				CCCC0000000000000003CAFE /* TodayNavigationTests.swift */,
+				CCCC0000000000000005CAFE /* TodayLayoutTests.swift */,
 			);
 			path = PickleballTrainingGenieTests;
 			sourceTree = "<group>";
@@ -340,6 +360,17 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		DDDD0000000000000007CAFE = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DDDD0000000000000011CAFE;
+			buildPhases = (DDDD0000000000000008CAFE, DDDD0000000000000009CAFE, DDDD000000000000000ACAFE,);
+			buildRules = ();
+			dependencies = (DDDD0000000000000013CAFE,);
+			name = PickleballTrainingGenieUITests;
+			productName = PickleballTrainingGenieUITests;
+			productReference = DDDD0000000000000005CAFE;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		AAAA0000000000000002CAFE /* PickleballTrainingGenie */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAAA0000000000000007CAFE /* Build configuration list for PBXNativeTarget "PickleballTrainingGenie" */;
@@ -388,6 +419,7 @@
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
+					DDDD0000000000000007CAFE = {CreatedOnToolsVersion = 27.2; TestTargetID = AAAA0000000000000002CAFE; };
 					AAAA0000000000000002CAFE = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -415,6 +447,7 @@
 			targets = (
 				AAAA0000000000000002CAFE /* PickleballTrainingGenie */,
 				BBBB0000000000000022CAFE /* PickleballTrainingGenieTests */,
+				DDDD0000000000000007CAFE,
 			);
 		};
 /* End PBXProject section */
@@ -439,6 +472,7 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXResourcesBuildPhase section */
+		DDDD000000000000000ACAFE = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 		AAAA000000000000000ACAFE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -460,11 +494,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		DDDD0000000000000008CAFE = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (DDDD0000000000000004CAFE,); runOnlyForDeploymentPostprocessing = 0; };
 		AAAA0000000000000009CAFE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				AAAA000000000000001FCAFE /* PickleballTrainingGenieApp.swift in Sources */,
+				DDDD0000000000000002CAFE,
 				AAAA0000000000000020CAFE /* ContentView.swift in Sources */,
 				AAAA000000000000002BCAFE /* PickleballTrainingGenieClient.swift in Sources */,
 				AAAA0000000000000022CAFE /* LoginView.swift in Sources */,
@@ -511,6 +547,7 @@
 				AAAA0000000000000089CAFE /* LocalDataPurge.swift in Sources */,
 				AAAA0000000000000083CAFE /* VideoReviewView.swift in Sources */,
 				AAAA0000000000000085CAFE /* AppTutorialView.swift in Sources */,
+				CCCC0000000000000002CAFE /* TodayView.swift in Sources */,
 				AAAA000000000000008BCAFE /* AppLog.swift in Sources */,
 				AAAA000000000000008DCAFE /* DrillSoloHeuristic.swift in Sources */,
 			);
@@ -534,12 +571,15 @@
 				BBBB000000000000001CCAFE /* DrillSoloHeuristicTests.swift in Sources */,
 				BBBB000000000000001DCAFE /* WorkoutHistoryViewModelTests.swift in Sources */,
 				BBBB000000000000001ECAFE /* ZipCityMatcherTests.swift in Sources */,
+				CCCC0000000000000004CAFE /* TodayNavigationTests.swift in Sources */,
+				CCCC0000000000000006CAFE /* TodayLayoutTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		DDDD0000000000000013CAFE = {isa = PBXTargetDependency; target = AAAA0000000000000002CAFE; targetProxy = DDDD0000000000000012CAFE; };
 		BBBB0000000000000029CAFE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = AAAA0000000000000002CAFE /* PickleballTrainingGenie */;
@@ -548,6 +588,16 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		DDDD000000000000000FCAFE = {
+			isa = XCBuildConfiguration;
+			buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.jdtechprojects.pickleballgenie.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = PickleballTrainingGenie; };
+			name = Debug;
+		};
+		DDDD0000000000000010CAFE = {
+			isa = XCBuildConfiguration;
+			buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; PRODUCT_BUNDLE_IDENTIFIER = com.jdtechprojects.pickleballgenie.uitests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; TEST_TARGET_NAME = PickleballTrainingGenie; };
+			name = Release;
+		};
 		AAAA0000000000000003CAFE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -777,6 +827,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DDDD0000000000000011CAFE = {isa = XCConfigurationList; buildConfigurations = (DDDD000000000000000FCAFE, DDDD0000000000000010CAFE,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
 		AAAA0000000000000007CAFE /* Build configuration list for PBXNativeTarget "PickleballTrainingGenie" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

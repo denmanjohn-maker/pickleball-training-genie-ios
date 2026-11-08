@@ -5,6 +5,7 @@
 included:
   - PickleballTrainingGenie
   - PickleballTrainingGenieTests
+  - PickleballTrainingGenieUITests
 
 excluded:
   - .build

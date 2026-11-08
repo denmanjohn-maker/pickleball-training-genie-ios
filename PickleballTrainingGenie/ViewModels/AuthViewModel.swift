@@ -17,7 +17,7 @@ class AuthViewModel: ObservableObject {
 
     let client: PickleballTrainingGenieClient
 
-    init() {
+    init(restoreSession: Bool = true) {
         let baseURL = URL(string: APIConfig.baseURL)!
         client = PickleballTrainingGenieClient(baseURL: baseURL)
         // Any authenticated call that comes back 401 means the token is dead;
@@ -27,6 +27,7 @@ class AuthViewModel: ObservableObject {
                 self?.handleSessionExpired()
             }
         }
+        guard restoreSession else { return }
         // Restore saved token on launch from Keychain
         if let savedToken = KeychainHelper.read(forKey: "jwtToken"),
            !savedToken.isEmpty {

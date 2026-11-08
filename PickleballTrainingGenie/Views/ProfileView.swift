@@ -233,10 +233,7 @@ struct ProfileView: View {
                     .padding(.horizontal)
 
                     // Training habits — weekly goal + reminders
-                    TrainingHabitsCard(
-                        client: authViewModel.client,
-                        userId: authViewModel.currentUser?.id
-                    )
+                    TrainingHabitsCard()
                     .padding(.horizontal)
 
                     // Player details
@@ -463,18 +460,11 @@ struct ProfileView: View {
 /// on-device: goal in UserDefaults, reminders via UNUserNotificationCenter —
 /// except the streak numbers, which come from workout-session history.
 private struct TrainingHabitsCard: View {
-    @StateObject private var streakStore: TrainingStreakStore
-    @State private var weeklyGoal = TrainingStats.weeklyGoal
+    @AppStorage("training.weeklyGoal") private var weeklyGoal = 3
     @State private var remindersEnabled = TrainingReminders.isEnabled
     @State private var selectedWeekdays = TrainingReminders.savedWeekdays
     @State private var reminderTime = TrainingHabitsCard.initialTime
     @State private var showPermissionDenied = false
-
-    init(client: PickleballTrainingGenieClient, userId: String?) {
-        _streakStore = StateObject(
-            wrappedValue: TrainingStreakStore(client: client, userId: userId)
-        )
-    }
 
     // 1 = Sunday … 7 = Saturday, matching DateComponents.weekday.
     private static let weekdayLabels = ["S", "M", "T", "W", "T", "F", "S"]
@@ -492,39 +482,15 @@ private struct TrainingHabitsCard: View {
                 .font(.headline)
                 .foregroundColor(.starlight)
 
-            if streakStore.isLoading && streakStore.sessionDates.isEmpty {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-            } else {
-                HStack(spacing: 12) {
-                    HabitStatChip(
-                        icon: "flame.fill",
-                        color: .orange,
-                        value: "\(streakStore.streakDays)",
-                        label: "Day Streak"
-                    )
-                    HabitStatChip(
-                        icon: "calendar",
-                        color: .green,
-                        value: "\(streakStore.sessionsThisWeek)/\(weeklyGoal)",
-                        label: "This Week"
-                    )
-                }
-                if let cachedDate = streakStore.cachedDate {
-                    Text("Offline — as of \(cachedDate.formatted(date: .abbreviated, time: .shortened)).")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-            }
+            TrainingActivitySummary()
 
             Divider()
 
             Stepper(value: $weeklyGoal, in: 1...14) {
-                HStack {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Weekly goal")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Spacer()
                     Text("\(weeklyGoal) session\(weeklyGoal == 1 ? "" : "s")")
                         .font(.subheadline)
                         .fontWeight(.medium)
@@ -604,7 +570,6 @@ private struct TrainingHabitsCard: View {
         }
         .padding()
         .pickleballCard()
-        .task { await streakStore.load() }
         .alert("Notifications Are Off", isPresented: $showPermissionDenied) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -614,34 +579,6 @@ private struct TrainingHabitsCard: View {
 
     private func accessibilityName(for weekday: Int) -> String {
         Calendar.current.weekdaySymbols[weekday - 1]
-    }
-}
-
-/// Compact stat inside the habits card — same vocabulary as the Training
-/// History header, without the nested card background.
-private struct HabitStatChip: View {
-    let icon: String
-    let color: Color
-    let value: String
-    let label: String
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.subheadline)
-                .foregroundColor(color)
-            Text(value)
-                .font(.title3)
-                .fontWeight(.bold)
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 8)
-        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 10))
     }
 }
 
@@ -711,6 +648,9 @@ private struct StatRowPlaceholder: View {
 #Preview {
     ProfileView()
         .environmentObject(AuthViewModel())
+        .environmentObject(TrainingStreakStore(client: PickleballTrainingGenieClient(
+            baseURL: URL(string: "https://example.test/")!
+        )))
 }
 struct EditRatingsView: View {
     @EnvironmentObject var authViewModel: AuthViewModel

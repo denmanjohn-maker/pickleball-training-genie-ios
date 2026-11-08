@@ -25,22 +25,22 @@ struct AppTutorialView: View {
         TutorialPage(
             icon: "star.fill",
             title: "Get Picks Made For You",
-            description: "The For You tab recommends drills matched to your rating and goals, so you always know what to practice next."
+            description: "Start in Today: review your saved workout or open setup, see your training habits, and explore personalized recommendations."
         ),
         TutorialPage(
             icon: "bolt.fill",
             title: "AI-Generated Workouts",
-            description: "Tell the Genie how much time you have, and get a complete, ready-to-run training session."
+            description: "In Train, choose how much time you have and generate a plan. Review it first, then start a guided session or use the checklist at your own pace."
         ),
         TutorialPage(
             icon: "trophy.fill",
             title: "Find Tournaments",
-            description: "Discover upcoming tournaments near you and keep track of the ones you want to play."
+            description: "Open Find Tournaments from Today to discover upcoming events near your city and keep track of the ones you want to play."
         ),
         TutorialPage(
             icon: "person.fill",
             title: "Track Your Growth",
-            description: "Manage your DUPR ratings, review your workout history, and set training reminders — all from your Profile."
+            description: "Progress holds training history and video self-review. Profile holds your DUPR ratings, weekly goal, and training reminders. Drills and Learn remain ready to explore."
         ),
     ]
 
