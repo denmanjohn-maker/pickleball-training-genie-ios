@@ -63,14 +63,39 @@ struct WorkoutView: View {
 
                         HStack(spacing: 10) {
                             ForEach([15, 30, 45, 60], id: \.self) { minutes in
-                                DurationButton(
-                                    minutes: minutes,
+                                ChoiceButton(
+                                    title: "\(minutes)m",
                                     isSelected: drillsViewModel.workoutDuration == minutes
                                 ) {
                                     drillsViewModel.workoutDuration = minutes
                                 }
                             }
                         }
+                    }
+                    .padding(.horizontal)
+
+                    // Who's training? Decides which drills the server may use:
+                    // alone means wall / machine / self-feed drills only.
+                    VStack(alignment: .leading, spacing: 12) {
+                        Label("Who's Training?", systemImage: "person.2")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        HStack(spacing: 10) {
+                            ForEach(TrainingCompany.allCases, id: \.self) { company in
+                                ChoiceButton(
+                                    title: company.title,
+                                    systemImage: company.systemImage,
+                                    isSelected: drillsViewModel.trainingCompany == company
+                                ) {
+                                    drillsViewModel.trainingCompany = company
+                                }
+                            }
+                        }
+
+                        Text(drillsViewModel.trainingCompany.detail)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                     .padding(.horizontal)
 
@@ -217,21 +242,34 @@ struct WorkoutView: View {
     }
 }
 
-private struct DurationButton: View {
-    let minutes: Int
+/// One option in a row of mutually exclusive choices (duration, who's training).
+private struct ChoiceButton: View {
+    let title: String
+    var systemImage: String?
     let isSelected: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Text("\(minutes)m")
-                .font(.subheadline)
-                .fontWeight(isSelected ? .bold : .regular)
-                .foregroundColor(isSelected ? .black : .primary)
-                .frame(maxWidth: .infinity, minHeight: 48)
-                .background(isSelected ? Color.neonMagenta : Color.surfaceMuted)
-                .cornerRadius(10)
+            VStack(spacing: 4) {
+                if let systemImage {
+                    Image(systemName: systemImage)
+                        .font(.subheadline)
+                }
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(isSelected ? .bold : .regular)
+                    .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.8)
+            }
+            .foregroundColor(isSelected ? .black : .primary)
+            .padding(.vertical, 6)
+            .padding(.horizontal, 4)
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .background(isSelected ? Color.neonMagenta : Color.surfaceMuted)
+            .cornerRadius(10)
         }
+        .accessibilityLabel(title)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
@@ -346,8 +384,43 @@ private struct WorkoutDrillCard: View {
     let item: WorkoutDrillItem
     let isCompleted: Bool
     let onToggle: () -> Void
+    @State private var showInstructions = false
+
+    /// The card is a toggle button, so the tags and the instructions
+    /// disclosure live below it rather than inside it — nested controls
+    /// confuse both taps and VoiceOver.
+    private var hasDetails: Bool {
+        item.minPlayers != nil || !item.equipmentItems.isEmpty || item.instructions != nil
+    }
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            toggleRow
+            if hasDetails {
+                VStack(alignment: .leading, spacing: 8) {
+                    DrillTagRow(minPlayers: item.minPlayers, equipment: item.equipmentItems)
+                    if let instructions = item.instructions {
+                        DisclosureGroup(isExpanded: $showInstructions) {
+                            DrillInstructionsView(instructions: instructions, compact: true)
+                                .padding(.top, 8)
+                        } label: {
+                            Label("How to run this drill", systemImage: "list.bullet.rectangle")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.neonCyan)
+                        }
+                        .tint(.neonCyan)
+                    }
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 12)
+            }
+        }
+        .background(Color.nebulaSurface)
+        .cornerRadius(12)
+    }
+
+    private var toggleRow: some View {
         Button(action: onToggle) {
             HStack(alignment: .top, spacing: 12) {
                 ZStack {
@@ -394,8 +467,6 @@ private struct WorkoutDrillCard: View {
                     .foregroundColor(isCompleted ? .green : .secondary)
             }
             .padding()
-            .background(Color.nebulaSurface)
-            .cornerRadius(12)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

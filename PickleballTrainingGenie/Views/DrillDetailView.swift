@@ -54,10 +54,16 @@ struct DrillDetailView: View {
                             .font(.headline)
                             .foregroundColor(.neonMagenta)
 
-                        Text(drill.description)
-                            .font(.body)
-                            .foregroundColor(.primary)
-                            .lineSpacing(4)
+                        // Who the drill needs and any gear; unknown (older
+                        // backend) falls back to the keyword guess for solo.
+                        DrillTagRow(
+                            minPlayers: drill.minPlayers ?? (drill.isSoloFriendly ? 1 : nil),
+                            equipment: drill.equipmentItems
+                        )
+
+                        // Curated drills arrive templated (summary, setup, how
+                        // to run it, goal, cue); anything else renders as prose.
+                        DrillInstructionsView(instructions: drill.instructions)
                     }
                     .padding()
                     .pickleballCard()
@@ -209,7 +215,9 @@ struct SafariView: UIViewControllerRepresentable {
         category: "Dinking",
         videoUrl: "https://youtube.com/watch?v=example",
         sourceUrl: "https://pickleballkitchen.com",
-        createdAt: "2024-01-01"
+        createdAt: "2024-01-01",
+        minPlayers: 2,
+        equipment: nil
     ))
     .environmentObject(DrillsViewModel(client: PickleballTrainingGenieClient(
         baseURL: URL(string: "http://localhost:5123/")!

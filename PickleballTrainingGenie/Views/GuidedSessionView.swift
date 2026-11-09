@@ -145,7 +145,10 @@ struct GuidedSessionView: View {
 
     private func drillCard(_ item: WorkoutDrillItem) -> some View {
         VStack(spacing: 20) {
-            CategoryBadge(category: item.category)
+            VStack(spacing: 8) {
+                CategoryBadge(category: item.category)
+                DrillTagRow(minPlayers: item.minPlayers, equipment: item.equipmentItems)
+            }
 
             Text(item.title)
                 .font(.title2)
@@ -163,16 +166,25 @@ struct GuidedSessionView: View {
                     .accessibilityLabel("Time remaining \(GuidedSessionViewModel.formatSeconds(remaining))")
             }
 
+            // Coaching notes first (what to focus on right now), then the
+            // full instructions when the server attached the catalog drill —
+            // at the court nobody wants to leave the timer to look them up.
             ScrollView {
-                Text(item.coachingNotes)
-                    .font(.subheadline)
-                    .foregroundColor(.white.opacity(0.85))
-                    .lineSpacing(4)
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    .readableWidth()
+                VStack(spacing: 14) {
+                    Text(item.coachingNotes)
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.85))
+                        .lineSpacing(4)
+                        .multilineTextAlignment(.center)
+                    if let instructions = item.instructions {
+                        DrillInstructionsView(instructions: instructions, compact: true, onDark: true)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .padding()
+                .readableWidth()
             }
-            .frame(maxHeight: 140)
+            .frame(maxHeight: item.instructions == nil ? 140 : 220)
 
             // Controls
             HStack(spacing: 14) {

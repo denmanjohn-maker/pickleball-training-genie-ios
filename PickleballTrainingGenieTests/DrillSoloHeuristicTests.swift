@@ -36,4 +36,25 @@ final class DrillSoloHeuristicTests: XCTestCase {
         XCTAssertTrue(Fixtures.drill(title: "Wall Dinks", description: "Against a wall.").isSoloFriendly)
         XCTAssertFalse(Fixtures.drill(description: "Partner feeds.").isSoloFriendly)
     }
+
+    func testServerMinPlayersWinsOverKeywords() {
+        // Text screams "partner", but the server says solo (e.g. a wall
+        // alternative is described) — the tag is authoritative.
+        let taggedSolo = Fixtures.drill(
+            description: "With a partner feeding, or off a wall.", minPlayers: 1)
+        XCTAssertTrue(taggedSolo.isSoloFriendly)
+
+        // Text looks solo (a wall is mentioned), but the server says partner.
+        let taggedPartner = Fixtures.drill(
+            description: "Stand near the wall of the court while your feed comes in.", minPlayers: 2)
+        XCTAssertFalse(taggedPartner.isSoloFriendly)
+
+        let taggedGroup = Fixtures.drill(description: "Solo warm-up before the pattern.", minPlayers: 4)
+        XCTAssertFalse(taggedGroup.isSoloFriendly)
+    }
+
+    func testHeuristicStillAppliesWhenServerTagIsMissing() {
+        let untagged = Fixtures.drill(description: "Hit against a wall for 10 minutes.", minPlayers: nil)
+        XCTAssertTrue(untagged.isSoloFriendly)
+    }
 }

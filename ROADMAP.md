@@ -19,14 +19,14 @@ The sections below are kept as written for the reasoning behind each item. Where
 | Offline cache | ✅ Shipped (`OfflineCache`, per-user keys) |
 | Video self-review | ✅ Shipped (on-device only, excluded from backup) |
 | Inline video playback, favorites, session journal | ✅ Shipped |
-| Solo-vs-partner (Gap 2) | ⚠️ Client-side keyword heuristic (`DrillSoloHeuristic`) and "Solo-friendly" filter; real fix is backend ask §6.3 |
+| Solo-vs-partner (Gap 2) | ✅ Shipped: backend tags every drill with `minPlayers`/`equipment`; the Train tab asks "Who's training?" (just me / partner / group) and sends `playersAvailable`; plans carry full instructions. `DrillSoloHeuristic` remains only as a fallback for untagged drills |
 | Test target / CI / lint | ✅ `PickleballTrainingGenieTests`, `.github/workflows/ios.yml`, `.swiftlint.yml` |
 | Accessibility & Dynamic Type pass | ⚠️ Partial: fixed point sizes replaced with text styles / `@ScaledMetric`, selection traits on chips; full VoiceOver audit still open |
 | Multi-week programs, community, partner finding | ⏳ Not started (backend-dependent) |
 | Cross-device sync of local state (assessment, favorites) | ⏳ Open — needs iCloud entitlement or backend endpoints |
 | HealthKit / widget / Watch | ⏳ Open — product decision + new targets/entitlements |
 
-Open **backend asks** (§6) remain the gating items: accept sub-3.0 ratings, tag 2.0/2.5 drills, extend `Drill` with `requiresPartner`/equipment/duration, and accept focus categories on workout generation.
+Open **backend asks** (§6) remaining: accept sub-3.0 ratings, tag 2.0/2.5 drills, structured `steps[]`/`skillTags[]`/`targetScore` on `Drill`, and focus categories on workout generation. The partner/equipment asks (§6.3 in part, §6.4 `playersAvailable`, §6.5) shipped.
 
 ---
 
@@ -254,17 +254,17 @@ Not iOS work — collected here so the API owner has a single list. Roughly in o
 **Unblocks Gap 2 (the partner problem):**
 
 3. **Extend the `Drill` model.** The highest-value single change on this list:
-   - `requiresPartner` / `playerCount` — **lets us filter to solo-friendly drills**
-   - `equipment[]` — wall, ball machine, cones, just a paddle
+   - ✅ `minPlayers` (1 solo / 2 partner / 4 group) — **filters to solo-friendly drills**; the app shows it as a Solo/Partner/Group badge
+   - ✅ `equipment` — wall, ball machine, bucket of balls, cones (comma-separated string)
    - `durationMinutes` — the library drill has no duration; only AI-generated drills do
-   - `steps[]` — structured instructions instead of one prose blob
+   - ⚠️ `steps[]` — partially: curated descriptions now follow a fixed template (summary, Setup, How to run it, Goal, Coaching cue) that `DrillInstructions` parses into sections; a real structured field is still open
    - `skillTags[]` — finer-grained than the 10 categories
    - `targetScore` / `reps` — gives the drill a pass/fail, which makes progress measurable
 
 **Unblocks real personalization:**
 
-4. `POST api/workouts/generate` to accept `focusCategories[]`, `soloOnly`, and available `equipment` — currently it takes only `durationMinutes` (`GenerateWorkoutRequest`).
-5. `GET api/Drills/recommendations` to accept the same focus signal, so §4b becomes true personalization rather than client-side re-ranking.
+4. `POST api/workouts/generate` to accept `focusCategories[]` and available `equipment` — ✅ `playersAvailable` (the solo/partner/group signal) shipped, and the response now carries each drill's `drillId`, `description`, `minPlayers` and `equipment`.
+5. ✅ `GET api/Drills/recommendations` accepts `playersAvailable`; focus categories still open, so §4b remains client-side re-ranking for now.
 6. **Persist per-drill self-ratings** and expose a skill trend over time — turns Tier 2's feedback loop from a local convenience into the engine behind adaptive workouts.
 7. **Program endpoints** for multi-week structured plans.
 
