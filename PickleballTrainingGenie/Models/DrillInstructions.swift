@@ -5,8 +5,9 @@ import Foundation
 /// Curated drills on the backend follow a fixed template — a one-sentence
 /// summary, then `Setup:`, `How to run it:`, `Goal:` and `Coaching cue:` lines —
 /// so the app can render labelled sections instead of one prose blob. Scraped
-/// or older drills have no labels; they parse to a summary only and render as
-/// plain text, exactly as before.
+/// or older drills have no labels; they parse to a summary that is the trimmed
+/// description verbatim (line breaks included) and render as plain text,
+/// exactly as before.
 struct DrillInstructions: Equatable, Sendable {
     var summary: String
     var setup: String?
@@ -45,8 +46,11 @@ struct DrillInstructions: Equatable, Sendable {
             }
         }
 
-        result.summary = summaryLines.joined(separator: " ")
-        if result.summary.isEmpty && !result.hasSections {
+        if result.hasSections {
+            result.summary = summaryLines.joined(separator: " ")
+        } else {
+            // No template labels: keep the description verbatim so paragraph
+            // breaks and numbered steps in legacy prose survive.
             result.summary = description.trimmingCharacters(in: .whitespacesAndNewlines)
         }
         return result

@@ -30,6 +30,20 @@ final class DrillInstructionsTests: XCTestCase {
         XCTAssertFalse(parsed.hasSections)
     }
 
+    func testPlainProseKeepsParagraphAndListBreaks() {
+        let legacy = """
+          Warm up with ten easy dinks.
+
+          1. Set up at the kitchen line.
+          2. Feed cross-court and hold the rally.
+          """
+
+        let parsed = DrillInstructions.parse(legacy)
+
+        XCTAssertEqual(parsed.summary, "Warm up with ten easy dinks.\n\n1. Set up at the kitchen line.\n2. Feed cross-court and hold the rally.")
+        XCTAssertFalse(parsed.hasSections)
+    }
+
     func testWrappedSectionLinesAreJoined_AndEmptySectionsAreNil() {
         let parsed = DrillInstructions.parse("Summary line.\nSetup: First part\nsecond part.\nGoal:\nCoaching cue: Breathe.")
 

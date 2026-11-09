@@ -176,7 +176,7 @@ struct GuidedSessionView: View {
                         .foregroundColor(.white.opacity(0.85))
                         .lineSpacing(4)
                         .multilineTextAlignment(.center)
-                    if let instructions = item.instructions, instructions.hasSections {
+                    if let instructions = item.instructions {
                         DrillInstructionsView(instructions: instructions, compact: true, onDark: true)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
