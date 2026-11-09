@@ -55,10 +55,14 @@
                 .environment(\.horizontalSizeClass, alternateLayout
                              ? (nativeSizeClass == .regular ? .compact : .regular)
                              : nativeSizeClass)
-                .safeAreaInset(edge: .bottom) {
+                // Pinned to the top edge: a bottom inset would sit over the iPhone
+                // tab bar and make the tab buttons unhittable for XCUITest.
+                .safeAreaInset(edge: .top) {
                     if ProcessInfo.processInfo.environment["GENIE_UI_SIZE_TEST"] == "1" {
                         Button("Toggle Test Size Class") { alternateLayout.toggle() }
                             .buttonStyle(SecondaryButtonStyle())
+                            .padding(.horizontal)
+                            .accessibilityIdentifier("uiTest.toggleSizeClass")
                     }
                 }
         }
