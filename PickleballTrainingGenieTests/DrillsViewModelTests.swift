@@ -122,6 +122,81 @@ final class DrillsViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.workoutError)
     }
 
+    // MARK: - Recommendations follow the training company
+
+    private static let partnerDrillJSON = Data(#"""
+    [{"id":"partner-dinks","title":"Partner Dinks","description":"Dink cross-court with a partner.",
+      "targetDUPRLevel":3.0,"category":"Dinking","sourceUrl":"https://example.test/drill",
+      "createdAt":"2026-01-01T00:00:00Z","minPlayers":2}]
+    """#.utf8)
+
+    private func makeAuthenticatedViewModel() -> DrillsViewModel {
+        let client = PickleballTrainingGenieClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
+        client.jwtToken = "abc"
+        return DrillsViewModel(client: client, userId: "t-\(UUID().uuidString)", defaults: isolatedDefaults())
+    }
+
+    func testChangingTrainingCompanyClearsLoadedRecommendations() {
+        let viewModel = makeAuthenticatedViewModel()
+        viewModel.trainingCompany = .partner
+        viewModel.recommendations = [Fixtures.drill(id: "p", minPlayers: 2)]
+        viewModel.cachedRecommendationsDate = Date()
+
+        viewModel.trainingCompany = .partner
+        XCTAssertEqual(viewModel.recommendations.map(\.id), ["p"], "Re-selecting the same choice keeps what is loaded")
+
+        viewModel.trainingCompany = .solo
+        XCTAssertTrue(viewModel.recommendations.isEmpty)
+        XCTAssertNil(viewModel.cachedRecommendationsDate)
+        XCTAssertNil(viewModel.recommendationsError)
+    }
+
+    func testRecommendationsForThePreviousChoiceAreDiscardedWhenTheyArrive() async {
+        let viewModel = makeAuthenticatedViewModel()
+        viewModel.trainingCompany = .partner
+        let gate = DispatchSemaphore(value: 0)
+        StubURLProtocol.handler = { request in
+            gate.wait()
+            return (StubURLProtocol.response(for: request, status: 200), Self.partnerDrillJSON)
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        let inFlight = Task { await viewModel.loadRecommendations() }
+        while !viewModel.isLoadingRecommendations { await Task.yield() }
+
+        viewModel.trainingCompany = .solo
+        gate.signal()
+        await inFlight.value
+
+        XCTAssertTrue(viewModel.recommendations.isEmpty, "A partner reply must not fill a solo session")
+        XCTAssertFalse(viewModel.isLoadingRecommendations)
+    }
+
+    func testRecommendationCacheIsScopedToTrainingCompany() async {
+        let viewModel = makeAuthenticatedViewModel()
+        viewModel.trainingCompany = .partner
+        StubURLProtocol.handler = { request in
+            (StubURLProtocol.response(for: request, status: 200), Self.partnerDrillJSON)
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        await viewModel.loadRecommendations()
+        XCTAssertEqual(viewModel.recommendations.map(\.id), ["partner-dinks"])
+
+        // Offline from here on.
+        StubURLProtocol.handler = { _ in throw URLError(.notConnectedToInternet) }
+
+        viewModel.trainingCompany = .solo
+        await viewModel.loadRecommendations()
+        XCTAssertTrue(viewModel.recommendations.isEmpty, "Partner drills must not be restored for a solo session")
+        XCTAssertNotNil(viewModel.recommendationsError)
+
+        viewModel.trainingCompany = .partner
+        await viewModel.loadRecommendations()
+        XCTAssertEqual(viewModel.recommendations.map(\.id), ["partner-dinks"])
+        XCTAssertNotNil(viewModel.cachedRecommendationsDate)
+    }
+
     func testGenerateWorkoutSurfacesServerExplanationOn400() async {
         let client = PickleballTrainingGenieClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
         client.jwtToken = "abc"

@@ -5,6 +5,11 @@ import Foundation
 /// compared there against each drill's `minPlayers` (a drill is offered when
 /// `minPlayers <= playersAvailable`). Remembered on this device only — it's a
 /// per-session fact, not a profile trait.
+///
+/// The backend tags drills as needing 1, 2 or 4 players, so these are the only
+/// honest choices: three players pick "With a partner" and get everything that
+/// doesn't need a fourth. A separate "3" option would return the same drills
+/// as "2" while looking like it unlocked more.
 enum TrainingCompany: Int, CaseIterable, Codable, Sendable {
     case solo = 1
     case partner = 2
@@ -17,7 +22,7 @@ enum TrainingCompany: Int, CaseIterable, Codable, Sendable {
         switch self {
         case .solo: return "Just me"
         case .partner: return "With a partner"
-        case .group: return "Group (3–4)"
+        case .group: return "Group of 4"
         }
     }
 
@@ -34,7 +39,7 @@ enum TrainingCompany: Int, CaseIterable, Codable, Sendable {
         switch self {
         case .solo: return "Wall, ball machine, self-feed and footwork drills — nobody else needed."
         case .partner: return "Adds drills that need one feeder or rally partner."
-        case .group: return "Adds doubles pattern drills for three or four players."
+        case .group: return "Adds doubles pattern drills that need four players. Three of you? Choose With a partner."
         }
     }
 

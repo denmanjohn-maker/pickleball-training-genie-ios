@@ -23,7 +23,14 @@ class DrillsViewModel: ObservableObject {
     /// actually run. Remembered on this device; the Train tab lets them change
     /// it before every generate.
     @Published var trainingCompany: TrainingCompany {
-        didSet { defaults.set(trainingCompany.rawValue, forKey: TrainingCompany.storageKey) }
+        didSet {
+            defaults.set(trainingCompany.rawValue, forKey: TrainingCompany.storageKey)
+            // The recommendations on screen were fetched for the old choice.
+            // Drop them so the next screen that needs them asks again, and
+            // make sure a reply still in flight for the old choice can't
+            // repopulate them.
+            if oldValue != trainingCompany { invalidateRecommendations() }
+        }
     }
     @Published var isCompletingWorkout = false
     @Published var workoutCompletedSuccessfully = false
@@ -40,10 +47,16 @@ class DrillsViewModel: ObservableObject {
     /// The drill library is public content and cached globally; the
     /// recommendations and workout caches are personalized, so their keys are
     /// scoped per user — a shared device must never surface one account's
-    /// workout to another.
+    /// workout to another. Recommendations are further scoped by training
+    /// company, so an offline relaunch after switching to "Just me" can't
+    /// restore drills that need a partner.
     private let drillsCacheKey = "drills"
-    private let recommendationsCacheKey: String
+    private let personalCacheScope: String
     private let workoutCacheKey: String
+
+    private func recommendationsCacheKey(for company: TrainingCompany) -> String {
+        "recommendations\(personalCacheScope)-players\(company.rawValue)"
+    }
 
     let drillCategories = [
         "Dinking", "Drops", "Volleys", "Serving", "Returns",
@@ -88,6 +101,10 @@ class DrillsViewModel: ObservableObject {
     private let trainingStreakStore: TrainingStreakStore?
     private let defaults: UserDefaults
     private var recommendationsSavedAt: Date?
+    /// Bumped whenever the recommendations become invalid (training company
+    /// changed); a fetch compares its own copy on return and discards itself
+    /// if it is no longer current.
+    private var recommendationsRequestID = 0
 
     var workoutActionTitle: String {
         workout == nil ? "Set Up a Workout" : "Review Saved Workout"
@@ -107,8 +124,11 @@ class DrillsViewModel: ObservableObject {
         // reads as 0, which is not a valid case, so the fallback applies.
         trainingCompany = TrainingCompany(rawValue: defaults.integer(forKey: TrainingCompany.storageKey)) ?? .solo
         let scope = userId.map { "-\($0)" } ?? ""
-        recommendationsCacheKey = "recommendations\(scope)"
+        personalCacheScope = scope
         workoutCacheKey = "currentWorkout\(scope)"
+        // Recommendations used to be cached without the training company in
+        // the key; that entry can't be trusted for any choice, so drop it.
+        OfflineCache.remove(key: "recommendations\(scope)")
         // A workout generated earlier survives restarts, so it's still there
         // at a court with no signal. Cleared when a session is saved.
         if let cached = OfflineCache.load(WorkoutPlanResponse.self, key: workoutCacheKey) {
@@ -139,10 +159,17 @@ class DrillsViewModel: ObservableObject {
         guard !isLoadingRecommendations else { return }
         isLoadingRecommendations = true
         recommendationsError = nil
+        // Capture the choice this request is for: the player can change it
+        // while the request is out, and the cache entry must match the
+        // request that was sent, not whatever is selected on return.
+        let requestID = recommendationsRequestID
+        let company = trainingCompany
+        let cacheKey = recommendationsCacheKey(for: company)
         do {
-            var fetched = try await client.recommendations(playersAvailable: trainingCompany.rawValue)
+            var fetched = try await client.recommendations(playersAvailable: company.rawValue)
+            guard requestID == recommendationsRequestID else { return }
             cachedRecommendationsDate = nil
-            OfflineCache.save(fetched, key: recommendationsCacheKey)
+            OfflineCache.save(fetched, key: cacheKey)
             recommendationsSavedAt = Date()
             // The server only knows the player's DUPR; if they took the skill
             // check, lead with drills for their weakest categories.
@@ -151,11 +178,14 @@ class DrillsViewModel: ObservableObject {
             }
             recommendations = fetched
         } catch let error as PickleballTrainingGenieError {
+            guard requestID == recommendationsRequestID else { return }
             recommendationsError = error.serverMessage ?? "Could not load recommendations."
             cachedRecommendationsDate = recommendationsSavedAt
         } catch {
-            // Plain network failure — fall back to the last good fetch.
-            if let cached = OfflineCache.load([Drill].self, key: recommendationsCacheKey) {
+            guard requestID == recommendationsRequestID else { return }
+            // Plain network failure — fall back to the last good fetch for
+            // this same choice.
+            if let cached = OfflineCache.load([Drill].self, key: cacheKey) {
                 var fetched = cached.value
                 if let assessment = SkillAssessment.load() {
                     fetched = SkillAssessment.rank(fetched, by: assessment)
@@ -168,6 +198,19 @@ class DrillsViewModel: ObservableObject {
             }
             AppLog.network.error("Recommendation refresh failed: \(error.localizedDescription)")
         }
+        isLoadingRecommendations = false
+    }
+
+    /// Forgets the recommendations and anything about where they came from.
+    /// Any fetch still in flight sees the bumped request id and discards its
+    /// result, so `isLoadingRecommendations` is reset here and the next
+    /// screen to appear can start a fresh fetch straight away.
+    private func invalidateRecommendations() {
+        recommendationsRequestID += 1
+        recommendations = []
+        recommendationsError = nil
+        cachedRecommendationsDate = nil
+        recommendationsSavedAt = nil
         isLoadingRecommendations = false
     }
 
