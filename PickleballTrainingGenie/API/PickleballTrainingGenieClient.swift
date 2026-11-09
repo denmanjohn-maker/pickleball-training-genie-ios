@@ -13,6 +13,13 @@ struct Drill: Codable, Equatable, Identifiable, Sendable {
     let videoUrl: String?
     let sourceUrl: String
     let createdAt: String
+    /// Fewest people the drill needs: 1 = solo, 2 = one partner, 4 = a doubles
+    /// group. Optional because older backends don't send it; see
+    /// `Drill.isSoloFriendly` for the fallback.
+    let minPlayers: Int?
+    /// Comma-separated gear beyond paddle, ball and court ("Wall, Cones or
+    /// targets"); nil when nothing extra is needed. `equipmentItems` splits it.
+    let equipment: String?
 }
 
 struct User: Codable, Equatable, Sendable {
@@ -121,6 +128,9 @@ struct MessageResponse: Codable, Equatable, Sendable {
 
 struct GenerateWorkoutRequest: Codable, Sendable {
     let durationMinutes: Int?
+    /// `TrainingCompany.rawValue`: 1 just me, 2 with a partner, 4 group. Nil
+    /// is omitted from the JSON and leaves the server's catalog unfiltered.
+    let playersAvailable: Int?
 }
 
 struct WorkoutDrillItem: Codable, Identifiable, Sendable, Equatable {
@@ -128,6 +138,13 @@ struct WorkoutDrillItem: Codable, Identifiable, Sendable, Equatable {
     let category: String
     let durationMinutes: Int
     let coachingNotes: String
+    // Attached by the server from the catalog drill behind the item. All nil
+    // for plans from older backends, for cached plans generated before this
+    // existed, and for items the model renamed beyond recognition.
+    let drillId: String?
+    let description: String?
+    let minPlayers: Int?
+    let equipment: String?
 
     var id: String { title }
 }
@@ -416,13 +433,13 @@ class PickleballTrainingGenieClient {
         return try await send(request(url: url, method: "GET"), requireAuth: true)
     }
 
-    func generateWorkout(durationMinutes: Int? = nil) async throws -> WorkoutPlanResponse {
+    func generateWorkout(durationMinutes: Int? = nil, playersAvailable: Int? = nil) async throws -> WorkoutPlanResponse {
         // AI generation is the one slow call; give it more room than the
         // session default without letting it hang forever.
         var requestObj = try jsonRequest(
             path: "api/workouts/generate",
             method: "POST",
-            body: GenerateWorkoutRequest(durationMinutes: durationMinutes)
+            body: GenerateWorkoutRequest(durationMinutes: durationMinutes, playersAvailable: playersAvailable)
         )
         requestObj.timeoutInterval = 90
         return try await send(requestObj, requireAuth: true)
@@ -434,7 +451,7 @@ class PickleballTrainingGenieClient {
         try await send(request(path: "api/Drills/progress", method: "GET"), requireAuth: true)
     }
 
-    func drills(category: String? = nil, level: Decimal? = nil) async throws -> [Drill] {
+    func drills(category: String? = nil, level: Decimal? = nil, playersAvailable: Int? = nil) async throws -> [Drill] {
         var components = try urlComponents(path: "api/Drills")
         var queryItems: [URLQueryItem] = []
         if let category = category {
@@ -446,6 +463,9 @@ class PickleballTrainingGenieClient {
                 value: NSDecimalNumber(decimal: level).stringValue
             ))
         }
+        if let playersAvailable = playersAvailable {
+            queryItems.append(URLQueryItem(name: "playersAvailable", value: String(playersAvailable)))
+        }
         if !queryItems.isEmpty {
             components.queryItems = queryItems
         }
@@ -453,8 +473,13 @@ class PickleballTrainingGenieClient {
         return try await send(request(url: url, method: "GET"), requireAuth: false)
     }
 
-    func recommendations() async throws -> [Drill] {
-        try await send(request(path: "api/Drills/recommendations", method: "GET"), requireAuth: true)
+    func recommendations(playersAvailable: Int? = nil) async throws -> [Drill] {
+        var components = try urlComponents(path: "api/Drills/recommendations")
+        if let playersAvailable = playersAvailable {
+            components.queryItems = [URLQueryItem(name: "playersAvailable", value: String(playersAvailable))]
+        }
+        guard let url = components.url else { throw PickleballTrainingGenieError.invalidURL }
+        return try await send(request(url: url, method: "GET"), requireAuth: true)
     }
 
     func completeDrill(id: String) async throws -> MessageResponse {

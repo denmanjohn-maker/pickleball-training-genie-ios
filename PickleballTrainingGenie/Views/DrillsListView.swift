@@ -246,7 +246,8 @@ struct DrillRowView: View {
                 }
             }
 
-            Text(drill.description)
+            // The one-sentence summary, not the whole templated description.
+            Text(drill.instructions.summary)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .lineLimit(2)
@@ -256,7 +257,13 @@ struct DrillRowView: View {
                     Label("Video Available", systemImage: "play.circle.fill")
                         .foregroundColor(.neonCyan)
                 }
-                if drill.isSoloFriendly {
+                if let minPlayers = drill.minPlayers {
+                    Label(
+                        TrainingCompany.label(forMinPlayers: minPlayers),
+                        systemImage: TrainingCompany.systemImage(forMinPlayers: minPlayers)
+                    )
+                    .foregroundColor(minPlayers == 1 ? .solarGold : .secondary)
+                } else if drill.isSoloFriendly {
                     Label("Solo-friendly", systemImage: "person.fill")
                         .foregroundColor(.solarGold)
                 }

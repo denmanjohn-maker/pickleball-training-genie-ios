@@ -32,7 +32,8 @@
                     drills: [
                         WorkoutDrillItem(
                             title: "Fixture Workout Dinks", category: "Dinking", durationMinutes: 5,
-                            coachingNotes: "Keep your paddle in front."
+                            coachingNotes: "Keep your paddle in front.",
+                            drillId: nil, description: nil, minPlayers: nil, equipment: nil
                         )
                     ],
                     cooldown: nil, totalDurationMinutes: 5, rawResponse: nil

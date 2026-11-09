@@ -20,6 +20,7 @@
 		AAAA0000000000000023CAFE /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000017CAFE /* RegisterView.swift */; };
 		AAAA0000000000000024CAFE /* DrillsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000018CAFE /* DrillsListView.swift */; };
 		AAAA0000000000000025CAFE /* DrillDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000019CAFE /* DrillDetailView.swift */; };
+		AAAA0000000000000093CAFE /* DrillInstructionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000092CAFE /* DrillInstructionsView.swift */; };
 		AAAA0000000000000026CAFE /* RecommendationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000001ACAFE /* RecommendationsView.swift */; };
 		AAAA0000000000000027CAFE /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000001BCAFE /* ProfileView.swift */; };
 		AAAA0000000000000028CAFE /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000001CCAFE /* AuthViewModel.swift */; };
@@ -76,10 +77,13 @@
 		BBBB000000000000001ACAFE /* GuidedSessionViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBB000000000000000ACAFE /* GuidedSessionViewModelTests.swift */; };
 		BBBB000000000000001BCAFE /* OfflineCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBB000000000000000BCAFE /* OfflineCacheTests.swift */; };
 		BBBB000000000000001CCAFE /* DrillSoloHeuristicTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBB000000000000000CCAFE /* DrillSoloHeuristicTests.swift */; };
+		BBBB000000000000002CCAFE /* DrillInstructionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBB000000000000002BCAFE /* DrillInstructionsTests.swift */; };
 		BBBB000000000000001DCAFE /* WorkoutHistoryViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBB000000000000000DCAFE /* WorkoutHistoryViewModelTests.swift */; };
 		BBBB000000000000001ECAFE /* ZipCityMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBBB000000000000000ECAFE /* ZipCityMatcherTests.swift */; };
 		AAAA000000000000008BCAFE /* AppLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000008ACAFE /* AppLog.swift */; };
 		AAAA000000000000008DCAFE /* DrillSoloHeuristic.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000008CCAFE /* DrillSoloHeuristic.swift */; };
+		AAAA0000000000000091CAFE /* DrillInstructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA0000000000000090CAFE /* DrillInstructions.swift */; };
+		AAAA000000000000008FCAFE /* TrainingCompany.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAA000000000000008ECAFE /* TrainingCompany.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +113,7 @@
 		AAAA0000000000000017CAFE /* RegisterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000018CAFE /* DrillsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillsListView.swift; sourceTree = "<group>"; };
 		AAAA0000000000000019CAFE /* DrillDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillDetailView.swift; sourceTree = "<group>"; };
+		AAAA0000000000000092CAFE /* DrillInstructionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillInstructionsView.swift; sourceTree = "<group>"; };
 		AAAA000000000000001ACAFE /* RecommendationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecommendationsView.swift; sourceTree = "<group>"; };
 		AAAA000000000000001BCAFE /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		AAAA000000000000001CCAFE /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
@@ -167,10 +172,13 @@
 		BBBB000000000000000ACAFE /* GuidedSessionViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidedSessionViewModelTests.swift; sourceTree = "<group>"; };
 		BBBB000000000000000BCAFE /* OfflineCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OfflineCacheTests.swift; sourceTree = "<group>"; };
 		BBBB000000000000000CCAFE /* DrillSoloHeuristicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillSoloHeuristicTests.swift; sourceTree = "<group>"; };
+		BBBB000000000000002BCAFE /* DrillInstructionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillInstructionsTests.swift; sourceTree = "<group>"; };
 		BBBB000000000000000DCAFE /* WorkoutHistoryViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutHistoryViewModelTests.swift; sourceTree = "<group>"; };
 		BBBB000000000000000ECAFE /* ZipCityMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipCityMatcherTests.swift; sourceTree = "<group>"; };
 		AAAA000000000000008ACAFE /* AppLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLog.swift; sourceTree = "<group>"; };
 		AAAA000000000000008CCAFE /* DrillSoloHeuristic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillSoloHeuristic.swift; sourceTree = "<group>"; };
+		AAAA0000000000000090CAFE /* DrillInstructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrillInstructions.swift; sourceTree = "<group>"; };
+		AAAA000000000000008ECAFE /* TrainingCompany.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingCompany.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +250,7 @@
 				AAAA0000000000000017CAFE /* RegisterView.swift */,
 				AAAA0000000000000018CAFE /* DrillsListView.swift */,
 				AAAA0000000000000019CAFE /* DrillDetailView.swift */,
+				AAAA0000000000000092CAFE /* DrillInstructionsView.swift */,
 				AAAA000000000000001ACAFE /* RecommendationsView.swift */,
 				AAAA0000000000000030CAFE /* WorkoutView.swift */,
 				AAAA000000000000001BCAFE /* ProfileView.swift */,
@@ -269,6 +278,8 @@
 				AAAA000000000000006CCAFE /* SkillAssessment.swift */,
 				AAAA000000000000007CCAFE /* TrainingStats.swift */,
 				AAAA000000000000008CCAFE /* DrillSoloHeuristic.swift */,
+				AAAA0000000000000090CAFE /* DrillInstructions.swift */,
+				AAAA000000000000008ECAFE /* TrainingCompany.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -349,6 +360,7 @@
 				BBBB000000000000000ACAFE /* GuidedSessionViewModelTests.swift */,
 				BBBB000000000000000BCAFE /* OfflineCacheTests.swift */,
 				BBBB000000000000000CCAFE /* DrillSoloHeuristicTests.swift */,
+				BBBB000000000000002BCAFE /* DrillInstructionsTests.swift */,
 				BBBB000000000000000DCAFE /* WorkoutHistoryViewModelTests.swift */,
 				BBBB000000000000000ECAFE /* ZipCityMatcherTests.swift */,
 				CCCC0000000000000003CAFE /* TodayNavigationTests.swift */,
@@ -508,6 +520,7 @@
 				AAAA0000000000000023CAFE /* RegisterView.swift in Sources */,
 				AAAA0000000000000024CAFE /* DrillsListView.swift in Sources */,
 				AAAA0000000000000025CAFE /* DrillDetailView.swift in Sources */,
+				AAAA0000000000000093CAFE /* DrillInstructionsView.swift in Sources */,
 				AAAA0000000000000026CAFE /* RecommendationsView.swift in Sources */,
 				AAAA0000000000000034CAFE /* WorkoutView.swift in Sources */,
 				AAAA0000000000000027CAFE /* ProfileView.swift in Sources */,
@@ -550,6 +563,8 @@
 				CCCC0000000000000002CAFE /* TodayView.swift in Sources */,
 				AAAA000000000000008BCAFE /* AppLog.swift in Sources */,
 				AAAA000000000000008DCAFE /* DrillSoloHeuristic.swift in Sources */,
+				AAAA0000000000000091CAFE /* DrillInstructions.swift in Sources */,
+				AAAA000000000000008FCAFE /* TrainingCompany.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +584,7 @@
 				BBBB000000000000001ACAFE /* GuidedSessionViewModelTests.swift in Sources */,
 				BBBB000000000000001BCAFE /* OfflineCacheTests.swift in Sources */,
 				BBBB000000000000001CCAFE /* DrillSoloHeuristicTests.swift in Sources */,
+				BBBB000000000000002CCAFE /* DrillInstructionsTests.swift in Sources */,
 				BBBB000000000000001DCAFE /* WorkoutHistoryViewModelTests.swift in Sources */,
 				BBBB000000000000001ECAFE /* ZipCityMatcherTests.swift in Sources */,
 				CCCC0000000000000004CAFE /* TodayNavigationTests.swift in Sources */,

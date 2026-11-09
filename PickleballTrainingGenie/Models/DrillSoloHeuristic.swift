@@ -2,10 +2,11 @@ import Foundation
 
 /// Guesses whether a drill can be run without a partner.
 ///
-/// The backend's `Drill` carries no player count yet (see ROADMAP §6), but the
-/// player who can't get coaching usually can't get a drilling partner either,
-/// so a "solo" filter is worth having even as a heuristic. Keyword-based on the
-/// title and description; replace with a server-side flag when one exists.
+/// The backend now tags every curated drill with `minPlayers`, which wins
+/// whenever it is present (see `Drill.isSoloFriendly`). This keyword guess is
+/// the fallback for drills from older backends, or scraped rows the server
+/// hasn't tagged, so the "Solo-friendly" filter keeps working against any
+/// catalog.
 enum DrillSoloHeuristic {
     static let soloKeywords: [String] = [
         "solo", "alone", "by yourself", "on your own", "wall", "ball machine",
@@ -39,8 +40,10 @@ enum DrillSoloHeuristic {
 }
 
 extension Drill {
-    /// Heuristic — see `DrillSoloHeuristic`.
+    /// True when the drill needs nobody else. The server's `minPlayers` tag is
+    /// authoritative; the keyword heuristic only fills in when it is missing.
     var isSoloFriendly: Bool {
-        DrillSoloHeuristic.isSoloFriendly(title: title, description: description, category: category)
+        if let minPlayers { return minPlayers == 1 }
+        return DrillSoloHeuristic.isSoloFriendly(title: title, description: description, category: category)
     }
 }

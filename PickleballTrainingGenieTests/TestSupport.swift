@@ -47,7 +47,9 @@ enum Fixtures {
         title: String = "Dink Rally",
         description: String = "Keep a cross-court dink rally going.",
         level: Decimal = 3.0,
-        category: String = "Dinking"
+        category: String = "Dinking",
+        minPlayers: Int? = nil,
+        equipment: String? = nil
     ) -> Drill {
         Drill(
             id: id,
@@ -57,12 +59,30 @@ enum Fixtures {
             category: category,
             videoUrl: nil,
             sourceUrl: "https://example.test/drill",
-            createdAt: "2026-01-01T00:00:00Z"
+            createdAt: "2026-01-01T00:00:00Z",
+            minPlayers: minPlayers,
+            equipment: equipment
         )
     }
 
-    static func workoutItem(title: String, category: String = "Dinking", minutes: Int = 5) -> WorkoutDrillItem {
-        WorkoutDrillItem(title: title, category: category, durationMinutes: minutes, coachingNotes: "Stay low.")
+    static func workoutItem(
+        title: String,
+        category: String = "Dinking",
+        minutes: Int = 5,
+        description: String? = nil,
+        minPlayers: Int? = nil,
+        equipment: String? = nil
+    ) -> WorkoutDrillItem {
+        WorkoutDrillItem(
+            title: title,
+            category: category,
+            durationMinutes: minutes,
+            coachingNotes: "Stay low.",
+            drillId: nil,
+            description: description,
+            minPlayers: minPlayers,
+            equipment: equipment
+        )
     }
 
     static func workout(
@@ -116,5 +136,26 @@ enum Fixtures {
 
     static func date(_ year: Int, _ month: Int, _ day: Int, hour: Int = 12) -> Date {
         utcCalendar.date(from: DateComponents(year: year, month: month, day: day, hour: hour))!
+    }
+}
+
+extension URLRequest {
+    /// The outgoing body. `URLProtocol` hands tests the body as a stream more
+    /// often than as `httpBody`, so read whichever is present.
+    func bodyData() -> Data? {
+        if let httpBody { return httpBody }
+        guard let stream = httpBodyStream else { return nil }
+        stream.open()
+        defer { stream.close() }
+        var data = Data()
+        let bufferSize = 4096
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
+        defer { buffer.deallocate() }
+        while stream.hasBytesAvailable {
+            let read = stream.read(buffer, maxLength: bufferSize)
+            if read <= 0 { break }
+            data.append(buffer, count: read)
+        }
+        return data
     }
 }

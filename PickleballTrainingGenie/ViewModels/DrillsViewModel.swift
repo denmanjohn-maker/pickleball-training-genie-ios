@@ -18,6 +18,13 @@ class DrillsViewModel: ObservableObject {
     @Published var selectedCategory: String?
     @Published var selectedLevel: Decimal?
     @Published var workoutDuration: Int = 30
+    /// Who the player has to train with today. Sent with workout and
+    /// recommendation requests so the server only offers drills they can
+    /// actually run. Remembered on this device; the Train tab lets them change
+    /// it before every generate.
+    @Published var trainingCompany: TrainingCompany {
+        didSet { defaults.set(trainingCompany.rawValue, forKey: TrainingCompany.storageKey) }
+    }
     @Published var isCompletingWorkout = false
     @Published var workoutCompletedSuccessfully = false
     /// Set when the drills list is showing cached content because the network
@@ -79,6 +86,7 @@ class DrillsViewModel: ObservableObject {
 
     private let client: PickleballTrainingGenieClient
     private let trainingStreakStore: TrainingStreakStore?
+    private let defaults: UserDefaults
     private var recommendationsSavedAt: Date?
 
     var workoutActionTitle: String {
@@ -88,10 +96,16 @@ class DrillsViewModel: ObservableObject {
     init(
         client: PickleballTrainingGenieClient,
         userId: String? = nil,
-        trainingStreakStore: TrainingStreakStore? = nil
+        trainingStreakStore: TrainingStreakStore? = nil,
+        defaults: UserDefaults = .standard
     ) {
         self.client = client
         self.trainingStreakStore = trainingStreakStore
+        self.defaults = defaults
+        // Default to training alone: the app exists for players who can't get
+        // a coach, and they usually can't get a partner either. A missing key
+        // reads as 0, which is not a valid case, so the fallback applies.
+        trainingCompany = TrainingCompany(rawValue: defaults.integer(forKey: TrainingCompany.storageKey)) ?? .solo
         let scope = userId.map { "-\($0)" } ?? ""
         recommendationsCacheKey = "recommendations\(scope)"
         workoutCacheKey = "currentWorkout\(scope)"
@@ -126,7 +140,7 @@ class DrillsViewModel: ObservableObject {
         isLoadingRecommendations = true
         recommendationsError = nil
         do {
-            var fetched = try await client.recommendations()
+            var fetched = try await client.recommendations(playersAvailable: trainingCompany.rawValue)
             cachedRecommendationsDate = nil
             OfflineCache.save(fetched, key: recommendationsCacheKey)
             recommendationsSavedAt = Date()
@@ -234,7 +248,10 @@ class DrillsViewModel: ObservableObject {
         // success — a failed generate at the court must not cost the player
         // the workout they already had.
         do {
-            workout = try await client.generateWorkout(durationMinutes: workoutDuration)
+            workout = try await client.generateWorkout(
+                durationMinutes: workoutDuration,
+                playersAvailable: trainingCompany.rawValue
+            )
             completedWorkoutDrillIndices = []
             cachedWorkoutDate = nil
             if let workout {
@@ -244,6 +261,10 @@ class DrillsViewModel: ObservableObject {
             switch error {
             case .invalidResponse(let code, _) where code == 401:
                 workoutError = "Please log in to generate a personalized workout."
+            case .invalidResponse(let code, _) where code == 400:
+                // The server explains what to change (e.g. no solo drills in
+                // range yet — try "With a partner"); pass that straight through.
+                workoutError = error.serverMessage ?? "Could not generate workout. Please try again."
             default:
                 workoutError = "Could not generate workout. Please try again."
             }

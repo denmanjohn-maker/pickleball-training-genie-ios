@@ -29,6 +29,7 @@ enum LocalDataPurge {
         TrainingReminders.hourKey,
         TrainingReminders.minuteKey,
         GuidedSessionViewModel.voiceCuesKey,
+        TrainingCompany.storageKey,     // DrillsViewModel
     ]
 
     static func purgeAll() async {

@@ -61,4 +61,80 @@ final class DrillsViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.filteredDrills.isEmpty)
         XCTAssertNil(viewModel.levelFallbackNotice)
     }
+
+    // MARK: - Training company
+
+    private func isolatedDefaults() -> UserDefaults {
+        let suite = "DrillsViewModelTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.removePersistentDomain(forName: suite)
+        return defaults
+    }
+
+    func testTrainingCompanyDefaultsToSolo() {
+        let client = PickleballTrainingGenieClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
+        let viewModel = DrillsViewModel(client: client, userId: "t", defaults: isolatedDefaults())
+        XCTAssertEqual(viewModel.trainingCompany, .solo)
+    }
+
+    func testTrainingCompanyPersistsAcrossViewModels() {
+        let client = PickleballTrainingGenieClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
+        let defaults = isolatedDefaults()
+
+        let first = DrillsViewModel(client: client, userId: "t", defaults: defaults)
+        first.trainingCompany = .group
+
+        let second = DrillsViewModel(client: client, userId: "t", defaults: defaults)
+        XCTAssertEqual(second.trainingCompany, .group)
+        XCTAssertEqual(defaults.integer(forKey: TrainingCompany.storageKey), 4)
+    }
+
+    func testTrainingCompanyIgnoresCorruptStoredValue() {
+        let client = PickleballTrainingGenieClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
+        let defaults = isolatedDefaults()
+        defaults.set(3, forKey: TrainingCompany.storageKey)
+
+        let viewModel = DrillsViewModel(client: client, userId: "t", defaults: defaults)
+        XCTAssertEqual(viewModel.trainingCompany, .solo)
+    }
+
+    func testGenerateWorkoutSendsTrainingCompany() async {
+        let client = PickleballTrainingGenieClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
+        client.jwtToken = "abc"
+        let viewModel = DrillsViewModel(client: client, userId: "t", defaults: isolatedDefaults())
+        viewModel.trainingCompany = .partner
+        viewModel.workoutDuration = 45
+
+        var body: [String: Any] = [:]
+        StubURLProtocol.handler = { request in
+            if let data = request.bodyData(),
+               let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+                body = json
+            }
+            return (StubURLProtocol.response(for: request, status: 200), Data(#"{"drills":[]}"#.utf8))
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        await viewModel.generateWorkout()
+
+        XCTAssertEqual(body["durationMinutes"] as? Int, 45)
+        XCTAssertEqual(body["playersAvailable"] as? Int, 2)
+        XCTAssertNil(viewModel.workoutError)
+    }
+
+    func testGenerateWorkoutSurfacesServerExplanationOn400() async {
+        let client = PickleballTrainingGenieClient(baseURL: Fixtures.baseURL, session: StubURLProtocol.makeSession())
+        client.jwtToken = "abc"
+        let viewModel = DrillsViewModel(client: client, userId: "t", defaults: isolatedDefaults())
+
+        StubURLProtocol.handler = { request in
+            let message = "No solo drills found for your DUPR range yet. Try 'With a partner'."
+            return (StubURLProtocol.response(for: request, status: 400, headers: ["Content-Type": "text/plain"]), Data(message.utf8))
+        }
+        defer { StubURLProtocol.handler = nil }
+
+        await viewModel.generateWorkout()
+
+        XCTAssertEqual(viewModel.workoutError, "No solo drills found for your DUPR range yet. Try 'With a partner'.")
+    }
 }

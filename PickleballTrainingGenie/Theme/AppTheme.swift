@@ -270,6 +270,66 @@ struct CategoryBadge: View {
     }
 }
 
+/// Who a drill needs (from the backend's `minPlayers`).
+struct PlayersBadge: View {
+    let minPlayers: Int
+
+    var body: some View {
+        Label(
+            TrainingCompany.label(forMinPlayers: minPlayers),
+            systemImage: TrainingCompany.systemImage(forMinPlayers: minPlayers)
+        )
+        .font(.caption)
+        .fontWeight(.medium)
+        .foregroundColor(.solarGold)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background(Color.solarGold.opacity(0.15))
+        .cornerRadius(8)
+    }
+}
+
+/// One piece of gear a drill needs beyond paddle, ball and court.
+struct EquipmentBadge: View {
+    let name: String
+
+    var body: some View {
+        Label(name, systemImage: "wrench.and.screwdriver")
+            .font(.caption)
+            .foregroundColor(.secondary)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(Color.surfaceMuted)
+            .cornerRadius(8)
+    }
+}
+
+/// The players badge plus equipment badges for a drill. Draws nothing when
+/// neither is known, so older backends and untagged plans show no empty row.
+/// Wraps to a column when the pills don't fit the width (large Dynamic Type).
+struct DrillTagRow: View {
+    let minPlayers: Int?
+    let equipment: [String]
+
+    var body: some View {
+        if minPlayers != nil || !equipment.isEmpty {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 6) { badges }
+                VStack(alignment: .leading, spacing: 6) { badges }
+            }
+        }
+    }
+
+    @ViewBuilder private var badges: some View {
+        if let minPlayers {
+            PlayersBadge(minPlayers: minPlayers)
+        }
+        ForEach(equipment, id: \.self) { item in
+            EquipmentBadge(name: item)
+        }
+    }
+}
+
 // MARK: - Brand Icon
 
 /// Small circular genie mark for navigation bars — establishes the genie as
