@@ -55,7 +55,10 @@ final class TrainingNavigationUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Instructions"].waitForExistence(timeout: 5))
         app.buttons["Done"].tap()
         select("Today")
-        if app.navigationBars["Recommendations"].exists { back() }
+        // The tab switch can still be animating here, so give the
+        // Recommendations bar a moment to appear before deciding to pop it.
+        if app.navigationBars["Recommendations"].waitForExistence(timeout: 3) { back() }
+        XCTAssertTrue(app.navigationBars["Today"].waitForExistence(timeout: 5), app.debugDescription)
         tap("Find Tournaments")
         XCTAssertTrue(app.navigationBars["Tournaments"].waitForExistence(timeout: 5))
         let city = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Fixture City")).firstMatch
