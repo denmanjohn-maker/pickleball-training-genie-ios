@@ -11,6 +11,9 @@ final class TodayNavigationTests: XCTestCase {
         for prefix in ["currentWorkout", "recommendations", "trainingActivity"] {
             OfflineCache.remove(key: "\(prefix)-\(scope)")
         }
+        for company in TrainingCompany.allCases {
+            OfflineCache.remove(key: "recommendations-\(scope)-players\(company.rawValue)")
+        }
         super.tearDown()
     }
 
@@ -206,11 +209,17 @@ final class TodayNavigationTests: XCTestCase {
     }
 
     func testRecommendationsCacheAndAccountIsolation() async throws {
-        let drills = [Fixtures.drill(id: "saved")]
-        OfflineCache.save(drills, key: "recommendations-\(scope)")
+        // An entry under the pre-training-company key can't be trusted for
+        // any choice, so the view model drops it on init.
+        OfflineCache.save([Fixtures.drill(id: "legacy")], key: "recommendations-\(scope)")
         StubURLProtocol.handler = { _ in throw URLError(.notConnectedToInternet) }
         let first = DrillsViewModel(client: client(), userId: scope)
         let other = DrillsViewModel(client: client(), userId: "\(scope)-other")
+        XCTAssertNil(OfflineCache.load([Drill].self, key: "recommendations-\(scope)"))
+
+        // The live cache is scoped by user and by the training company in use.
+        let drills = [Fixtures.drill(id: "saved")]
+        OfflineCache.save(drills, key: "recommendations-\(scope)-players\(first.trainingCompany.rawValue)")
         await first.loadRecommendations()
         await other.loadRecommendations()
         XCTAssertEqual(first.recommendations.map(\.id), ["saved"])
